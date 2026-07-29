@@ -1,5 +1,7 @@
 # credenciais - nunca versionar
 .env
+.env.local
+.env*.local
 *.token
 
 # dados exportados das contas de anuncios (gasto, performance)
@@ -8,3 +10,16 @@ dados/
 
 # relatorios gerados (embutem dados das contas)
 relatorio*.html
+
+# next / node
+node_modules/
+.next/
+out/
+build/
+next-env.d.ts
+*.tsbuildinfo
+.vercel
+
+# sistema
+.DS_Store
+*.log
