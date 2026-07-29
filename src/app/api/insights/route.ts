@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { listarClientes, tokenDe } from "@/lib/clientes";
 import { ErroMeta, carregarPainel } from "@/lib/meta";
 import { resolverJanela } from "@/lib/periodo";
+import { aliquotaDe } from "@/lib/impostos";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -49,7 +50,7 @@ export async function GET(req: Request) {
       dias: janela.janela.dias,
     });
     return NextResponse.json(
-      { ...painel, clienteId },
+      { ...painel, clienteId, aliquotaImposto: aliquotaDe(clienteId) },
       { headers: { "Cache-Control": "no-store, max-age=0" } }
     );
   } catch (e) {

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { clientesComToken } from "@/lib/clientes";
 import { carregarCarteira } from "@/lib/meta";
 import { resolverJanela } from "@/lib/periodo";
+import { aliquotaDe } from "@/lib/impostos";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -28,7 +29,15 @@ export async function GET(req: Request) {
       since: janela.janela.since,
       until: janela.janela.until,
     });
-    return NextResponse.json(carteira, {
+    // Cada cliente pode ter alíquota própria; a tela soma o imposto de cada um.
+    const comImposto = {
+      ...carteira,
+      clientes: carteira.clientes.map((c) => ({
+        ...c,
+        aliquotaImposto: aliquotaDe(c.clienteId),
+      })),
+    };
+    return NextResponse.json(comImposto, {
       headers: { "Cache-Control": "no-store, max-age=0" },
     });
   } catch (e) {

@@ -42,6 +42,17 @@ export default function Carteira({ clientes, aoAbrir }: Props) {
     };
   }, [clientes]);
 
+  const { impostoTotal, temImposto } = useMemo(() => {
+    const ativos2 = clientes.filter((c) => !c.erro && c.gasto > 0);
+    return {
+      impostoTotal: ativos2.reduce(
+        (s, c) => s + (c.aliquotaImposto ? c.gasto * (c.aliquotaImposto / 100) : 0),
+        0
+      ),
+      temImposto: ativos2.some((c) => c.aliquotaImposto != null),
+    };
+  }, [clientes]);
+
   const piorCusto = useMemo(
     () =>
       Math.max(
@@ -88,6 +99,29 @@ export default function Carteira({ clientes, aoAbrir }: Props) {
           <div className="obs">no período</div>
         </div>
       </div>
+
+      {temImposto && total.gasto > 0 && (
+        <div className="imposto">
+          <div className="imposto-item">
+            <span className="imposto-rot">Verba líquida</span>
+            <span className="imposto-val">{brl(total.gasto)}</span>
+          </div>
+          <div className="imposto-item">
+            <span className="imposto-rot">Imposto estimado</span>
+            <span className="imposto-val">{brl(impostoTotal)}</span>
+          </div>
+          <div className="imposto-item">
+            <span className="imposto-rot">Custo total</span>
+            <span className="imposto-val total">
+              {brl(total.gasto + impostoTotal)}
+            </span>
+          </div>
+          <p className="imposto-nota">
+            Soma do imposto de cada cliente, na alíquota configurada para ele. A
+            Meta não expõe imposto na API — o valor que ela devolve é líquido.
+          </p>
+        </div>
+      )}
 
       <div className="painel" style={{ marginBottom: 22 }}>
         <h2>Custo por conversa, por cliente</h2>

@@ -27,6 +27,7 @@ import {
 import TabelaCampanhas from "./TabelaCampanhas";
 import Calendario from "./Calendario";
 import Diagnostico from "./Diagnostico";
+import Imposto from "./Imposto";
 import Carteira from "./Carteira";
 
 const INTERVALO_MS = 60_000;
@@ -456,6 +457,11 @@ export default function Painel() {
               </div>
             </div>
           </div>
+
+          <Imposto
+            gastoLiquido={r.gasto}
+            aliquota={dados?.aliquotaImposto ?? null}
+          />
 
           <div className="grade">
             <div className="painel">

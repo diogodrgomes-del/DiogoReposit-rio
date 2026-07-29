@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { temSessionSecret, totalUsuarios } from "@/lib/auth";
 import { listarClientes } from "@/lib/clientes";
+import { temImpostoConfigurado } from "@/lib/impostos";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -31,6 +32,7 @@ export async function GET() {
       usuariosCadastrados: usuarios,
       sessionSecretOk: segredo,
       clientesCadastrados: clientes.length,
+      impostoConfigurado: temImpostoConfigurado(),
       // Só os nomes, para conferir se as linhas foram lidas como esperado.
       clientes: clientes.map((c) => c.nome),
       pendencias,

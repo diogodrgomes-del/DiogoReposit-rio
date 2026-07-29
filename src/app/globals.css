@@ -303,6 +303,52 @@ select {
   line-height: 1.35;
 }
 
+/* ======================== faixa de imposto ======================== */
+
+.imposto {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 26px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--s3);
+  border-radius: 10px;
+  padding: 13px 17px;
+  margin: -8px 0 22px;
+  box-shadow: var(--sombra);
+}
+
+.imposto-item { display: flex; flex-direction: column; gap: 2px; }
+
+.imposto-rot {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.imposto-val {
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+}
+
+.imposto-val.total { color: var(--s3); }
+
+.imposto-nota {
+  margin-left: auto;
+  font-size: 12.5px;
+  color: var(--ink-3);
+  max-width: 42ch;
+  line-height: 1.4;
+}
+
+@media (max-width: 700px) {
+  .imposto-nota { margin-left: 0; max-width: none; }
+}
+
 /* ======================== paineis ======================== */
 
 .grade {

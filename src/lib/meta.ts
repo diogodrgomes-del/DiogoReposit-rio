@@ -48,6 +48,8 @@ export type Campanha = Metricas & {
 export type PontoSerie = Metricas & { data: string };
 
 export type Painel = {
+  /** Percentual de imposto configurado; null quando não há. */
+  aliquotaImposto?: number | null;
   contas: Conta[];
   resumo: Metricas;
   campanhas: Campanha[];
@@ -323,6 +325,7 @@ export { ErroMeta };
 // ===================== visao consolidada da carteira =====================
 
 export type ResumoCliente = Metricas & {
+  aliquotaImposto?: number | null;
   clienteId: string;
   cliente: string;
   contas: number;
