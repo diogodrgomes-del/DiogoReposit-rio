@@ -1,3 +1,7 @@
 # credenciais - nunca versionar
 .env
 *.token
+
+# dados exportados das contas de anuncios (gasto, performance)
+*.csv
+dados/
