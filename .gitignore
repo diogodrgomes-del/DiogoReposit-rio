@@ -5,3 +5,6 @@
 # dados exportados das contas de anuncios (gasto, performance)
 *.csv
 dados/
+
+# relatorios gerados (embutem dados das contas)
+relatorio*.html
