@@ -12,6 +12,9 @@ export async function middleware(req: NextRequest) {
   const livre =
     pathname === "/login" ||
     pathname === "/api/auth/login" ||
+    // Diagnóstico de configuração: precisa responder sem sessão, porque é
+    // usado justamente quando o login não funciona. Não expõe valor algum.
+    pathname === "/api/saude" ||
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico";
 

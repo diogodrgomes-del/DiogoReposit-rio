@@ -1,5 +1,12 @@
 import { NextResponse } from "next/server";
-import { COOKIE, MAX_IDADE_COOKIE, conferirSenha, criarSessao } from "@/lib/auth";
+import {
+  COOKIE,
+  MAX_IDADE_COOKIE,
+  conferirSenha,
+  criarSessao,
+  temSessionSecret,
+  totalUsuarios,
+} from "@/lib/auth";
 
 export const runtime = "nodejs";
 
@@ -23,6 +30,28 @@ export async function POST(req: Request) {
     return NextResponse.json(
       { erro: "Informe usuário e senha." },
       { status: 400 }
+    );
+  }
+
+  // Servidor sem nenhum usuário cadastrado recusaria toda tentativa como
+  // "senha incorreta", culpando quem digitou por um erro de configuração.
+  if (totalUsuarios() === 0) {
+    return NextResponse.json(
+      {
+        erro:
+          "Nenhum usuário cadastrado no servidor. Verifique a variável DASH_USERS " +
+          "e faça um novo deploy — variáveis novas só valem no próximo build.",
+      },
+      { status: 503 }
+    );
+  }
+  if (!temSessionSecret()) {
+    return NextResponse.json(
+      {
+        erro:
+          "SESSION_SECRET ausente ou com menos de 32 caracteres. Cadastre e refaça o deploy.",
+      },
+      { status: 503 }
     );
   }
 

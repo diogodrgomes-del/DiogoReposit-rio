@@ -80,6 +80,16 @@ function iguais(a: Uint8Array, b: Uint8Array): boolean {
   return dif === 0;
 }
 
+/** Quantos usuários o servidor conhece. Zero significa servidor mal configurado. */
+export function totalUsuarios(): number {
+  return usuarios().size;
+}
+
+export function temSessionSecret(): boolean {
+  const s = process.env.SESSION_SECRET;
+  return typeof s === "string" && s.length >= 32;
+}
+
 export async function conferirSenha(
   usuario: string,
   senha: string
