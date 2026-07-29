@@ -62,22 +62,20 @@ class ErroMeta extends Error {
   }
 }
 
-function token(): string {
-  const t = process.env.META_ACCESS_TOKEN;
-  if (!t) throw new ErroMeta("META_ACCESS_TOKEN não configurado no servidor.");
-  return t;
-}
-
 /** Remove o token de qualquer texto antes que ele chegue a um log ou a tela. */
-function limpar(texto: string): string {
-  const t = process.env.META_ACCESS_TOKEN;
-  return t ? texto.split(t).join("<TOKEN>") : texto;
+function limpar(texto: string, token: string): string {
+  return token ? texto.split(token).join("<TOKEN>") : texto;
 }
 
-async function buscar<T>(caminho: string, params: Record<string, string>): Promise<T[]> {
+async function buscar<T>(
+  caminho: string,
+  token: string,
+  params: Record<string, string>
+): Promise<T[]> {
+  if (!token) throw new ErroMeta("Cliente sem token configurado no servidor.");
   const url = new URL(`${API}/${caminho}`);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
-  url.searchParams.set("access_token", token());
+  url.searchParams.set("access_token", token);
 
   const itens: T[] = [];
   let proxima: string | null = url.toString();
@@ -88,7 +86,7 @@ async function buscar<T>(caminho: string, params: Record<string, string>): Promi
 
     if (corpo?.error) {
       const e = corpo.error;
-      throw new ErroMeta(limpar(`Meta: ${e.message ?? "erro desconhecido"}`), e.code);
+      throw new ErroMeta(limpar(`Meta: ${e.message ?? "erro desconhecido"}`, token), e.code);
     }
     if (!r.ok) {
       throw new ErroMeta(`Meta respondeu ${r.status}.`);
@@ -199,9 +197,10 @@ function preencherLacunas(
   return saida;
 }
 
-export async function listarContas(): Promise<Conta[]> {
+export async function listarContas(token: string): Promise<Conta[]> {
   const dados = await buscar<{ id: string; name?: string; currency?: string }>(
     "me/adaccounts",
+    token,
     { fields: "id,name,currency", limit: "100" }
   );
   return dados.map((c) => ({
@@ -222,13 +221,15 @@ function janela(
 }
 
 export async function carregarPainel(opcoes: {
+  token: string;
   contaId: string | null; // null = todas
   preset: string | null;
   since: string | null;
   until: string | null;
   dias: number | null;
 }): Promise<Painel> {
-  const todas = await listarContas();
+  const token = opcoes.token;
+  const todas = await listarContas(token);
   const alvo = opcoes.contaId
     ? todas.filter((c) => c.id === opcoes.contaId)
     : todas;
@@ -245,17 +246,17 @@ export async function carregarPainel(opcoes: {
   const porConta = await Promise.all(
     alvo.map(async (conta) => {
       const [linhasCamp, statusCamp, linhasSerie] = await Promise.all([
-        buscar<LinhaBruta>(`${conta.id}/insights`, {
+        buscar<LinhaBruta>(`${conta.id}/insights`, token, {
           ...periodo,
           level: "campaign",
           fields: `campaign_id,campaign_name,objective,${CAMPOS_BASE}`,
           limit: "500",
         }),
-        buscar<{ id: string; effective_status?: string }>(`${conta.id}/campaigns`, {
+        buscar<{ id: string; effective_status?: string }>(`${conta.id}/campaigns`, token, {
           fields: "id,effective_status",
           limit: "500",
         }),
-        buscar<LinhaBruta>(`${conta.id}/insights`, {
+        buscar<LinhaBruta>(`${conta.id}/insights`, token, {
           ...periodo,
           level: "account",
           fields: CAMPOS_BASE,
@@ -318,3 +319,91 @@ export async function carregarPainel(opcoes: {
 }
 
 export { ErroMeta };
+
+// ===================== visao consolidada da carteira =====================
+
+export type ResumoCliente = Metricas & {
+  clienteId: string;
+  cliente: string;
+  contas: number;
+  /** Preenchido quando este cliente falhou sozinho, sem derrubar os demais. */
+  erro?: string;
+};
+
+/**
+ * Roda tarefas com um teto de paralelismo. Oito clientes disparando todas as
+ * chamadas de uma vez encosta no limite de requisicoes da Meta e derruba o
+ * carregamento inteiro; em blocos, o custo e alguns segundos a mais.
+ */
+async function comLimite<T, R>(
+  itens: T[],
+  limite: number,
+  tarefa: (item: T) => Promise<R>
+): Promise<R[]> {
+  const saida: R[] = new Array(itens.length);
+  let proximo = 0;
+  const operarios = Array.from(
+    { length: Math.min(limite, itens.length) },
+    async () => {
+      while (proximo < itens.length) {
+        const i = proximo++;
+        saida[i] = await tarefa(itens[i]);
+      }
+    }
+  );
+  await Promise.all(operarios);
+  return saida;
+}
+
+/**
+ * Totais de cada cliente no periodo, para a tela de carteira.
+ *
+ * Um cliente que falha nao derruba os outros: o erro fica no proprio registro e
+ * a tela mostra a linha marcada. Perder a carteira toda porque um token expirou
+ * seria pior do que ver sete linhas boas e uma com problema.
+ */
+export async function carregarCarteira(
+  clientes: { id: string; nome: string; token: string }[],
+  opcoes: {
+    preset: string | null;
+    since: string | null;
+    until: string | null;
+  }
+): Promise<{ clientes: ResumoCliente[]; atualizadoEm: string }> {
+  const periodo = janela(opcoes.preset, opcoes.since, opcoes.until);
+
+  const resultados = await comLimite(clientes, 3, async (c) => {
+    const base = { clienteId: c.id, cliente: c.nome };
+    try {
+      const contas = await listarContas(c.token);
+      if (contas.length === 0) {
+        return {
+          ...base, ...VAZIO, contas: 0,
+          erro: "Nenhuma conta atribuída ao usuário do sistema.",
+        } as ResumoCliente;
+      }
+
+      const porConta = await comLimite(contas, 3, (conta) =>
+        buscar<LinhaBruta>(`${conta.id}/insights`, c.token, {
+          ...periodo,
+          level: "account",
+          fields: CAMPOS_BASE,
+          limit: "100",
+        })
+      );
+
+      return {
+        ...base,
+        ...agregar(porConta.flat().map(metricas)),
+        contas: contas.length,
+      } as ResumoCliente;
+    } catch (e) {
+      return {
+        ...base, ...VAZIO, contas: 0,
+        erro: (e as Error).message,
+      } as ResumoCliente;
+    }
+  });
+
+  return { clientes: resultados, atualizadoEm: new Date().toISOString() };
+}

@@ -1,58 +1,57 @@
 import { NextResponse } from "next/server";
+import { listarClientes, tokenDe } from "@/lib/clientes";
 import { ErroMeta, carregarPainel } from "@/lib/meta";
-import { PERIODOS, diasEntre, validarData } from "@/lib/presets";
+import { resolverJanela } from "@/lib/periodo";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export async function GET(req: Request) {
-  const url = new URL(req.url);
-  const periodoId = url.searchParams.get("periodo") ?? "last_30d";
-  const contaId = url.searchParams.get("conta");
-  const since = validarData(url.searchParams.get("since"));
-  const until = validarData(url.searchParams.get("until"));
+  const params = new URL(req.url).searchParams;
 
-  // Conta so pode ser um id no formato act_<digitos>; "todas" vira null.
-  const conta =
-    contaId && contaId !== "todas" && /^act_\d+$/.test(contaId) ? contaId : null;
-
-  let preset: string | null = null;
-  let dias: number | null = null;
-
-  if (periodoId === "custom") {
-    if (!since || !until) {
-      return NextResponse.json(
-        { erro: "Período personalizado exige as duas datas." },
-        { status: 400 }
-      );
-    }
-    if (since > until) {
-      return NextResponse.json(
-        { erro: "A data inicial não pode ser depois da final." },
-        { status: 400 }
-      );
-    }
-    dias = diasEntre(since, until);
-  } else {
-    const p = PERIODOS.find((x) => x.id === periodoId);
-    if (!p) {
-      return NextResponse.json({ erro: "Período desconhecido." }, { status: 400 });
-    }
-    preset = p.preset ?? null;
-    dias = p.dias;
+  const janela = resolverJanela(params);
+  if (!janela.ok) {
+    return NextResponse.json({ erro: janela.erro }, { status: 400 });
   }
+
+  // Sem cliente na URL, usa o primeiro da carteira.
+  const pedido = params.get("cliente");
+  const primeiro = listarClientes()[0];
+  const clienteId = pedido || primeiro?.id;
+
+  if (!clienteId) {
+    return NextResponse.json(
+      { erro: "Nenhum cliente configurado. Preencha META_TOKENS no servidor." },
+      { status: 500 }
+    );
+  }
+
+  const token = tokenDe(clienteId);
+  if (!token) {
+    return NextResponse.json({ erro: "Cliente não encontrado." }, { status: 404 });
+  }
+
+  // Conta só pode ser act_<dígitos>; qualquer outra coisa vira "todas".
+  const contaBruta = params.get("conta");
+  const conta =
+    contaBruta && contaBruta !== "todas" && /^act_\d+$/.test(contaBruta)
+      ? contaBruta
+      : null;
 
   try {
     const painel = await carregarPainel({
+      token,
       contaId: conta,
-      preset,
-      since: preset ? null : since,
-      until: preset ? null : until,
-      dias,
+      preset: janela.janela.preset,
+      since: janela.janela.since,
+      until: janela.janela.until,
+      dias: janela.janela.dias,
     });
-    return NextResponse.json(painel, {
-      headers: { "Cache-Control": "no-store, max-age=0" },
-    });
+    return NextResponse.json(
+      { ...painel, clienteId },
+      { headers: { "Cache-Control": "no-store, max-age=0" } }
+    );
   } catch (e) {
     const erro = e as Error;
     if (erro instanceof ErroMeta) {

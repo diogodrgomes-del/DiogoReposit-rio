@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Painel as DadosPainel } from "@/lib/meta";
+import type { Cliente } from "@/lib/clientes";
+import type { Painel as DadosPainel, ResumoCliente } from "@/lib/meta";
 import {
   PERIODOS,
   PERIODO_PADRAO,
@@ -24,11 +25,18 @@ import {
   GraficoInvestimento,
 } from "./Graficos";
 import TabelaCampanhas from "./TabelaCampanhas";
+import Carteira from "./Carteira";
 
 const INTERVALO_MS = 60_000;
 
+type Visao = "carteira" | "cliente";
+
 export default function Painel() {
   const router = useRouter();
+
+  const [visao, setVisao] = useState<Visao>("carteira");
+  const [clientes, setClientes] = useState<Cliente[]>([]);
+  const [cliente, setCliente] = useState<string>("");
 
   const [periodo, setPeriodo] = useState(PERIODO_PADRAO);
   const [since, setSince] = useState(somarDias(hojeISO(), -7));
@@ -37,41 +45,84 @@ export default function Painel() {
   const [auto, setAuto] = useState(true);
 
   const [dados, setDados] = useState<DadosPainel | null>(null);
+  const [carteira, setCarteira] = useState<ResumoCliente[] | null>(null);
+  const [atualizadoEm, setAtualizadoEm] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [carregando, setCarregando] = useState(true);
-  const [tick, setTick] = useState(0); // só para recalcular "há X min"
+  const [tick, setTick] = useState(0); // só recalcula o "há X min"
 
-  // Guarda a requisição em voo para descartar respostas fora de ordem.
+  // Descarta respostas fora de ordem quando o filtro muda rápido.
   const emVoo = useRef<AbortController | null>(null);
 
-  const buscar = useCallback(async () => {
-    emVoo.current?.abort();
-    const ctrl = new AbortController();
-    emVoo.current = ctrl;
+  // --- carteira de clientes (uma vez) ---
+  useEffect(() => {
+    let vivo = true;
+    (async () => {
+      try {
+        const r = await fetch("/api/clientes", { cache: "no-store" });
+        if (r.status === 401) {
+          router.replace("/login");
+          return;
+        }
+        const corpo = await r.json();
+        if (!vivo) return;
+        const lista: Cliente[] = corpo.clientes ?? [];
+        setClientes(lista);
+        if (lista.length > 0) setCliente((c) => c || lista[0].id);
+        // Com um cliente só, a tela de carteira não acrescenta nada.
+        if (lista.length <= 1) setVisao("cliente");
+      } catch {
+        /* o erro aparece no carregamento dos dados */
+      }
+    })();
+    return () => {
+      vivo = false;
+    };
+  }, [router]);
 
-    setCarregando(true);
-    const q = new URLSearchParams({ periodo, conta });
+  const parametros = useCallback(() => {
+    const q = new URLSearchParams({ periodo });
     if (periodo === "custom") {
       q.set("since", since);
       q.set("until", until);
     }
+    return q;
+  }, [periodo, since, until]);
+
+  const buscar = useCallback(async () => {
+    if (visao === "cliente" && !cliente) return;
+
+    emVoo.current?.abort();
+    const ctrl = new AbortController();
+    emVoo.current = ctrl;
+    setCarregando(true);
+
+    const q = parametros();
+    let url: string;
+    if (visao === "carteira") {
+      url = `/api/carteira?${q}`;
+    } else {
+      q.set("cliente", cliente);
+      q.set("conta", conta);
+      url = `/api/insights?${q}`;
+    }
 
     try {
-      const r = await fetch(`/api/insights?${q}`, {
-        signal: ctrl.signal,
-        cache: "no-store",
-      });
-
+      const r = await fetch(url, { signal: ctrl.signal, cache: "no-store" });
       if (r.status === 401) {
         router.replace("/login");
         return;
       }
-
       const corpo = await r.json().catch(() => ({}));
       if (!r.ok) {
         setErro(corpo?.erro ?? "Não foi possível carregar os dados.");
+      } else if (visao === "carteira") {
+        setCarteira(corpo.clientes ?? []);
+        setAtualizadoEm(corpo.atualizadoEm ?? null);
+        setErro(null);
       } else {
         setDados(corpo as DadosPainel);
+        setAtualizadoEm(corpo.atualizadoEm ?? null);
         setErro(null);
       }
     } catch (e) {
@@ -81,7 +132,7 @@ export default function Painel() {
     } finally {
       if (!ctrl.signal.aborted) setCarregando(false);
     }
-  }, [periodo, conta, since, until, router]);
+  }, [visao, cliente, conta, parametros, router]);
 
   useEffect(() => {
     void buscar();
@@ -93,23 +144,40 @@ export default function Painel() {
     return () => clearInterval(id);
   }, [auto, buscar]);
 
-  // Mantém o "atualizado há X" correndo sem refazer a requisição.
   useEffect(() => {
     const id = setInterval(() => setTick((t) => t + 1), 15_000);
     return () => clearInterval(id);
   }, []);
 
-  const intervalo = useMemo(() => {
-    if (periodo === "custom") return { since, until };
-    return intervaloAproximado(periodo);
-  }, [periodo, since, until]);
+  // Trocar de cliente precisa zerar o filtro de conta: os ids não se repetem
+  // entre clientes, e manter o antigo devolveria uma tela vazia.
+  function trocarCliente(id: string) {
+    setCliente(id);
+    setConta("todas");
+    setDados(null);
+  }
 
-  const rotuloPeriodo = useMemo(() => {
-    if (periodo === "custom") {
-      return `${dataLonga(since)} a ${dataLonga(until)}`;
-    }
-    return PERIODOS.find((p) => p.id === periodo)?.rotulo ?? periodo;
-  }, [periodo, since, until]);
+  function abrirCliente(id: string) {
+    trocarCliente(id);
+    setVisao("cliente");
+  }
+
+  const intervalo = useMemo(
+    () =>
+      periodo === "custom" ? { since, until } : intervaloAproximado(periodo),
+    [periodo, since, until]
+  );
+
+  const rotuloPeriodo = useMemo(
+    () =>
+      periodo === "custom"
+        ? `${dataLonga(since)} a ${dataLonga(until)}`
+        : (PERIODOS.find((p) => p.id === periodo)?.rotulo ?? periodo),
+    [periodo, since, until]
+  );
+
+  const nomeCliente =
+    clientes.find((c) => c.id === cliente)?.nome ?? "—";
 
   const r = dados?.resumo;
 
@@ -119,18 +187,17 @@ export default function Painel() {
    * "Conversa iniciada" vem de messaging_conversation_started_7d, com janela de
    * atribuição de 7 dias. As métricas de profundidade não têm janela: contam
    * eventos ocorridos no período, mesmo de conversas iniciadas antes dele. Como
-   * as bases de contagem são diferentes, uma etapa pode superar a anterior, e
-   * tratá-las como etapas encaixadas produziria percentuais acima de 100%.
-   * Por isso as barras são escaladas pelo maior valor, não pelo topo.
+   * as bases de contagem diferem, uma etapa pode superar a anterior, e tratá-las
+   * como etapas encaixadas produziria percentuais acima de 100%.
    */
   const profundidade = useMemo(() => {
     if (!r) return [];
     return [
-      { rot: "Conversa iniciada", v: r.conversas, base: true },
-      { rot: "1ª resposta", v: r.resposta1, base: false },
-      { rot: "2ª mensagem", v: r.prof2, base: false },
-      { rot: "3ª mensagem", v: r.prof3, base: false },
-      { rot: "5ª mensagem", v: r.prof5, base: false },
+      { rot: "Conversa iniciada", v: r.conversas },
+      { rot: "1ª resposta", v: r.resposta1 },
+      { rot: "2ª mensagem", v: r.prof2 },
+      { rot: "3ª mensagem", v: r.prof3 },
+      { rot: "5ª mensagem", v: r.prof5 },
     ];
   }, [r]);
 
@@ -138,11 +205,6 @@ export default function Painel() {
     () => Math.max(1, ...profundidade.map((f) => f.v)),
     [profundidade]
   );
-
-  const nomeConta =
-    conta === "todas"
-      ? "Todas as contas"
-      : (dados?.contas.find((c) => c.id === conta)?.nome ?? conta);
 
   async function sair() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -159,14 +221,36 @@ export default function Painel() {
     raiz.dataset.theme = atual === "dark" ? "light" : "dark";
   }
 
+  const titulo = visao === "carteira" ? "Carteira de clientes" : nomeCliente;
+
   return (
     <div className="app">
-      {/* ---------------- barra superior ---------------- */}
       <header className="topo nao-imprime">
         <div className="topo-linha">
           <div className="marca">
             Marktiva <span>Meta Ads</span>
           </div>
+
+          {clientes.length > 1 && (
+            <div className="abas" role="tablist">
+              <button
+                className="aba"
+                role="tab"
+                aria-selected={visao === "carteira"}
+                onClick={() => setVisao("carteira")}
+              >
+                Carteira
+              </button>
+              <button
+                className="aba"
+                role="tab"
+                aria-selected={visao === "cliente"}
+                onClick={() => setVisao("cliente")}
+              >
+                Cliente
+              </button>
+            </div>
+          )}
 
           <button className="btn btn-icone" onClick={alternarTema} title="Alternar tema">
             ◐
@@ -180,20 +264,35 @@ export default function Painel() {
         </div>
       </header>
 
-      {/* ---------------- filtros ---------------- */}
       <div className="controles nao-imprime">
-        <select
-          value={conta}
-          onChange={(e) => setConta(e.target.value)}
-          aria-label="Conta de anúncios"
-        >
-          <option value="todas">Todas as contas</option>
-          {dados?.contas.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.nome}
-            </option>
-          ))}
-        </select>
+        {visao === "cliente" && (
+          <>
+            <select
+              value={cliente}
+              onChange={(e) => trocarCliente(e.target.value)}
+              aria-label="Cliente"
+            >
+              {clientes.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nome}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={conta}
+              onChange={(e) => setConta(e.target.value)}
+              aria-label="Conta de anúncios"
+            >
+              <option value="todas">Todas as contas</option>
+              {dados?.contas.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nome}
+                </option>
+              ))}
+            </select>
+          </>
+        )}
 
         <select
           value={periodo}
@@ -249,11 +348,10 @@ export default function Painel() {
         </label>
       </div>
 
-      {/* ---------------- cabeçalho do PDF ---------------- */}
+      {/* cabeçalho que só aparece no PDF */}
       <div className="so-impressao cabecalho-pdf">
-        <h1>Marktiva — Relatório de Campanhas</h1>
+        <h1>Marktiva — {titulo}</h1>
         <div className="meta">
-          <span>{nomeConta}</span>
           <span>{rotuloPeriodo}</span>
           {intervalo && (
             <span>
@@ -270,20 +368,24 @@ export default function Painel() {
         </div>
       </div>
 
-      {/* ---------------- estado ---------------- */}
       <div className="status-linha nao-imprime" data-tick={tick}>
         <span className={`ponto ${carregando ? "carregando" : ""}`} />
         {carregando
           ? "buscando dados na Meta…"
-          : dados
-            ? `atualizado ${tempoRelativo(dados.atualizadoEm)}`
+          : atualizadoEm
+            ? `atualizado ${tempoRelativo(atualizadoEm)}`
             : "—"}
         {intervalo && (
           <span>
             · {dataLonga(intervalo.since)} a {dataLonga(intervalo.until)}
           </span>
         )}
-        {dados && <span>· {dados.campanhas.length} campanhas</span>}
+        {visao === "cliente" && dados && (
+          <span>· {dados.campanhas.length} campanhas</span>
+        )}
+        {visao === "carteira" && carteira && (
+          <span>· {carteira.length} clientes</span>
+        )}
       </div>
 
       {erro && (
@@ -293,7 +395,7 @@ export default function Painel() {
         </div>
       )}
 
-      {!dados && !erro && (
+      {!erro && ((visao === "carteira" && !carteira) || (visao === "cliente" && !dados)) && (
         <div className="tiles">
           {Array.from({ length: 5 }).map((_, i) => (
             <div className="tile" key={i}>
@@ -304,8 +406,13 @@ export default function Painel() {
         </div>
       )}
 
-      {/* ---------------- indicadores ---------------- */}
-      {r && (
+      {/* ---------------- visão de carteira ---------------- */}
+      {visao === "carteira" && carteira && (
+        <Carteira clientes={carteira} aoAbrir={abrirCliente} />
+      )}
+
+      {/* ---------------- visão de um cliente ---------------- */}
+      {visao === "cliente" && r && (
         <>
           <div className="tiles">
             <div className="tile">
@@ -343,7 +450,6 @@ export default function Painel() {
             </div>
           </div>
 
-          {/* ---------------- gráficos ---------------- */}
           <div className="grade">
             <div className="painel">
               <h2>Conversas iniciadas</h2>
@@ -359,10 +465,7 @@ export default function Painel() {
               <p className="desc">
                 Em laranja, os períodos acima da média de {brl(r.custoConversa)}.
               </p>
-              <GraficoCustoConversa
-                serie={dados!.serie}
-                media={r.custoConversa}
-              />
+              <GraficoCustoConversa serie={dados!.serie} media={r.custoConversa} />
             </div>
 
             <div className="painel">
@@ -374,8 +477,7 @@ export default function Painel() {
             <div className="painel">
               <h2>Profundidade das conversas</h2>
               <p className="desc">
-                Até onde as conversas avançaram — o indicador de qualidade do
-                lead.
+                Até onde as conversas avançaram — o indicador de qualidade do lead.
               </p>
               {profundidade.every((f) => f.v === 0) ? (
                 <div className="vazio" style={{ padding: "48px 12px", fontSize: 14 }}>
@@ -407,7 +509,6 @@ export default function Painel() {
             </div>
           </div>
 
-          {/* ---------------- tabela ---------------- */}
           <div className="quebra-pagina">
             <div className="painel" style={{ padding: 0, border: 0, boxShadow: "none" }}>
               <h2 style={{ marginBottom: 3 }}>Campanhas</h2>
