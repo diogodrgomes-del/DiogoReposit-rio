@@ -25,6 +25,8 @@ import {
   GraficoInvestimento,
 } from "./Graficos";
 import TabelaCampanhas from "./TabelaCampanhas";
+import Calendario from "./Calendario";
+import Diagnostico from "./Diagnostico";
 import Carteira from "./Carteira";
 
 const INTERVALO_MS = 60_000;
@@ -43,6 +45,7 @@ export default function Painel() {
   const [until, setUntil] = useState(hojeISO());
   const [conta, setConta] = useState("todas");
   const [auto, setAuto] = useState(true);
+  const [calAberto, setCalAberto] = useState(false);
 
   const [dados, setDados] = useState<DadosPainel | null>(null);
   const [carteira, setCarteira] = useState<ResumoCliente[] | null>(null);
@@ -296,7 +299,10 @@ export default function Painel() {
 
         <select
           value={periodo}
-          onChange={(e) => setPeriodo(e.target.value)}
+          onChange={(e) => {
+            setPeriodo(e.target.value);
+            setCalAberto(e.target.value === "custom");
+          }}
           aria-label="Período"
         >
           {PERIODOS.map((p) => (
@@ -308,24 +314,25 @@ export default function Painel() {
         </select>
 
         {periodo === "custom" && (
-          <div className="chip-datas">
-            <label htmlFor="d1">de</label>
-            <input
-              id="d1"
-              type="date"
-              value={since}
-              max={until}
-              onChange={(e) => setSince(e.target.value)}
-            />
-            <label htmlFor="d2">até</label>
-            <input
-              id="d2"
-              type="date"
-              value={until}
-              min={since}
-              max={hojeISO()}
-              onChange={(e) => setUntil(e.target.value)}
-            />
+          <div className="cal-ancora">
+            <button
+              className="btn"
+              onClick={() => setCalAberto((v) => !v)}
+              aria-expanded={calAberto}
+            >
+              {dataLonga(since)} — {dataLonga(until)}
+            </button>
+            {calAberto && (
+              <Calendario
+                since={since}
+                until={until}
+                onChange={(a, b) => {
+                  setSince(a);
+                  setUntil(b);
+                }}
+                onFechar={() => setCalAberto(false)}
+              />
+            )}
           </div>
         )}
 
@@ -513,11 +520,16 @@ export default function Painel() {
             <div className="painel" style={{ padding: 0, border: 0, boxShadow: "none" }}>
               <h2 style={{ marginBottom: 3 }}>Campanhas</h2>
               <p className="desc">
-                Clique num cabeçalho para reordenar. Em verde o melhor custo por
-                conversa, em vermelho o pior e as que não converteram.
+                Clique na seta para abrir os conjuntos, e neles para ver os
+                anúncios. Ordene por qualquer coluna no cabeçalho.
               </p>
             </div>
-            <TabelaCampanhas campanhas={dados!.campanhas} />
+            <TabelaCampanhas
+              campanhas={dados!.campanhas}
+              clienteId={cliente}
+              periodoQuery={parametros().toString()}
+            />
+            <Diagnostico campanhas={dados!.campanhas} />
           </div>
         </>
       )}

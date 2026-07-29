@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import type { Campanha } from "@/lib/meta";
+import { useCallback, useMemo, useState } from "react";
+import type { Campanha, Metricas, NoDetalhe } from "@/lib/meta";
 import {
   brl,
   decimal,
@@ -11,31 +11,36 @@ import {
   statusPt,
 } from "@/lib/format";
 
+type Props = {
+  campanhas: Campanha[];
+  clienteId: string;
+  /** Query string do período em vigor, para os filhos virem da mesma janela. */
+  periodoQuery: string;
+};
+
 type Coluna = {
-  id: keyof Campanha | "nome";
+  id: string;
   rot: string;
-  fmt?: (c: Campanha) => string;
-  /** Menor é melhor (custo). Define a direção inicial da ordenação. */
+  valor: (m: Metricas) => string;
   menorMelhor?: boolean;
 };
 
 const COLUNAS: Coluna[] = [
-  { id: "nome", rot: "Campanha" },
-  { id: "gasto", rot: "Investido", fmt: (c) => brl(c.gasto) },
-  { id: "conversas", rot: "Conversas", fmt: (c) => inteiro(c.conversas) },
+  { id: "gasto", rot: "Investido", valor: (m) => brl(m.gasto) },
+  { id: "conversas", rot: "Conversas", valor: (m) => inteiro(m.conversas) },
   {
     id: "custoConversa",
     rot: "R$/conversa",
-    fmt: (c) => (c.conversas ? brl(c.custoConversa) : "sem retorno"),
+    valor: (m) => (m.conversas ? brl(m.custoConversa) : "sem retorno"),
     menorMelhor: true,
   },
-  { id: "alcance", rot: "Alcance", fmt: (c) => inteiro(c.alcance) },
-  { id: "frequencia", rot: "Freq.", fmt: (c) => decimal(c.frequencia) },
-  { id: "impressoes", rot: "Impressões", fmt: (c) => inteiro(c.impressoes) },
-  { id: "cliques", rot: "Cliques", fmt: (c) => inteiro(c.cliques) },
-  { id: "ctr", rot: "CTR", fmt: (c) => pct(c.ctr) },
-  { id: "cpc", rot: "CPC", fmt: (c) => brl(c.cpc), menorMelhor: true },
-  { id: "cpm", rot: "CPM", fmt: (c) => brl(c.cpm), menorMelhor: true },
+  { id: "alcance", rot: "Alcance", valor: (m) => inteiro(m.alcance) },
+  { id: "frequencia", rot: "Freq.", valor: (m) => decimal(m.frequencia) },
+  { id: "impressoes", rot: "Impressões", valor: (m) => inteiro(m.impressoes) },
+  { id: "cliques", rot: "Cliques", valor: (m) => inteiro(m.cliques) },
+  { id: "ctr", rot: "CTR", valor: (m) => pct(m.ctr) },
+  { id: "cpc", rot: "CPC", valor: (m) => brl(m.cpc), menorMelhor: true },
+  { id: "cpm", rot: "CPM", valor: (m) => brl(m.cpm), menorMelhor: true },
 ];
 
 function classeStatus(s: string): string {
@@ -44,11 +49,74 @@ function classeStatus(s: string): string {
   return "pausada";
 }
 
-export default function TabelaCampanhas({ campanhas }: { campanhas: Campanha[] }) {
+type EstadoRamo = {
+  aberto: boolean;
+  carregando: boolean;
+  erro?: string;
+  filhos?: NoDetalhe[];
+};
+
+export default function TabelaCampanhas({
+  campanhas,
+  clienteId,
+  periodoQuery,
+}: Props) {
   const [ordem, setOrdem] = useState<{ col: string; asc: boolean }>({
     col: "gasto",
     asc: false,
   });
+  const [ramos, setRamos] = useState<Record<string, EstadoRamo>>({});
+
+  const buscarFilhos = useCallback(
+    async (id: string, nivel: "adset" | "ad") => {
+      setRamos((r) => ({
+        ...r,
+        [id]: { ...(r[id] ?? {}), aberto: true, carregando: true, erro: undefined },
+      }));
+      try {
+        const q = new URLSearchParams(periodoQuery);
+        q.set("cliente", clienteId);
+        q.set("nivel", nivel);
+        q.set("pai", id);
+        const r = await fetch(`/api/detalhe?${q}`, { cache: "no-store" });
+        const corpo = await r.json().catch(() => ({}));
+        if (!r.ok) {
+          setRamos((s) => ({
+            ...s,
+            [id]: { aberto: true, carregando: false, erro: corpo?.erro ?? "Falhou." },
+          }));
+          return;
+        }
+        setRamos((s) => ({
+          ...s,
+          [id]: { aberto: true, carregando: false, filhos: corpo.filhos ?? [] },
+        }));
+      } catch {
+        setRamos((s) => ({
+          ...s,
+          [id]: { aberto: true, carregando: false, erro: "Falha de conexão." },
+        }));
+      }
+    },
+    [clienteId, periodoQuery]
+  );
+
+  const alternar = useCallback(
+    (id: string, nivel: "adset" | "ad") => {
+      const atual = ramos[id];
+      if (atual?.aberto) {
+        setRamos((r) => ({ ...r, [id]: { ...atual, aberto: false } }));
+        return;
+      }
+      // Já carregado antes: reabre sem nova requisição.
+      if (atual?.filhos) {
+        setRamos((r) => ({ ...r, [id]: { ...atual, aberto: true } }));
+        return;
+      }
+      void buscarFilhos(id, nivel);
+    },
+    [ramos, buscarFilhos]
+  );
 
   const ordenadas = useMemo(() => {
     const lista = [...campanhas];
@@ -60,13 +128,11 @@ export default function TabelaCampanhas({ campanhas }: { campanhas: Campanha[] }
       }
       const va = a[ordem.col as keyof Campanha];
       const vb = b[ordem.col as keyof Campanha];
-      // Campanhas sem conversa não têm custo: vão sempre para o fim da lista.
+      // Sem conversa não há custo por conversa: essas linhas vão para o fim.
       if (va === null && vb === null) return 0;
       if (va === null) return 1;
       if (vb === null) return -1;
-      const na = Number(va);
-      const nb = Number(vb);
-      return ordem.asc ? na - nb : nb - na;
+      return ordem.asc ? Number(va) - Number(vb) : Number(vb) - Number(va);
     });
     return lista;
   }, [campanhas, ordem]);
@@ -77,20 +143,119 @@ export default function TabelaCampanhas({ campanhas }: { campanhas: Campanha[] }
   const melhor = custos.length ? Math.min(...custos) : null;
   const pior = custos.length ? Math.max(...custos) : null;
 
-  function alternar(col: Coluna) {
+  function alternarOrdem(col: Coluna | { id: string; menorMelhor?: boolean }) {
     setOrdem((o) =>
       o.col === col.id
         ? { col: o.col, asc: !o.asc }
-        : { col: String(col.id), asc: col.id === "nome" ? true : !!col.menorMelhor }
+        : { col: col.id, asc: col.id === "nome" ? true : !!col.menorMelhor }
     );
   }
 
   if (campanhas.length === 0) {
-    return (
-      <div className="vazio">
-        Nenhuma campanha com veiculação neste período.
-      </div>
-    );
+    return <div className="vazio">Nenhuma campanha com veiculação neste período.</div>;
+  }
+
+  function celulas(m: Metricas, destacar: boolean) {
+    return COLUNAS.map((col) => {
+      let cls = "";
+      if (destacar && col.id === "custoConversa") {
+        const cc = m.custoConversa;
+        cls =
+          m.conversas === 0
+            ? "ruim"
+            : cc !== null && cc === melhor
+              ? "bom"
+              : cc !== null && cc === pior
+                ? "ruim"
+                : "";
+      } else if (col.id === "custoConversa" && m.conversas === 0) {
+        cls = "ruim";
+      }
+      return (
+        <td key={col.id} className={cls}>
+          {col.valor(m)}
+        </td>
+      );
+    });
+  }
+
+  // Anotação explícita: a função é recursiva (conjunto chama anúncio) e o
+  // TypeScript não consegue inferir o retorno de algo que se referencia.
+  function linhasFilhas(
+    paiId: string,
+    nivel: "adset" | "ad",
+    profundidade: 1 | 2
+  ): React.ReactNode {
+    const ramo = ramos[paiId];
+    if (!ramo?.aberto) return null;
+
+    if (ramo.carregando) {
+      return (
+        <tr key={`${paiId}-load`} className="linha-filha">
+          <td colSpan={COLUNAS.length + 1} className="ramo-msg">
+            <span className={`recuo n${profundidade}`} />
+            carregando {nivel === "adset" ? "conjuntos" : "anúncios"}…
+          </td>
+        </tr>
+      );
+    }
+    if (ramo.erro) {
+      return (
+        <tr key={`${paiId}-erro`} className="linha-filha">
+          <td colSpan={COLUNAS.length + 1} className="ramo-msg ruim">
+            <span className={`recuo n${profundidade}`} />
+            {ramo.erro}
+          </td>
+        </tr>
+      );
+    }
+    if (!ramo.filhos?.length) {
+      return (
+        <tr key={`${paiId}-vazio`} className="linha-filha">
+          <td colSpan={COLUNAS.length + 1} className="ramo-msg">
+            <span className={`recuo n${profundidade}`} />
+            sem {nivel === "adset" ? "conjuntos" : "anúncios"} com veiculação no período
+          </td>
+        </tr>
+      );
+    }
+
+    return ramo.filhos.flatMap((f) => {
+      const podeAbrir = nivel === "adset";
+      const aberto = ramos[f.id]?.aberto ?? false;
+      return [
+        <tr key={f.id} className="linha-filha">
+          <td>
+            <div className="no-linha">
+              <span className={`recuo n${profundidade}`} />
+              {podeAbrir ? (
+                <button
+                  className={`seta ${aberto ? "aberta" : ""}`}
+                  onClick={() => alternar(f.id, "ad")}
+                  aria-expanded={aberto}
+                  aria-label={aberto ? "Recolher anúncios" : "Expandir anúncios"}
+                >
+                  ▸
+                </button>
+              ) : (
+                <span className="seta vazia" />
+              )}
+              <div>
+                <div className="no-nome">{f.nome || f.id}</div>
+                <div className="no-meta">
+                  <span className={`pastilha ${classeStatus(f.status)}`}>
+                    {statusPt(f.status)}
+                  </span>
+                  <span>{nivel === "adset" ? "conjunto" : "anúncio"}</span>
+                </div>
+              </div>
+            </div>
+          </td>
+          {celulas(f, false)}
+        </tr>,
+        ...(podeAbrir ? [linhasFilhas(f.id, "ad", 2)] : []),
+      ];
+    });
   }
 
   return (
@@ -98,16 +263,13 @@ export default function TabelaCampanhas({ campanhas }: { campanhas: Campanha[] }
       <table>
         <thead>
           <tr>
+            <th onClick={() => alternarOrdem({ id: "nome" })}>Campanha</th>
             {COLUNAS.map((c) => (
               <th
-                key={String(c.id)}
-                onClick={() => alternar(c)}
+                key={c.id}
+                onClick={() => alternarOrdem(c)}
                 aria-sort={
-                  ordem.col === c.id
-                    ? ordem.asc
-                      ? "ascending"
-                      : "descending"
-                    : "none"
+                  ordem.col === c.id ? (ordem.asc ? "ascending" : "descending") : "none"
                 }
                 title={`Ordenar por ${c.rot}`}
               >
@@ -117,48 +279,38 @@ export default function TabelaCampanhas({ campanhas }: { campanhas: Campanha[] }
           </tr>
         </thead>
         <tbody>
-          {ordenadas.map((c) => {
-            const cc = c.custoConversa;
-            const classe =
-              c.conversas === 0
-                ? "ruim"
-                : cc !== null && cc === melhor
-                  ? "bom"
-                  : cc !== null && cc === pior
-                    ? "ruim"
-                    : "";
-            return (
+          {ordenadas.flatMap((c) => {
+            const aberto = ramos[c.id]?.aberto ?? false;
+            return [
               <tr key={c.id}>
                 <td>
-                  <div style={{ fontWeight: 500 }}>{c.nome}</div>
-                  <div
-                    style={{
-                      fontSize: 11.5,
-                      color: "var(--ink-3)",
-                      marginTop: 3,
-                      display: "flex",
-                      gap: 8,
-                      alignItems: "center",
-                      flexWrap: "wrap",
-                    }}
-                  >
-                    <span className={`pastilha ${classeStatus(c.status)}`}>
-                      {statusPt(c.status)}
-                    </span>
-                    <span>{objetivoPt(c.objetivo)}</span>
-                    <span>· {c.conta}</span>
+                  <div className="no-linha">
+                    <button
+                      className={`seta ${aberto ? "aberta" : ""}`}
+                      onClick={() => alternar(c.id, "adset")}
+                      aria-expanded={aberto}
+                      aria-label={aberto ? "Recolher conjuntos" : "Expandir conjuntos"}
+                    >
+                      ▸
+                    </button>
+                    <div>
+                      <div className="no-nome" style={{ fontWeight: 500 }}>
+                        {c.nome}
+                      </div>
+                      <div className="no-meta">
+                        <span className={`pastilha ${classeStatus(c.status)}`}>
+                          {statusPt(c.status)}
+                        </span>
+                        <span>{objetivoPt(c.objetivo)}</span>
+                        <span>· {c.conta}</span>
+                      </div>
+                    </div>
                   </div>
                 </td>
-                {COLUNAS.slice(1).map((col) => (
-                  <td
-                    key={String(col.id)}
-                    className={col.id === "custoConversa" ? classe : ""}
-                  >
-                    {col.fmt ? col.fmt(c) : String(c[col.id as keyof Campanha])}
-                  </td>
-                ))}
-              </tr>
-            );
+                {celulas(c, true)}
+              </tr>,
+              linhasFilhas(c.id, "adset", 1),
+            ];
           })}
         </tbody>
       </table>

@@ -417,3 +417,65 @@ export async function carregarCarteira(
 
   return { clientes: resultados, atualizadoEm: new Date().toISOString() };
 }
+
+// ===================== detalhamento por nivel =====================
+
+export type Nivel = "adset" | "ad";
+
+export type NoDetalhe = Metricas & {
+  id: string;
+  nome: string;
+  status: string;
+};
+
+/**
+ * Filhos de uma campanha (conjuntos) ou de um conjunto (anuncios).
+ *
+ * A busca e feita no proprio no pai — `/{campanha}/insights?level=adset` —
+ * em vez de puxar a conta inteira e filtrar. Assim cada expansao custa uma
+ * chamada pequena, e o painel nao precisa carregar todos os anuncios da conta
+ * so porque o usuario abriu uma campanha.
+ */
+export async function carregarFilhos(opcoes: {
+  token: string;
+  paiId: string;
+  nivel: Nivel;
+  preset: string | null;
+  since: string | null;
+  until: string | null;
+}): Promise<NoDetalhe[]> {
+  const { token, paiId, nivel } = opcoes;
+  const periodo = janela(opcoes.preset, opcoes.since, opcoes.until);
+
+  const idCampo = nivel === "adset" ? "adset_id" : "ad_id";
+  const nomeCampo = nivel === "adset" ? "adset_name" : "ad_name";
+
+  const [linhas, estados] = await Promise.all([
+    buscar<LinhaBruta>(`${paiId}/insights`, token, {
+      ...periodo,
+      level: nivel,
+      fields: `${idCampo},${nomeCampo},${CAMPOS_BASE}`,
+      limit: "500",
+    }),
+    // O endpoint de insights nao devolve status; vem do edge correspondente.
+    buscar<{ id: string; effective_status?: string }>(
+      `${paiId}/${nivel === "adset" ? "adsets" : "ads"}`,
+      token,
+      { fields: "id,effective_status", limit: "500" }
+    ).catch(() => [] as { id: string; effective_status?: string }[]),
+  ]);
+
+  const status = new Map(estados.map((e) => [e.id, e.effective_status ?? "—"]));
+
+  return linhas
+    .map((l) => {
+      const id = String(l[idCampo] ?? "");
+      return {
+        id,
+        nome: String(l[nomeCampo] ?? ""),
+        status: status.get(id) ?? "—",
+        ...metricas(l),
+      };
+    })
+    .sort((a, b) => b.gasto - a.gasto);
+}

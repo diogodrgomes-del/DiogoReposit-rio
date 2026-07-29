@@ -22,12 +22,17 @@
   --grid: #e4eae7;
   --sombra: 0 1px 2px rgba(16, 25, 23, 0.05);
 
-  --serif: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino,
-    "Book Antiqua", Georgia, serif;
-  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
-    sans-serif;
-  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
-    "Liberation Mono", monospace;
+  /* Uma família só, a do sistema: SF Pro no Mac, Segoe UI Variable no Windows,
+     Roboto no Android. São as faces mais legíveis disponíveis sem baixar fonte,
+     e o navegador já as tem em cache.
+
+     Números não usam monoespaçada: `tabular-nums` alinha as colunas do mesmo
+     jeito, com letras muito mais fáceis de bater o olho e entender. */
+  --sans: system-ui, -apple-system, "Segoe UI Variable Text", "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --serif: var(--sans);
+  --mono: var(--sans);
+  --num: var(--sans);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -86,8 +91,8 @@ body {
   background: var(--surface);
   color: var(--ink);
   font-family: var(--sans);
-  font-size: 16px;
-  line-height: 1.55;
+  font-size: 16.5px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: 100%;
 }
@@ -136,7 +141,7 @@ select {
 .marca {
   font-family: var(--serif);
   font-size: 19px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.015em;
   margin-right: auto;
   display: flex;
@@ -146,7 +151,7 @@ select {
 
 .marca span {
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 12px;
   letter-spacing: 0.11em;
   text-transform: uppercase;
   color: var(--s1);
@@ -229,7 +234,7 @@ select {
 }
 
 .chip-datas label {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--ink-3);
   font-family: var(--mono);
   text-transform: uppercase;
@@ -264,8 +269,8 @@ select {
 
 .tile .rot {
   font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
+  font-size: 12px;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--ink-3);
   margin-bottom: 7px;
@@ -277,9 +282,9 @@ select {
 }
 
 .tile .val {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: clamp(22px, 3.2vw, 29px);
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.05;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
@@ -292,7 +297,7 @@ select {
 }
 
 .tile .obs {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--ink-3);
   margin-top: 6px;
   line-height: 1.35;
@@ -319,13 +324,13 @@ select {
 .painel h2 {
   font-family: var(--serif);
   font-size: 17px;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0 0 3px;
   letter-spacing: -0.01em;
 }
 
 .painel .desc {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--ink-3);
   margin: 0 0 16px;
 }
@@ -342,7 +347,7 @@ select {
   grid-template-columns: 108px 1fr auto;
   gap: 11px;
   align-items: center;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .funil-rot {
@@ -368,14 +373,14 @@ select {
 
 .funil-val {
   font-family: var(--mono);
-  font-size: 12.5px;
+  font-size: 13.5px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
 .nota-metrica {
-  font-size: 11.5px;
+  font-size: 12.5px;
   color: var(--ink-3);
   line-height: 1.45;
   margin: 14px 0 0;
@@ -412,7 +417,7 @@ select {
 
 .rank-nome {
   grid-area: nome;
-  font-size: 13.5px;
+  font-size: 14.5px;
   font-weight: 500;
 }
 
@@ -433,7 +438,7 @@ select {
 .rank-val {
   grid-area: val;
   font-family: var(--mono);
-  font-size: 12.5px;
+  font-size: 13.5px;
   font-weight: 650;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -442,7 +447,7 @@ select {
 .rank-obs {
   grid-area: obs;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12.5px;
   color: var(--ink-3);
   font-variant-numeric: tabular-nums;
 }
@@ -473,7 +478,7 @@ select {
   background: none;
   border-radius: 6px;
   padding: 7px 14px;
-  font-size: 13.5px;
+  font-size: 14.5px;
   font-weight: 500;
   cursor: pointer;
   color: var(--ink-2);
@@ -498,10 +503,11 @@ select {
 }
 
 table {
+  font-variant-numeric: tabular-nums;
   border-collapse: collapse;
   width: 100%;
   min-width: 860px;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 th,
@@ -513,7 +519,7 @@ td {
 
 th {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 11.5px;
   text-transform: uppercase;
   letter-spacing: 0.07em;
   color: var(--ink-3);
@@ -567,7 +573,7 @@ tbody tr:hover td {
 
 .pastilha {
   display: inline-block;
-  font-size: 10.5px;
+  font-size: 12px;
   padding: 2px 7px;
   border-radius: 100px;
   font-weight: 600;
@@ -598,6 +604,338 @@ tbody tr:hover td {
 .ruim {
   color: var(--crit);
   font-weight: 650;
+}
+
+/* ======================== arvore de campanhas ======================== */
+
+.no-linha {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.no-nome {
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.no-meta {
+  font-size: 12.5px;
+  color: var(--ink-3);
+  margin-top: 3px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.seta {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border: 0;
+  background: none;
+  color: var(--ink-3);
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 12.5px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  transition: transform 0.14s ease, color 0.14s ease;
+  margin-top: 1px;
+}
+
+.seta:hover { color: var(--s1); background: var(--border-2); }
+.seta.aberta { transform: rotate(90deg); color: var(--s1); }
+.seta.vazia { cursor: default; opacity: 0; }
+
+/* O recuo marca o nível: conjunto entra um passo, anúncio entra dois. */
+.recuo { flex: none; display: inline-block; }
+.recuo.n1 { width: 18px; }
+.recuo.n2 { width: 36px; }
+
+tbody tr.linha-filha td { background: var(--card-2); }
+tbody tr.linha-filha:hover td { background: var(--border-2); }
+tbody tr.linha-filha td:first-child { background: var(--card-2); }
+
+.ramo-msg {
+  text-align: left !important;
+  font-family: var(--sans) !important;
+  font-size: 13.5px;
+  color: var(--ink-3);
+  padding-left: 14px;
+}
+
+.ramo-msg .recuo { vertical-align: middle; }
+
+/* ======================== calendario ======================== */
+
+.cal-ancora { position: relative; }
+
+.cal-pop {
+  position: absolute;
+  z-index: 60;
+  top: calc(100% + 8px);
+  left: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 12px 40px rgba(16, 25, 23, 0.16);
+  width: max-content;
+  max-width: calc(100vw - 24px);
+}
+
+.cal-topo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.cal-rotulo {
+  flex: 1;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.cal-nav {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 17px;
+  line-height: 1;
+  color: var(--ink-2);
+  display: grid;
+  place-items: center;
+}
+
+.cal-nav:hover { border-color: var(--s1); color: var(--s1); }
+
+.cal-meses {
+  display: flex;
+  gap: 22px;
+}
+
+.cal-mes { min-width: 218px; }
+
+.cal-titulo {
+  font-size: 14.5px;
+  font-weight: 650;
+  text-align: center;
+  margin-bottom: 9px;
+}
+.cal-titulo span { color: var(--ink-3); font-weight: 500; }
+
+.cal-grade {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.cal-cab {
+  margin-bottom: 4px;
+}
+.cal-cab span {
+  font-size: 12px;
+  font-family: var(--mono);
+  color: var(--ink-3);
+  text-align: center;
+  padding: 3px 0;
+}
+
+.cal-vazio { height: 30px; }
+
+.cal-dia {
+  height: 30px;
+  border: 0;
+  background: none;
+  border-radius: 6px;
+  font-size: 13.5px;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  color: var(--ink);
+  transition: background 0.1s ease;
+}
+
+.cal-dia:hover:not(:disabled) { background: var(--border-2); }
+
+.cal-dia:disabled {
+  color: var(--ink-3);
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cal-dia.hoje {
+  color: var(--s1);
+  font-weight: 700;
+}
+
+/* Miolo da faixa: cantos retos para as células se emendarem. */
+.cal-dia.dentro {
+  background: color-mix(in srgb, var(--s1) 15%, transparent);
+  border-radius: 0;
+}
+
+.cal-dia.ini,
+.cal-dia.fim {
+  background: var(--s1);
+  color: #fff;
+  font-weight: 650;
+}
+.cal-dia.ini { border-radius: 6px 0 0 6px; }
+.cal-dia.fim { border-radius: 0 6px 6px 0; }
+.cal-dia.ini.fim { border-radius: 6px; }
+
+.cal-rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.cal-faixa {
+  font-family: var(--mono);
+  font-size: 13.5px;
+  color: var(--ink-2);
+}
+
+@media (max-width: 640px) {
+  .cal-meses { flex-direction: column; gap: 16px; }
+  .cal-pop { left: auto; right: 0; }
+}
+
+/* ======================== recomendacoes ======================== */
+
+.diag { margin-top: 26px; }
+
+.diag-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.diag-topo h2 {
+  font-family: var(--serif);
+  font-size: 19px;
+  font-weight: 700;
+  margin: 0 0 3px;
+  letter-spacing: -0.01em;
+}
+
+.diag-topo .desc { font-size: 14px; color: var(--ink-3); margin: 0; }
+
+.diag-resumo {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.rec-tag {
+  font-size: 12.5px;
+  font-weight: 650;
+  padding: 4px 10px;
+  border-radius: 100px;
+  letter-spacing: 0.01em;
+}
+
+.diag-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 12px;
+}
+
+.rec {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left-width: 3px;
+  border-radius: 8px;
+  padding: 15px 17px;
+  box-shadow: var(--sombra);
+  break-inside: avoid;
+}
+
+.rec-cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.rec-acao {
+  font-size: 12.5px;
+  font-family: var(--mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.rec-urgencia {
+  font-size: 12.5px;
+  color: var(--ink-3);
+  font-family: var(--mono);
+}
+
+.rec h3 {
+  font-size: 14.5px;
+  font-weight: 650;
+  margin: 0 0 5px;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+
+.rec-campanha {
+  font-size: 13px;
+  color: var(--ink-3);
+  margin: 0 0 9px;
+  font-family: var(--mono);
+  word-break: break-word;
+}
+
+.rec-motivo {
+  font-size: 14.5px;
+  color: var(--ink-2);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Cor por tipo de ação. Semântica, separada da paleta de séries. */
+.rec-pausar   { border-left-color: var(--crit); }
+.rec-pausar   .rec-acao { color: var(--crit); }
+.rec-escalar  { border-left-color: var(--good); }
+.rec-escalar  .rec-acao { color: var(--good); }
+.rec-revisar  { border-left-color: var(--warn); }
+.rec-revisar  .rec-acao { color: var(--warn); }
+.rec-renovar  { border-left-color: var(--s3); }
+.rec-renovar  .rec-acao { color: var(--s3); }
+.rec-reativar { border-left-color: var(--s1); }
+.rec-reativar .rec-acao { color: var(--s1); }
+
+.rec-tag.rec-pausar   { background: color-mix(in srgb, var(--crit) 14%, transparent); color: var(--crit); }
+.rec-tag.rec-escalar  { background: color-mix(in srgb, var(--good) 14%, transparent); color: var(--good); }
+.rec-tag.rec-revisar  { background: color-mix(in srgb, var(--warn) 16%, transparent); color: var(--warn); }
+.rec-tag.rec-renovar  { background: color-mix(in srgb, var(--s3) 14%, transparent);  color: var(--s3); }
+.rec-tag.rec-reativar { background: color-mix(in srgb, var(--s1) 14%, transparent);  color: var(--s1); }
+
+@media print {
+  .diag-lista { grid-template-columns: 1fr 1fr; gap: 6pt; }
+  .rec { padding: 8pt 10pt; box-shadow: none; }
+  .rec h3 { font-size: 10pt; }
+  .rec-motivo { font-size: 8.5pt; }
 }
 
 /* ======================== estados ======================== */
@@ -658,7 +996,7 @@ tbody tr:hover td {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12.5px;
+  font-size: 13.5px;
   color: var(--ink-3);
   font-family: var(--mono);
   margin-bottom: 16px;
@@ -706,14 +1044,14 @@ tbody tr:hover td {
 .login-caixa h1 {
   font-family: var(--serif);
   font-size: 25px;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0 0 5px;
   letter-spacing: -0.02em;
 }
 
 .login-caixa .sub {
   color: var(--ink-3);
-  font-size: 13.5px;
+  font-size: 14.5px;
   margin: 0 0 26px;
 }
 
@@ -724,7 +1062,7 @@ tbody tr:hover td {
 
 .campo span {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
   font-family: var(--mono);
   text-transform: uppercase;
   letter-spacing: 0.07em;
@@ -738,7 +1076,7 @@ tbody tr:hover td {
 
 .erro-msg {
   color: var(--crit);
-  font-size: 13.5px;
+  font-size: 14.5px;
   margin: 0 0 15px;
 }
 
