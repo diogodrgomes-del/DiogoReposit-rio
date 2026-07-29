@@ -7,6 +7,7 @@ import {
   temSessionSecret,
   totalUsuarios,
 } from "@/lib/auth";
+import { bloqueado, limparFalhas, origem, registrarFalha } from "@/lib/limite";
 
 export const runtime = "nodejs";
 
@@ -55,6 +56,17 @@ export async function POST(req: Request) {
     );
   }
 
+  const chave = origem(req);
+  const espera = bloqueado(chave);
+  if (espera > 0) {
+    return NextResponse.json(
+      {
+        erro: `Muitas tentativas. Aguarde ${Math.ceil(espera / 60)} minuto(s) e tente de novo.`,
+      },
+      { status: 429 }
+    );
+  }
+
   let ok = false;
   try {
     ok = await conferirSenha(usuario, senha);
@@ -70,12 +82,14 @@ export async function POST(req: Request) {
   if (resta > 0) await new Promise((r) => setTimeout(r, resta));
 
   if (!ok) {
+    registrarFalha(chave);
     return NextResponse.json(
       { erro: "Usuário ou senha incorretos." },
       { status: 401 }
     );
   }
 
+  limparFalhas(chave);
   const token = await criarSessao(usuario);
   const res = NextResponse.json({ ok: true, usuario });
   res.cookies.set(COOKIE, token, {

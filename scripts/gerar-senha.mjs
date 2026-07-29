@@ -47,7 +47,7 @@ function perguntarSenha(rotulo) {
 
 const usuario = (argv[2] ?? "").trim();
 if (!usuario) {
-  console.error("Uso: npm run senha -- <usuario> [senha]");
+  console.error("Uso: npm run senha -- <usuario> [senha] [--forcar]");
   exit(2);
 }
 if (/[,:]/.test(usuario)) {
@@ -65,9 +65,17 @@ if (!senha) {
   }
 }
 
-if (senha.length < 10) {
-  console.error("Use pelo menos 10 caracteres.");
+const forcar = argv.includes("--forcar");
+if (senha.length < 10 && !forcar) {
+  console.error(
+    `Senha com ${senha.length} caracteres. Use pelo menos 10 — este painel dá\n` +
+    `acesso aos dados de todos os clientes da carteira.\n\n` +
+    `Se for mesmo essa, repita o comando com --forcar no fim.`
+  );
   exit(1);
+}
+if (senha.length < 10) {
+  console.error(`AVISO: senha curta (${senha.length} caracteres), gerada mesmo assim.\n`);
 }
 
 const salt = randomBytes(16);
