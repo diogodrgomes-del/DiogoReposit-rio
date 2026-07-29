@@ -95,6 +95,10 @@ def listar_contas(token):
                  limit=50).get("data", [])
     if not contas:
         print("  nenhuma conta de anuncios acessivel por este token")
+        print("  causa provavel: o system user existe e o token e valido, mas")
+        print("  nenhuma conta foi atribuida a ele. Business Manager ->")
+        print("  Usuarios do sistema -> Adicionar ativos -> Contas de anuncios")
+        print("  -> permissao 'Ver desempenho'.")
         return []
 
     ativa = {1: "ativa", 2: "desativada", 3: "invalida", 101: "encerrada"}
@@ -165,7 +169,12 @@ def main():
         print(f"\nFALHOU: {e}", file=sys.stderr)
         return 1
 
-    print("\nOK: conexao com a Meta verificada.")
+    if not contas:
+        # Token valido sem contas atribuidas nao e sucesso: nao ha o que ler.
+        print("\nINCOMPLETO: token valido, mas sem acesso a nenhuma conta.")
+        return 3
+
+    print(f"\nOK: {len(contas)} conta(s) acessivel(is).")
     return 0
 
 
