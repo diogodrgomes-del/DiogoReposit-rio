@@ -383,12 +383,22 @@ export async function carregarCarteira(
         } as ResumoCliente;
       }
 
+      // Nivel de campanha, e nao de conta, de proposito.
+      //
+      // Numa janela longa com muito volume, a Meta corta tipos de acao do
+      // agregado de conta: uma conta com 5.428 conversas no historico devolve
+      // um `actions` sem nenhuma entrada de messaging, e o painel mostraria
+      // zero conversas e "sem retorno" para o maior cliente da carteira. O
+      // mesmo pedido no nivel de campanha devolve os 5.428.
+      //
+      // Custa algumas linhas a mais por conta e mantem a carteira concordando
+      // com a tela de cliente, que ja somava por campanha.
       const porConta = await comLimite(contas, 3, (conta) =>
         buscar<LinhaBruta>(`${conta.id}/insights`, c.token, {
           ...periodo,
-          level: "account",
+          level: "campaign",
           fields: CAMPOS_BASE,
-          limit: "100",
+          limit: "500",
         })
       );
 
