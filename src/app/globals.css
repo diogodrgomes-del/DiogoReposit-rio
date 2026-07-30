@@ -349,6 +349,65 @@ select {
   .imposto-nota { margin-left: 0; max-width: none; }
 }
 
+/* ======================== orcamento da conta ======================== */
+
+.orcamento {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 10px 30px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--s1);
+  border-radius: 10px;
+  padding: 13px 17px;
+  margin: -8px 0 16px;
+  box-shadow: var(--sombra);
+}
+
+.orc-item { display: flex; flex-direction: column; gap: 1px; }
+
+.orc-rot {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.orc-val {
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+
+.orc-val.saldo { color: var(--s1); }
+.orc-val.esgotado { color: var(--crit); }
+
+.orc-obs { font-size: 12.5px; color: var(--ink-3); }
+
+.orc-hist { margin-left: auto; font-size: 13px; }
+.orc-hist summary { cursor: pointer; color: var(--ink-2); }
+.orc-hist summary:hover { color: var(--s1); }
+
+.orc-hist ul {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 3px;
+  min-width: 190px;
+}
+
+.orc-hist li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
 /* ======================== paineis ======================== */
 
 .grade {

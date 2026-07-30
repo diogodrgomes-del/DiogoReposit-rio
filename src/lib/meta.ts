@@ -50,6 +50,7 @@ export type PontoSerie = Metricas & { data: string };
 export type Painel = {
   /** Percentual de imposto configurado; null quando não há. */
   aliquotaImposto?: number | null;
+  orcamentos?: Orcamento[];
   contas: Conta[];
   resumo: Metricas;
   campanhas: Campanha[];
@@ -310,8 +311,13 @@ export async function carregarPainel(opcoes: {
     gran
   );
 
+  const orcamentos = await Promise.all(
+    alvo.map((c) => carregarOrcamento(token, c).catch(() => null))
+  );
+
   return {
     contas: todas,
+    orcamentos: orcamentos.filter((o): o is Orcamento => o !== null),
     resumo: agregar(campanhas),
     campanhas,
     serie,
@@ -481,4 +487,87 @@ export async function carregarFilhos(opcoes: {
       };
     })
     .sort((a, b) => b.gasto - a.gasto);
+}
+
+// ===================== orcamento e aportes =====================
+
+export type Aporte = { data: string; valor: number };
+
+export type Orcamento = {
+  contaId: string;
+  conta: string;
+  /** Total ja gasto na conta, desde sempre. */
+  gastoAcumulado: number;
+  /** Teto de gasto. Em conta pre-paga equivale ao total aportado. */
+  teto: number | null;
+  /** Quanto ainda ha para gastar. */
+  disponivel: number | null;
+  ultimoAporte: Aporte | null;
+  aportes: Aporte[];
+};
+
+/**
+ * Orcamento da conta e historico de aportes.
+ *
+ * Os aportes saem do log de atividades, no evento `funding_event_successful` —
+ * cada PIX que entra na conta gera um. O disponivel vem de spend_cap menos
+ * amount_spent: em conta pre-paga o teto acompanha o total aportado, entao a
+ * diferenca e o que sobra para gastar.
+ *
+ * Contas sem teto definido devolvem `disponivel: null`, e nao zero: nao saber
+ * quanto resta e diferente de nao restar nada.
+ */
+export async function carregarOrcamento(
+  token: string,
+  conta: Conta
+): Promise<Orcamento> {
+  const centavos = (v: unknown): number | null => {
+    const n = Number(v);
+    return Number.isFinite(n) ? n / 100 : null;
+  };
+
+  const [detalhe, atividades] = await Promise.all([
+    fetch(
+      `${API}/${conta.id}?fields=amount_spent,spend_cap&access_token=${encodeURIComponent(token)}`,
+      { cache: "no-store" }
+    )
+      .then((r) => r.json())
+      .catch(() => ({})),
+    buscar<{ event_type?: string; event_time?: string; extra_data?: string }>(
+      `${conta.id}/activities`,
+      token,
+      { fields: "event_type,event_time,extra_data", limit: "500" }
+    ).catch(() => []),
+  ]);
+
+  const gasto = centavos(detalhe?.amount_spent) ?? 0;
+  const tetoBruto = centavos(detalhe?.spend_cap);
+  // spend_cap zero significa "sem teto", e nao teto de zero.
+  const teto = tetoBruto && tetoBruto > 0 ? tetoBruto : null;
+
+  const aportes: Aporte[] = [];
+  for (const a of atividades) {
+    if (a.event_type !== "funding_event_successful") continue;
+    let extra: { amount?: number } = {};
+    try {
+      extra =
+        typeof a.extra_data === "string" ? JSON.parse(a.extra_data) : (a.extra_data ?? {});
+    } catch {
+      continue;
+    }
+    const valor = centavos(extra.amount);
+    if (valor === null || !a.event_time) continue;
+    aportes.push({ data: a.event_time.slice(0, 10), valor });
+  }
+  aportes.sort((a, b) => b.data.localeCompare(a.data));
+
+  return {
+    contaId: conta.id,
+    conta: conta.nome,
+    gastoAcumulado: gasto,
+    teto,
+    disponivel: teto === null ? null : Math.max(teto - gasto, 0),
+    ultimoAporte: aportes[0] ?? null,
+    aportes: aportes.slice(0, 12),
+  };
 }

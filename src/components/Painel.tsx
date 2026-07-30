@@ -28,6 +28,7 @@ import TabelaCampanhas from "./TabelaCampanhas";
 import Calendario from "./Calendario";
 import Diagnostico from "./Diagnostico";
 import Imposto from "./Imposto";
+import Orcamento from "./Orcamento";
 import Carteira from "./Carteira";
 
 const INTERVALO_MS = 60_000;
@@ -457,6 +458,15 @@ export default function Painel() {
               </div>
             </div>
           </div>
+
+          <Orcamento
+            orcamentos={dados?.orcamentos ?? []}
+            gastoDiario={
+              dados && dados.serie.length > 0
+                ? r.gasto / dados.serie.length
+                : null
+            }
+          />
 
           <Imposto
             gastoLiquido={r.gasto}
