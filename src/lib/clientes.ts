@@ -81,9 +81,18 @@ function carregar(): ClienteInterno[] {
   return lista;
 }
 
-/** Lista publica: sem token, seguro para enviar ao navegador. */
+/**
+ * Lista publica: sem token, seguro para enviar ao navegador.
+ *
+ * Ordenada por nome na leitura, e nao na variavel de ambiente: META_TOKENS fica
+ * como esta, e acrescentar um cliente novo no fim da variavel ja o coloca no
+ * lugar certo do seletor. Comparacao com locale pt-BR para "Óticas" cair junto
+ * de "O", e nao depois de Z.
+ */
 export function listarClientes(): Cliente[] {
-  return carregar().map(({ id, nome }) => ({ id, nome }));
+  return carregar()
+    .map(({ id, nome }) => ({ id, nome }))
+    .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR", { sensitivity: "base" }));
 }
 
 /** Token de um cliente. Nunca exponha o retorno numa resposta HTTP. */
