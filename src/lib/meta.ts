@@ -652,6 +652,31 @@ export async function carregarAlteracoes(
       if (!def || !l.event_time) continue;
 
       let descricao = def.rotulo;
+
+      // Orçamento traz o valor antigo e o novo: mostrar "R$ 15,00 → R$ 12,00"
+      // diz muito mais do que "orçamento alterado".
+      if (tipo === "update_ad_set_budget" || tipo === "update_campaign_budget") {
+        try {
+          const e =
+            typeof l.extra_data === "string"
+              ? JSON.parse(l.extra_data)
+              : (l.extra_data ?? {});
+          const de = Number(e?.old_value?.old_value);
+          const para = Number(e?.new_value?.new_value);
+          if (Number.isFinite(de) && Number.isFinite(para) && de !== para) {
+            const reais = (c: number) =>
+              `R$ ${(c / 100).toLocaleString("pt-BR", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`;
+            const seta = para > de ? "aumentado" : "reduzido";
+            descricao = `Orçamento ${seta}: ${reais(de)} → ${reais(para)}`;
+          }
+        } catch {
+          /* mantém o rótulo genérico */
+        }
+      }
+
       if (tipo === "funding_event_successful") {
         try {
           const e =
@@ -681,7 +706,26 @@ export async function carregarAlteracoes(
     }
   }
 
-  return saida.sort((a, b) => b.quando.localeCompare(a.quando)).slice(0, 300);
+  const ordenada = saida.sort((a, b) => b.quando.localeCompare(a.quando));
+
+  // A Meta registra a mesma alteração mais de uma vez, com segundos de
+  // diferença. Sem juntar, uma troca de orçamento vira três linhas iguais e o
+  // registro fica ilegível.
+  const vistos = new Set<string>();
+  const unicas: Alteracao[] = [];
+  for (const a of ordenada) {
+    const minuto = a.quando.slice(0, 16);
+    const chave = `${minuto}|${a.tipo}|${a.alvo ?? ""}|${a.descricao}`;
+    if (vistos.has(chave)) continue;
+    vistos.add(chave);
+    unicas.push(a);
+  }
+  return unicas.slice(0, 300);
+}
+
+/** Alterações que mexem na entrega — as que valem medir o efeito. */
+export function alteraEntrega(a: Alteracao): boolean {
+  return a.peso === 1 && a.tipo !== "funding_event_successful";
 }
 
 // ===================== impacto de uma alteracao =====================

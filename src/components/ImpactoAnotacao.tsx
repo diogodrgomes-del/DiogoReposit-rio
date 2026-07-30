@@ -44,7 +44,14 @@ function Delta({
   );
 }
 
-export default function ImpactoAnotacao({ imp }: { imp: Impacto }) {
+export default function ImpactoAnotacao({
+  imp,
+  mudancas = 1,
+}: {
+  imp: Impacto;
+  /** Quantas alterações houve nesse dia, para não atribuir o efeito a uma só. */
+  mudancas?: number;
+}) {
   const { antes, depois, diasDecorridos, diasJanela, confiavel } = imp;
 
   // Nada veiculou nas duas janelas: não há o que comparar.
@@ -117,6 +124,13 @@ export default function ImpactoAnotacao({ imp }: { imp: Impacto }) {
           menorMelhor
         />
       </div>
+
+      {mudancas > 1 && (
+        <span className="imp-aviso">
+          {mudancas} alterações neste dia — o resultado é do conjunto delas, não
+          de uma isolada.
+        </span>
+      )}
 
       {!confiavel && (
         <span className="imp-aviso">

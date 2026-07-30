@@ -220,6 +220,12 @@ export default function Registro({ clienteId, nomeCliente }: Props) {
             {porDia.map(([dia, doDia]) => (
               <div className="reg-dia" key={dia}>
                 <h3 className="reg-dia-titulo">{diaDe(dia)}</h3>
+                {impactos[dia] && (
+                  <ImpactoAnotacao
+                    imp={impactos[dia]}
+                    mudancas={doDia.length}
+                  />
+                )}
                 {doDia.map((i, idx) =>
                   i.tipo === "nota" ? (
                     <article className="reg-item nota" key={`n-${i.dado.id}`}>
@@ -237,9 +243,6 @@ export default function Registro({ clienteId, nomeCliente }: Props) {
                         </button>
                       </div>
                       <p className="reg-texto">{i.dado.texto}</p>
-                      {impactos[i.quando.slice(0, 10)] && (
-                        <ImpactoAnotacao imp={impactos[i.quando.slice(0, 10)]} />
-                      )}
                     </article>
                   ) : (
                     <article

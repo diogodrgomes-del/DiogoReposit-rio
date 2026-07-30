@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import { lerSessao, COOKIE } from "@/lib/auth";
 import { listarClientes, tokenDe } from "@/lib/clientes";
-import { carregarAlteracoes, carregarImpactos, listarContas } from "@/lib/meta";
+import {
+  alteraEntrega,
+  carregarAlteracoes,
+  carregarImpactos,
+  listarContas,
+} from "@/lib/meta";
 import {
   apagarAnotacao,
   bancoConfigurado,
@@ -50,12 +55,19 @@ export async function GET(req: Request) {
       : Promise.resolve([]),
   ]);
 
-  // Só as anotações recentes ganham análise: puxar série diária de um ano
-  // inteiro para medir uma nota de meses atrás não paga o custo da chamada.
+  // Dias com anotação OU com alteração que mexe na entrega. Medir por dia, e
+  // não por evento, é o que o dado suporta: se três coisas mudaram no mesmo
+  // dia, não dá para atribuir o efeito a uma delas.
+  //
+  // O recorte de 180 dias existe porque puxar série diária de um ano inteiro
+  // para medir alteração antiga não paga o custo da chamada.
   const limite = new Date(Date.now() - 180 * 86_400_000).toISOString().slice(0, 10);
-  const datas = anotacoes
-    .map((a) => a.criadoEm.slice(0, 10))
-    .filter((d) => d >= limite);
+  const datas = [
+    ...new Set([
+      ...anotacoes.map((a) => a.criadoEm.slice(0, 10)),
+      ...alteracoes.filter(alteraEntrega).map((a) => a.quando.slice(0, 10)),
+    ]),
+  ].filter((d) => d >= limite);
 
   const impactos =
     token && contas.length && datas.length
