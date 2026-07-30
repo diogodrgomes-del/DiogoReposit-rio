@@ -683,3 +683,110 @@ export async function carregarAlteracoes(
 
   return saida.sort((a, b) => b.quando.localeCompare(a.quando)).slice(0, 300);
 }
+
+// ===================== impacto de uma alteracao =====================
+
+export type Impacto = {
+  /** Data da anotacao, no formato YYYY-MM-DD. */
+  data: string;
+  antes: Metricas;
+  depois: Metricas;
+  /** Quantos dos dias seguintes ja passaram. */
+  diasDecorridos: number;
+  diasJanela: number;
+  /** Amostra pequena demais para o numero significar algo. */
+  confiavel: boolean;
+};
+
+const MIN_CONVERSAS = 5;
+
+function somaFatia(
+  serie: PontoSerie[],
+  de: string,
+  ate: string
+): { m: Metricas; dias: number } {
+  const fatia = serie.filter((p) => p.data >= de && p.data <= ate);
+  return { m: agregar(fatia), dias: fatia.length };
+}
+
+/**
+ * Antes e depois de cada alteracao anotada.
+ *
+ * Uma chamada so cobre todas as anotacoes: pede a serie diaria do intervalo
+ * inteiro e recorta em memoria. Uma chamada por anotacao multiplicaria o tempo
+ * de carga por nada.
+ *
+ * O dia da propria alteracao fica de fora das duas janelas — ele e metade
+ * antigo e metade novo, e incluir de um lado enviesaria a comparacao.
+ */
+export async function carregarImpactos(
+  token: string,
+  contas: Conta[],
+  datas: string[],
+  janelaDias: number
+): Promise<Impacto[]> {
+  const validas = [...new Set(datas.filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d)))];
+  if (validas.length === 0 || contas.length === 0) return [];
+
+  const dia = 86_400_000;
+  const desloca = (iso: string, n: number) =>
+    new Date(Date.parse(`${iso}T00:00:00Z`) + n * dia).toISOString().slice(0, 10);
+
+  const hoje = new Date().toISOString().slice(0, 10);
+  const ordenadas = [...validas].sort();
+  const inicio = desloca(ordenadas[0], -janelaDias);
+  const fimBruto = desloca(ordenadas[ordenadas.length - 1], janelaDias);
+  const fim = fimBruto > hoje ? hoje : fimBruto;
+  if (inicio > fim) return [];
+
+  const porConta = await Promise.all(
+    contas.map((c) =>
+      buscar<LinhaBruta>(`${c.id}/insights`, token, {
+        time_range: JSON.stringify({ since: inicio, until: fim }),
+        level: "account",
+        fields: CAMPOS_BASE,
+        time_increment: "1",
+        limit: "500",
+      }).catch(() => [] as LinhaBruta[])
+    )
+  );
+
+  // Une as contas somando por dia, como no painel.
+  const porData = new Map<string, Metricas[]>();
+  for (const linhas of porConta) {
+    for (const l of linhas) {
+      const d = String(l.date_start ?? "");
+      if (!d) continue;
+      porData.set(d, [...(porData.get(d) ?? []), metricas(l)]);
+    }
+  }
+  const serie: PontoSerie[] = [...porData.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([data, ms]) => ({ data, ...agregar(ms) }));
+
+  return validas.map((data) => {
+    const antes = somaFatia(serie, desloca(data, -janelaDias), desloca(data, -1));
+    const depois = somaFatia(serie, desloca(data, 1), desloca(data, janelaDias));
+
+    // Dias já decorridos depois da alteração, limitados pela janela.
+    const passados = Math.max(
+      0,
+      Math.min(
+        janelaDias,
+        Math.round((Date.parse(`${hoje}T00:00:00Z`) - Date.parse(`${data}T00:00:00Z`)) / dia)
+      )
+    );
+
+    return {
+      data,
+      antes: antes.m,
+      depois: depois.m,
+      diasDecorridos: passados,
+      diasJanela: janelaDias,
+      // Sem um mínimo de conversas dos dois lados, a variação é ruído do dia a
+      // dia e não efeito da mudança.
+      confiavel:
+        antes.m.conversas >= MIN_CONVERSAS && depois.m.conversas >= MIN_CONVERSAS,
+    };
+  });
+}

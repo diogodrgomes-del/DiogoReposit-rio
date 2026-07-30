@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Alteracao } from "@/lib/meta";
 import type { Anotacao } from "@/lib/registro";
+import type { Impacto } from "@/lib/meta";
+import ImpactoAnotacao from "./ImpactoAnotacao";
 
 type Props = { clienteId: string; nomeCliente: string };
 
@@ -30,6 +32,7 @@ export default function Registro({ clienteId, nomeCliente }: Props) {
   const [aberto, setAberto] = useState(false);
   const [anotacoes, setAnotacoes] = useState<Anotacao[]>([]);
   const [alteracoes, setAlteracoes] = useState<Alteracao[]>([]);
+  const [impactos, setImpactos] = useState<Record<string, Impacto>>({});
   const [temBanco, setTemBanco] = useState(true);
   const [carregando, setCarregando] = useState(false);
   const [texto, setTexto] = useState("");
@@ -48,6 +51,11 @@ export default function Registro({ clienteId, nomeCliente }: Props) {
       if (r.ok) {
         setAnotacoes(corpo.anotacoes ?? []);
         setAlteracoes(corpo.alteracoes ?? []);
+        setImpactos(
+          Object.fromEntries(
+            ((corpo.impactos ?? []) as Impacto[]).map((i) => [i.data, i])
+          )
+        );
         setTemBanco(corpo.bancoConfigurado !== false);
         setErro(null);
       } else {
@@ -70,6 +78,7 @@ export default function Registro({ clienteId, nomeCliente }: Props) {
   useEffect(() => {
     setAnotacoes([]);
     setAlteracoes([]);
+    setImpactos({});
     setTexto("");
   }, [clienteId]);
 
@@ -228,6 +237,9 @@ export default function Registro({ clienteId, nomeCliente }: Props) {
                         </button>
                       </div>
                       <p className="reg-texto">{i.dado.texto}</p>
+                      {impactos[i.quando.slice(0, 10)] && (
+                        <ImpactoAnotacao imp={impactos[i.quando.slice(0, 10)]} />
+                      )}
                     </article>
                   ) : (
                     <article

@@ -1264,6 +1264,61 @@ tbody tr.marcada td:first-child { background: color-mix(in srgb, var(--s1) 7%, t
   .reg-item { break-inside: avoid; }
 }
 
+/* ======================== impacto da anotacao ======================== */
+
+.impacto {
+  margin-top: 9px;
+  padding: 10px 12px;
+  border-radius: 7px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  display: grid;
+  gap: 8px;
+}
+
+.impacto.bom    { border-left: 3px solid var(--good); }
+.impacto.ruim   { border-left: 3px solid var(--crit); }
+.impacto.neutro { border-left: 3px solid var(--ink-3); }
+.impacto.aguardando { border-style: dashed; }
+
+.imp-veredito { font-size: 13.5px; font-weight: 700; }
+.impacto.bom  .imp-veredito { color: var(--good); }
+.impacto.ruim .imp-veredito { color: var(--crit); }
+.impacto.neutro .imp-veredito { color: var(--ink-2); }
+
+.imp-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
+  gap: 8px 18px;
+}
+
+.imp-item { display: flex; flex-direction: column; gap: 1px; }
+
+.imp-rot {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+
+.imp-par {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-variant-numeric: tabular-nums;
+  font-size: 13.5px;
+}
+
+.imp-antes { color: var(--ink-3); }
+.imp-seta { color: var(--ink-3); font-size: 12px; }
+.imp-depois { font-weight: 700; }
+
+.imp-delta { font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.imp-delta.sobe { color: var(--good); }
+.imp-delta.desce { color: var(--crit); }
+
+.imp-aviso { font-size: 12.5px; color: var(--ink-3); line-height: 1.4; }
+
 /* ======================== estados ======================== */
 
 .aviso {

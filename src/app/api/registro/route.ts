@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { lerSessao, COOKIE } from "@/lib/auth";
 import { listarClientes, tokenDe } from "@/lib/clientes";
-import { carregarAlteracoes, listarContas } from "@/lib/meta";
+import { carregarAlteracoes, carregarImpactos, listarContas } from "@/lib/meta";
 import {
   apagarAnotacao,
   bancoConfigurado,
@@ -15,6 +15,8 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 const LIMITE_TEXTO = 2000;
+/** Dias comparados antes e depois de cada anotação. */
+const JANELA_DIAS = 3;
 
 async function usuarioAtual(): Promise<string | null> {
   const c = await cookies();
@@ -39,17 +41,35 @@ export async function GET(req: Request) {
   // As duas metades são independentes: se a Meta falhar, as anotações ainda
   // aparecem, e vice-versa. Um registro de trabalho não pode sumir porque a
   // API de terceiro teve um soluço.
+  const contas = token ? await listarContas(token).catch(() => []) : [];
+
   const [anotacoes, alteracoes] = await Promise.all([
     listarAnotacoes(clienteId).catch(() => []),
-    token
-      ? listarContas(token)
-          .then((contas) => carregarAlteracoes(token, contas, desde))
-          .catch(() => [])
+    token && contas.length
+      ? carregarAlteracoes(token, contas, desde).catch(() => [])
       : Promise.resolve([]),
   ]);
 
+  // Só as anotações recentes ganham análise: puxar série diária de um ano
+  // inteiro para medir uma nota de meses atrás não paga o custo da chamada.
+  const limite = new Date(Date.now() - 180 * 86_400_000).toISOString().slice(0, 10);
+  const datas = anotacoes
+    .map((a) => a.criadoEm.slice(0, 10))
+    .filter((d) => d >= limite);
+
+  const impactos =
+    token && contas.length && datas.length
+      ? await carregarImpactos(token, contas, datas, JANELA_DIAS).catch(() => [])
+      : [];
+
   return NextResponse.json(
-    { anotacoes, alteracoes, bancoConfigurado: bancoConfigurado() },
+    {
+      anotacoes,
+      alteracoes,
+      impactos,
+      janelaImpacto: JANELA_DIAS,
+      bancoConfigurado: bancoConfigurado(),
+    },
     { headers: { "Cache-Control": "no-store, max-age=0" } }
   );
 }
