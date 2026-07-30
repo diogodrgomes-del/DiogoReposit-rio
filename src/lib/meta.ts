@@ -571,3 +571,115 @@ export async function carregarOrcamento(
     aportes: aportes.slice(0, 12),
   };
 }
+
+// ===================== linha do tempo de alteracoes =====================
+
+export type Alteracao = {
+  quando: string;
+  tipo: string;
+  /** Frase pronta para a tela. */
+  descricao: string;
+  alvo: string | null;
+  autor: string | null;
+  /** Importancia: 1 muda entrega, 2 muda conteudo, 3 rotina. */
+  peso: 1 | 2 | 3;
+};
+
+/**
+ * Traducao dos eventos do log da Meta.
+ *
+ * Nem todo evento vira linha: `first_delivery_event` e
+ * `ad_account_billing_charge` acontecem sozinhos, varias vezes por dia, e
+ * afogariam as alteracoes que alguem de fato fez. Ficam de fora de proposito —
+ * o aporte, que interessa, ja aparece no bloco de orcamento.
+ */
+const EVENTOS: Record<string, { rotulo: string; peso: 1 | 2 | 3 }> = {
+  update_ad_run_status: { rotulo: "Anúncio pausado ou reativado", peso: 1 },
+  update_ad_set_run_status: { rotulo: "Conjunto pausado ou reativado", peso: 1 },
+  update_campaign_run_status: { rotulo: "Campanha pausada ou reativada", peso: 1 },
+  update_ad_set_budget: { rotulo: "Orçamento do conjunto alterado", peso: 1 },
+  update_campaign_budget: { rotulo: "Orçamento da campanha alterado", peso: 1 },
+  update_ad_set_bid_strategy: { rotulo: "Estratégia de lance alterada", peso: 1 },
+  update_ad_set_optimization_goal: { rotulo: "Objetivo de otimização alterado", peso: 1 },
+  update_ad_set_target_spec: { rotulo: "Público do conjunto alterado", peso: 1 },
+  update_ad_targets_spec: { rotulo: "Público do anúncio alterado", peso: 1 },
+  update_ad_set_duration: { rotulo: "Período de veiculação alterado", peso: 1 },
+
+  update_ad_creative: { rotulo: "Criativo trocado", peso: 2 },
+  create_ad: { rotulo: "Anúncio criado", peso: 2 },
+  create_ad_set: { rotulo: "Conjunto criado", peso: 2 },
+  create_campaign_group: { rotulo: "Campanha criada", peso: 2 },
+  create_audience: { rotulo: "Público criado", peso: 2 },
+  add_images: { rotulo: "Imagens adicionadas", peso: 2 },
+  edit_images: { rotulo: "Imagens editadas", peso: 2 },
+
+  update_ad_friendly_name: { rotulo: "Anúncio renomeado", peso: 3 },
+  update_ad_set_name: { rotulo: "Conjunto renomeado", peso: 3 },
+  update_campaign_name: { rotulo: "Campanha renomeada", peso: 3 },
+  ad_account_add_user_to_role: { rotulo: "Usuário adicionado à conta", peso: 3 },
+  ad_account_remove_user_from_role: { rotulo: "Usuário removido da conta", peso: 3 },
+  funding_event_successful: { rotulo: "Aporte recebido", peso: 1 },
+};
+
+type LinhaAtividade = {
+  event_type?: string;
+  event_time?: string;
+  object_name?: string;
+  actor_name?: string;
+  extra_data?: string;
+};
+
+export async function carregarAlteracoes(
+  token: string,
+  contas: Conta[],
+  desde: string | null
+): Promise<Alteracao[]> {
+  const porConta = await Promise.all(
+    contas.map((c) =>
+      buscar<LinhaAtividade>(`${c.id}/activities`, token, {
+        fields: "event_type,event_time,object_name,actor_name,extra_data",
+        limit: "300",
+        ...(desde ? { since: desde } : {}),
+      }).catch(() => [] as LinhaAtividade[])
+    )
+  );
+
+  const saida: Alteracao[] = [];
+  for (const linhas of porConta) {
+    for (const l of linhas) {
+      const tipo = l.event_type ?? "";
+      const def = EVENTOS[tipo];
+      if (!def || !l.event_time) continue;
+
+      let descricao = def.rotulo;
+      if (tipo === "funding_event_successful") {
+        try {
+          const e =
+            typeof l.extra_data === "string"
+              ? JSON.parse(l.extra_data)
+              : (l.extra_data ?? {});
+          const v = Number(e?.amount);
+          if (Number.isFinite(v)) {
+            descricao = `Aporte recebido de R$ ${(v / 100).toLocaleString("pt-BR", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}`;
+          }
+        } catch {
+          /* mantém o rótulo genérico */
+        }
+      }
+
+      saida.push({
+        quando: l.event_time,
+        tipo,
+        descricao,
+        alvo: l.object_name || null,
+        autor: l.actor_name || null,
+        peso: def.peso,
+      });
+    }
+  }
+
+  return saida.sort((a, b) => b.quando.localeCompare(a.quando)).slice(0, 300);
+}

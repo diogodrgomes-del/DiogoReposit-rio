@@ -29,6 +29,7 @@ import Calendario from "./Calendario";
 import Diagnostico from "./Diagnostico";
 import Imposto from "./Imposto";
 import Orcamento from "./Orcamento";
+import Registro from "./Registro";
 import Carteira from "./Carteira";
 
 const INTERVALO_MS = 60_000;
@@ -547,6 +548,8 @@ export default function Painel() {
             />
             <Diagnostico campanhas={dados!.campanhas} />
           </div>
+
+          <Registro clienteId={cliente} nomeCliente={nomeCliente} />
         </>
       )}
     </div>

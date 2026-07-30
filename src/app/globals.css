@@ -1128,6 +1128,142 @@ tbody tr.marcada td:first-child { background: color-mix(in srgb, var(--s1) 7%, t
   .col-marca { display: none; }
 }
 
+/* ======================== registro de alteracoes ======================== */
+
+.registro { margin-top: 26px; }
+
+.reg-corpo {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+  box-shadow: var(--sombra);
+}
+
+.reg-form { display: flex; flex-direction: column; gap: 9px; margin-bottom: 16px; }
+
+.reg-form textarea {
+  width: 100%;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 11px 13px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  resize: vertical;
+  min-height: 76px;
+  line-height: 1.5;
+}
+
+.reg-form textarea:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.reg-form-baixo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.reg-contador { font-size: 12.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+.reg-filtro {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+
+.reg-filtro input { width: 15px; height: 15px; accent-color: var(--s1); margin: 0; }
+
+.reg-linha-tempo { display: grid; gap: 20px; }
+
+.reg-dia-titulo {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-3);
+  text-transform: capitalize;
+  margin: 0 0 9px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-2);
+}
+
+.reg-item {
+  border-left: 2px solid var(--border);
+  padding: 7px 0 7px 14px;
+  margin-bottom: 7px;
+}
+
+/* Anotação é o que a pessoa escreveu: ganha destaque sobre o log automático. */
+.reg-item.nota {
+  border-left-color: var(--s1);
+  background: color-mix(in srgb, var(--s1) 5%, transparent);
+  border-radius: 0 7px 7px 0;
+  padding-right: 12px;
+}
+
+.reg-item.meta.peso-1 { border-left-color: var(--s2); }
+.reg-item.meta.peso-2 { border-left-color: var(--s3); }
+
+.reg-item-cab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 3px;
+}
+
+.reg-marca {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--border-2);
+  color: var(--ink-2);
+}
+
+.reg-item.nota .reg-marca { background: var(--s1); color: #fff; }
+
+.reg-hora, .reg-autor {
+  font-size: 12.5px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.reg-apagar {
+  margin-left: auto;
+  border: 0;
+  background: none;
+  color: var(--ink-3);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 5px;
+  border-radius: 4px;
+}
+
+.reg-apagar:hover { color: var(--crit); background: var(--border-2); }
+
+.reg-texto { margin: 0; font-size: 14.5px; color: var(--ink); line-height: 1.5; white-space: pre-wrap; }
+.reg-texto em { color: var(--ink-3); font-style: normal; }
+
+.reg-corpo code {
+  background: var(--border-2);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.92em;
+}
+
+@media print {
+  .reg-form, .reg-filtro, .reg-apagar { display: none; }
+  .reg-item { break-inside: avoid; }
+}
+
 /* ======================== estados ======================== */
 
 .aviso {
