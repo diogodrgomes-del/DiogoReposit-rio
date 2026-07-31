@@ -95,6 +95,12 @@ export default function Orcamento({ orcamentos, gastoDiario }: Props) {
           </ul>
         </details>
       )}
+
+      <p className="orc-nota">
+        Valores como a Meta devolve, sem desconto de imposto. O aporte entra
+        cheio e o imposto é cobrado depois, junto com a veiculação de cada dia —
+        a estimativa dele está na faixa abaixo.
+      </p>
     </div>
   );
 }

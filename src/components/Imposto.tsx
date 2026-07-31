@@ -43,9 +43,10 @@ export default function Imposto({ gastoLiquido, aliquota }: Props) {
         <span className="imposto-val total">{brl(total)}</span>
       </div>
       <p className="imposto-nota">
-        Calculado sobre a alíquota configurada. A Meta não expõe imposto na API —
-        o valor que ela devolve é sempre líquido. Confira na área de Faturamento
-        do Gerenciador.
+        Alíquota configurada, aplicada só ao gasto do período — a Meta não expõe
+        imposto na API, o valor que ela devolve é sempre líquido. O imposto não
+        sai do aporte de uma vez: é cobrado junto com a veiculação de cada dia.
+        Confira na área de Faturamento do Gerenciador.
       </p>
     </div>
   );
