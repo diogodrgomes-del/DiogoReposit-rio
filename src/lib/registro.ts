@@ -69,8 +69,12 @@ function conexao(): Consulta | null {
   }) as Consulta;
 }
 
+/**
+ * So olha a variavel, sem abrir driver: /api/saude chama isso a cada consulta e
+ * nao ha por que instanciar um Pool para responder uma pergunta de configuracao.
+ */
 export function bancoConfigurado(): boolean {
-  return conexao() !== null;
+  return urlBanco() !== null;
 }
 
 /**

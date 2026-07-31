@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { temSessionSecret, totalUsuarios } from "@/lib/auth";
 import { listarClientes } from "@/lib/clientes";
 import { temImpostoConfigurado } from "@/lib/impostos";
+import { bancoConfigurado } from "@/lib/registro";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -33,6 +34,9 @@ export async function GET() {
       sessionSecretOk: segredo,
       clientesCadastrados: clientes.length,
       impostoConfigurado: temImpostoConfigurado(),
+      // Nao entra em `pendencias`: sem banco o painel funciona inteiro, so as
+      // anotacoes escritas a mao ficam desligadas.
+      bancoConfigurado: bancoConfigurado(),
       // Só os nomes, para conferir se as linhas foram lidas como esperado.
       clientes: clientes.map((c) => c.nome),
       pendencias,
