@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AQUABION × MARKTIVA — Proposta de Posicionamento Digital</title>
+<meta name="description" content="Proposta comercial de posicionamento digital para a Aquabion no Brasil. Desenvolvida pela agência Marktiva.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   PROPOSTA AQUABION × MARKTIVA
+   Arquivo único. Basta subir este index.html em qualquer hospedagem.
+   Otimizado para apresentação em tela grande (1920×1080).
+   Navegação: rolagem, setas ←/→, PageUp/PageDown ou os pontos à direita.
+   ========================================================================== */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --ink:#04060d;
+  --blue:#1f8ef1;
+  --blue-deep:#0b4fa4;
+  --blue-glow:rgba(31,142,241,.45);
+  --cyan:#5ad9f0;
+  --brass:#e0b45c;
+  --brass-l:#f8e3ab;
+  --txt:#e9f0fa;
+  --muted:#8ba0bd;
+  --danger:#ff6472;
+  --ok:#37d9a0;
+  --line:rgba(120,160,220,.16);
+  --card:rgba(11,20,38,.78);
+  --radius:18px;
+  --maxw:1600px;
+}
+
+html{scroll-behavior:smooth}
+body{
+  background:var(--ink);color:var(--txt);
+  font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  font-size:17px;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:'Sora','Inter',system-ui,sans-serif;line-height:1.06;letter-spacing:-.025em}
+strong{font-weight:600;color:#fff}
+
+/* ---------------- fundo: profundidade de água ---------------- */
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+#bg .grad{position:absolute;inset:0;background:
+  radial-gradient(58% 46% at 18% 10%, rgba(31,142,241,.20), transparent 64%),
+  radial-gradient(52% 40% at 84% 28%, rgba(90,217,240,.13), transparent 62%),
+  radial-gradient(70% 52% at 50% 96%, rgba(11,79,164,.24), transparent 66%),
+  linear-gradient(180deg,#04060d,#050a16 45%,#04070f)}
+/* Blobs de luz. Sem filter:blur e sem scale na animação — o radial-gradient
+   já é suave, e animar só o translate mantém a camada composta (barato). */
+#bg .blob{position:absolute;border-radius:50%;opacity:.8;will-change:transform;contain:paint}
+#bg .b1{width:46vw;height:46vw;left:-8vw;top:-6vh;
+  background:radial-gradient(circle closest-side,rgba(31,142,241,.34),rgba(31,142,241,.08) 54%,transparent 72%);
+  animation:float1 34s ease-in-out infinite}
+#bg .b2{width:44vw;height:44vw;right:-8vw;top:34vh;
+  background:radial-gradient(circle closest-side,rgba(90,217,240,.22),rgba(90,217,240,.05) 54%,transparent 72%);
+  animation:float2 42s ease-in-out infinite}
+@keyframes float1{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(6vw,-7vh,0)}}
+@keyframes float2{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(-7vw,6vh,0)}}
+
+/* Cáusticas de piscina. Duas malhas de luz cruzadas que só se deslocam:
+   sem blur e sem rotação, o navegador compõe a camada uma vez e apenas
+   a desliza — o efeito sai praticamente de graça. */
+#bg .caustic{position:absolute;left:-14%;top:-14%;width:128%;height:128%;
+  opacity:.05;will-change:transform;contain:paint;
+  background:repeating-linear-gradient(66deg,rgba(150,225,255,0) 0px,rgba(150,225,255,.8) 48px,rgba(150,225,255,0) 104px);
+  animation:drift1 46s ease-in-out infinite}
+#bg .caustic.c2{opacity:.035;
+  background:repeating-linear-gradient(-58deg,rgba(120,205,245,0) 0px,rgba(120,205,245,.7) 84px,rgba(120,205,245,0) 176px);
+  animation:drift2 66s ease-in-out infinite}
+@keyframes drift1{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(-130px,86px,0)}}
+@keyframes drift2{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(110px,-100px,0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* bolhas de fundo subindo */
+.bubble{position:absolute;bottom:-8vh;border-radius:50%;will-change:transform;
+  background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.8),rgba(140,215,255,.22) 46%,rgba(140,215,255,0) 70%);
+  animation:rise linear infinite}
+@keyframes rise{
+  0%{transform:translate3d(0,0,0) scale(.6);opacity:0}
+  8%{opacity:.5}
+  50%{transform:translate3d(20px,-55vh,0) scale(1)}
+  92%{opacity:.3}
+  100%{transform:translate3d(-12px,-115vh,0) scale(1.15);opacity:0}}
+
+/* ---------------- topo, progresso e navegação ---------------- */
+#progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:90;
+  background:linear-gradient(90deg,var(--blue-deep),var(--blue),var(--cyan));box-shadow:0 0 16px var(--blue-glow)}
+
+#topbar{position:fixed;top:0;left:0;right:0;z-index:80;display:flex;align-items:center;justify-content:space-between;
+  padding:18px clamp(20px,3vw,48px);background:linear-gradient(180deg,rgba(4,6,13,.9),rgba(4,6,13,0))}
+#topbar .brands{display:flex;align-items:center;gap:18px}
+.x-mark{color:var(--muted);font-size:14px;opacity:.55}
+.tag-top{font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+#dots{position:fixed;right:clamp(12px,1.5vw,24px);top:50%;transform:translateY(-50%);z-index:80;
+  display:flex;flex-direction:column;gap:13px}
+#dots button{width:10px;height:10px;border-radius:50%;border:1px solid rgba(140,180,230,.42);
+  background:transparent;cursor:pointer;padding:0;transition:.35s;position:relative}
+#dots button::after{content:attr(data-l);position:absolute;right:20px;top:50%;
+  transform:translateY(-50%) translateX(6px);white-space:nowrap;font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);opacity:0;transition:.3s;pointer-events:none}
+#dots button:hover::after{opacity:1;transform:translateY(-50%) translateX(0)}
+#dots button.on{background:var(--blue);border-color:var(--blue);box-shadow:0 0 14px var(--blue-glow);transform:scale(1.35)}
+
+/* ---------------- logos vetoriais ----------------
+   [SLOT LOGO] Para usar os arquivos originais, troque estes blocos por
+   <img src="marktiva.png" style="height:24px"> e <img src="aquabion.png" style="height:30px">  */
+.logo-mk{font-family:'Sora',sans-serif;font-weight:600;font-size:22px;letter-spacing:-.045em;color:#fff;position:relative}
+.logo-mk .brk{position:absolute;left:26.5%;top:-2px;width:12px;height:10px;
+  border-top:2px solid var(--blue);border-right:2px solid var(--blue)}
+.logo-ab{display:flex;align-items:center;gap:9px}
+.logo-ab .wm{font-family:'Sora',sans-serif;font-weight:700;font-size:18px;color:#fff}
+.logo-ab .wm b{color:var(--blue)}
+
+/* ---------------- layout base ---------------- */
+main{position:relative;z-index:10}
+section{position:relative;padding:clamp(74px,8vh,116px) clamp(24px,3.6vw,64px);min-height:100vh;
+  display:flex;align-items:center}
+.wrap{width:100%;max-width:var(--maxw);margin:0 auto}
+.half{max-width:46%}
+.half-r{max-width:45%;margin-left:auto}
+@media(max-width:1180px){.half,.half-r{max-width:100%;margin-left:0}}
+
+.kicker{display:inline-flex;align-items:center;gap:11px;font-size:11.5px;letter-spacing:.26em;
+  text-transform:uppercase;color:var(--cyan);font-weight:600;margin-bottom:20px}
+.kicker::before{content:'';width:34px;height:1px;background:linear-gradient(90deg,var(--cyan),transparent)}
+h1{font-size:clamp(34px,4.1vw,74px);font-weight:800}
+h2{font-size:clamp(29px,3.15vw,56px);font-weight:700}
+h3{font-size:clamp(18px,1.25vw,22px);font-weight:600}
+.lead{font-size:clamp(15.5px,1.06vw,20px);color:#c3d3e8;font-weight:300;line-height:1.6;max-width:58ch}
+.grad-b{background:linear-gradient(100deg,var(--cyan),var(--blue) 46%,#9fd0ff);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.grad-g{background:linear-gradient(100deg,var(--brass-l),var(--brass) 56%,#c9973f);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* revelação ao rolar */
+.rv{opacity:0;transform:translateY(32px);
+  transition:opacity .85s cubic-bezier(.2,.7,.3,1),transform .85s cubic-bezier(.2,.7,.3,1)}
+.rv.in{opacity:1;transform:none}
+.rv.d1{transition-delay:.08s}.rv.d2{transition-delay:.16s}.rv.d3{transition-delay:.24s}
+.rv.d4{transition-delay:.32s}.rv.d5{transition-delay:.40s}.rv.d6{transition-delay:.48s}.rv.d7{transition-delay:.56s}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:clamp(16px,1.35vw,24px);position:relative;overflow:hidden;
+  transition:transform .45s cubic-bezier(.2,.7,.3,1),border-color .45s,box-shadow .45s}
+.card:hover{transform:translateY(-6px);border-color:rgba(31,142,241,.45);
+  box-shadow:0 22px 52px -24px rgba(31,142,241,.55)}
+.grid{display:grid;gap:clamp(12px,1vw,18px)}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:1180px){.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.g4,.g2{grid-template-columns:1fr}}
+
+/* ---------------- palco 3D fixo ---------------- */
+#stage{position:fixed;inset:0;z-index:5;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;will-change:opacity}
+#stage-in{position:relative;width:0;height:0;will-change:transform}
+#device-wrap{perspective:1600px;position:absolute;left:0;top:0}
+#device{position:absolute;left:0;top:0;transform-style:preserve-3d;will-change:transform}
+.part{position:absolute;left:0;top:0;transform-style:preserve-3d}
+.face{position:absolute;left:0;top:0;will-change:opacity}
+.cap{position:absolute;left:0;top:0;border-radius:50%}
+
+/* Brilho especular. A silhueta de um cilindro não muda quando ele gira, então
+   um reflexo fixo em 2D por cima da peça dá o metal polido sem custo por quadro
+   — a textura que gira junto sozinha deixaria o latão chapado. */
+#sheen{position:absolute;left:0;top:0;will-change:opacity}
+#sheen div{position:absolute;left:50%;top:50%;
+  background:linear-gradient(90deg,
+    rgba(0,0,0,.66) 0%,rgba(0,0,0,.32) 10%,rgba(0,0,0,0) 25%,
+    rgba(255,246,224,.26) 38%,rgba(255,253,242,.62) 45%,rgba(255,244,214,.24) 53%,
+    rgba(0,0,0,0) 69%,rgba(0,0,0,.36) 87%,rgba(0,0,0,.70) 100%)}
+/* sobre a etiqueta o reflexo é atenuado, para o texto continuar legível */
+#sheen .body{-webkit-mask-image:linear-gradient(180deg,#000 0%,#000 21%,rgba(0,0,0,.26) 31%,
+    rgba(0,0,0,.26) 69%,#000 79%,#000 100%);
+  mask-image:linear-gradient(180deg,#000 0%,#000 21%,rgba(0,0,0,.26) 31%,
+    rgba(0,0,0,.26) 69%,#000 79%,#000 100%)}
+
+#halo{position:absolute;left:0;top:0;width:620px;height:620px;margin:-310px 0 0 -310px;border-radius:50%;
+  will-change:transform,opacity;contain:paint;
+  background:radial-gradient(circle closest-side,rgba(31,142,241,.28),rgba(31,142,241,.05) 52%,transparent 72%)}
+#ring{position:absolute;left:0;top:0;width:560px;height:560px;margin:-280px 0 0 -280px;border-radius:50%;
+  border:1px solid rgba(120,190,255,.20);animation:spin 26s linear infinite;will-change:transform;contain:paint}
+#ring::before{content:'';position:absolute;inset:48px;border-radius:50%;border:1px dashed rgba(120,190,255,.13)}
+
+/* legendas técnicas — ficam em 2D, não giram com a peça */
+.callout{position:absolute;font-size:13.5px;line-height:1.35;opacity:0;white-space:nowrap;
+  transform:translateY(10px);transition:opacity .6s,transform .6s}
+.callout b{display:block;font-family:'Sora',sans-serif;font-weight:600;font-size:15.5px;color:#fff}
+.callout span{color:var(--muted);font-size:12px;letter-spacing:.03em}
+.callout i.dot{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--cyan);top:11px;
+  box-shadow:0 0 0 4px rgba(90,217,240,.16),0 0 14px var(--cyan)}
+.callout i.ln{position:absolute;height:1px;top:15px;width:34px}
+.callout.L{text-align:right}
+.callout.L i.dot{right:-40px}
+.callout.L i.ln{right:-36px;background:linear-gradient(270deg,rgba(90,217,240,.85),rgba(90,217,240,.04))}
+.callout.R i.dot{left:-40px}
+.callout.R i.ln{left:-36px;background:linear-gradient(90deg,rgba(90,217,240,.85),rgba(90,217,240,.04))}
+#stage.show-callouts .callout{opacity:1;transform:none}
+#stage.show-callouts .c1{transition-delay:.10s}#stage.show-callouts .c2{transition-delay:.20s}
+#stage.show-callouts .c3{transition-delay:.30s}#stage.show-callouts .c4{transition-delay:.40s}
+#stage.show-callouts .c5{transition-delay:.50s}#stage.show-callouts .c6{transition-delay:.60s}
+@media(max-width:1600px){.callout{display:none}}
+
+/* ---------------- ondas divisórias ---------------- */
+.waves{position:absolute;left:0;right:0;height:130px;overflow:hidden;pointer-events:none;z-index:6;line-height:0}
+.waves.top{top:-1px;transform:rotate(180deg)}
+.waves.bot{bottom:-1px}
+.waves svg{position:absolute;left:0;width:200%;height:100%;will-change:transform}
+.waves .w1{animation:wave 21s linear infinite;opacity:.28}
+.waves .w2{animation:wave 29s linear infinite reverse;opacity:.16}
+.waves .w3{animation:wave 15s linear infinite;opacity:.09}
+@keyframes wave{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ---------------- 1 · HERO ---------------- */
+.scroll-hint{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;
+  align-items:center;gap:9px;font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted)}
+.scroll-hint .mouse{width:22px;height:35px;border:1.5px solid rgba(140,180,230,.45);border-radius:13px;position:relative}
+.scroll-hint .mouse::after{content:'';position:absolute;left:50%;top:7px;width:3px;height:6px;border-radius:2px;
+  background:var(--cyan);transform:translateX(-50%);animation:sc 1.9s ease-in-out infinite}
+@keyframes sc{0%{opacity:0;transform:translate(-50%,-4px)}35%{opacity:1}100%{opacity:0;transform:translate(-50%,12px)}}
+.hero-badges{display:flex;flex-wrap:wrap;gap:9px;margin-top:30px}
+.badge{font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:#bcd3ee;border:1px solid var(--line);
+  border-radius:999px;padding:8px 15px;background:rgba(10,20,40,.55);font-weight:500}
+.badge.gold{border-color:rgba(224,180,92,.42);color:var(--brass-l)}
+
+/* ---------------- 2 · A VIRADA ---------------- */
+.strike-list{display:flex;flex-direction:column;gap:13px;margin-top:28px}
+.strike{display:flex;align-items:center;gap:14px;font-size:clamp(16px,1.2vw,21px);color:#94a9c4;font-weight:300}
+.strike .txt{position:relative;display:inline-block}
+.strike .txt::after{content:'';position:absolute;left:-4px;top:52%;height:2px;width:0;
+  background:linear-gradient(90deg,var(--danger),rgba(255,100,114,.3));transition:width 1.1s cubic-bezier(.2,.7,.3,1) .25s}
+.strike.in .txt::after{width:calc(100% + 8px)}
+.strike .no{color:var(--danger);font-size:14px;opacity:.85;min-width:20px}
+.turn-arrow{margin:32px 0 22px;display:flex;align-items:center;gap:16px;color:var(--cyan);
+  font-family:'Sora',sans-serif;font-weight:600;letter-spacing:.2em;text-transform:uppercase;font-size:12px}
+.turn-arrow .bar{flex:1;height:1px;background:linear-gradient(90deg,var(--cyan),transparent)}
+.blue-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px}
+@media(max-width:900px){.blue-cards{grid-template-columns:1fr}}
+.blue-card{border:1px solid rgba(31,142,241,.3);border-radius:15px;padding:20px;
+  background:linear-gradient(160deg,rgba(31,142,241,.14),rgba(8,16,32,.72))}
+.blue-card .n{font-family:'Sora',sans-serif;font-size:28px;font-weight:700;color:var(--cyan);line-height:1;margin-bottom:10px}
+.blue-card h4{font-family:'Sora',sans-serif;font-size:17px;font-weight:600;margin-bottom:7px}
+.blue-card p{font-size:13.5px;color:#a8bcd6;line-height:1.5}
+
+/* ---------------- 3 · MERCADO ---------------- */
+.sector .top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.sector .ico{width:42px;height:42px;flex:0 0 42px;border-radius:12px;display:grid;place-items:center;
+  background:linear-gradient(150deg,rgba(31,142,241,.24),rgba(90,217,240,.07));border:1px solid rgba(31,142,241,.3)}
+.sector .ico svg{width:22px;height:22px;stroke:var(--cyan);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.sector h3{font-size:17.5px}
+.ba{display:flex;flex-direction:column;gap:10px}
+.ba .row{display:flex;gap:10px;font-size:13.2px;line-height:1.48}
+.ba .row .p{flex:0 0 auto;width:19px;height:19px;border-radius:6px;display:grid;place-items:center;
+  font-size:10.5px;font-weight:700;margin-top:1px}
+.ba .bad .p{background:rgba(255,100,114,.16);color:var(--danger)}
+.ba .good .p{background:rgba(55,217,160,.15);color:var(--ok)}
+.ba .bad{color:#b09aa2}
+.ba .good{color:#cfe6dc}
+.ba .good strong{color:#fff}
+.sector-sep{height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent)}
+
+/* ---------------- 4 · PRODUTO ---------------- */
+.spec{display:flex;gap:13px;padding:12px 0;border-bottom:1px solid var(--line)}
+.spec:last-child{border-bottom:0}
+.spec .k{flex:0 0 38px;height:38px;border-radius:11px;display:grid;place-items:center;
+  background:linear-gradient(150deg,rgba(224,180,92,.22),rgba(224,180,92,.05));border:1px solid rgba(224,180,92,.3)}
+.spec .k svg{width:19px;height:19px;stroke:var(--brass-l);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.spec h4{font-family:'Sora',sans-serif;font-size:16px;font-weight:600;margin-bottom:3px}
+.spec p{font-size:13.2px;color:#9db2cd;line-height:1.45}
+.nots{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.not{border:1px solid rgba(255,100,114,.28);background:rgba(255,100,114,.07);border-radius:999px;padding:7px 14px;
+  font-size:12px;color:#ffc2c8;font-weight:500;display:flex;align-items:center;gap:7px}
+.not::before{content:'✕';font-size:10px;opacity:.8}
+
+/* ---------------- 5 · FUNIL ---------------- */
+.funnel{display:grid;grid-template-columns:repeat(4,1fr);margin-top:18px;position:relative}
+@media(max-width:1100px){.funnel{grid-template-columns:repeat(2,1fr);gap:12px}}
+@media(max-width:640px){.funnel{grid-template-columns:1fr}}
+.step{position:relative;padding:28px clamp(16px,1.4vw,26px);border:1px solid var(--line);border-right:0;
+  background:linear-gradient(180deg,rgba(12,22,42,.72),rgba(6,12,26,.5));overflow:hidden}
+.step:first-child{border-radius:18px 0 0 18px}
+.step:last-child{border-right:1px solid var(--line);border-radius:0 18px 18px 0}
+@media(max-width:1100px){.step{border-right:1px solid var(--line);border-radius:16px!important}}
+.step .fill{position:absolute;left:0;bottom:0;right:0;height:0;transition:height 1.3s cubic-bezier(.2,.7,.3,1);
+  background:linear-gradient(180deg,rgba(31,142,241,.02),rgba(31,142,241,.2))}
+.step.in .fill{height:100%}
+.step .num{position:relative;font-family:'Sora',sans-serif;font-size:11.5px;letter-spacing:.2em;
+  color:var(--cyan);font-weight:600;margin-bottom:13px}
+.step h3{position:relative;font-size:clamp(20px,1.75vw,30px);margin-bottom:10px}
+.step p{position:relative;font-size:13.5px;color:#a4b9d4;line-height:1.5}
+/* As setas ficam na grade, não dentro dos cards: o overflow:hidden que
+   recorta o preenchimento animado também cortaria a seta pela metade. */
+.funnel .arrow{position:absolute;top:50%;transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;
+  background:#0b1428;border:1px solid rgba(31,142,241,.5);display:grid;place-items:center;z-index:4;
+  color:var(--cyan);font-size:11px;pointer-events:none}
+.funnel .arrow.a1{left:25%}.funnel .arrow.a2{left:50%}.funnel .arrow.a3{left:75%}
+@media(max-width:1100px){.funnel .arrow{display:none}}
+.lang{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:26px}
+@media(max-width:900px){.lang{grid-template-columns:1fr}}
+.lang .box{border-radius:16px;padding:22px;border:1px solid var(--line)}
+.lang .box.emo{background:linear-gradient(150deg,rgba(90,217,240,.12),rgba(8,16,32,.6));border-color:rgba(90,217,240,.3)}
+.lang .box.fin{background:linear-gradient(150deg,rgba(224,180,92,.12),rgba(8,16,32,.6));border-color:rgba(224,180,92,.3)}
+.lang .box .t{font-family:'Sora',sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  margin-bottom:10px;font-weight:600}
+.lang .emo .t{color:var(--cyan)}.lang .fin .t{color:var(--brass-l)}
+.lang .box h4{font-family:'Sora',sans-serif;font-size:19px;margin-bottom:8px}
+.lang .box p{font-size:13.5px;color:#a4b9d4;line-height:1.5}
+
+/* ---------------- 6 · ENTREGAS ---------------- */
+.del .n{font-family:'Sora',sans-serif;font-size:clamp(28px,2.6vw,42px);font-weight:700;line-height:1;margin-bottom:10px;
+  background:linear-gradient(120deg,#fff,var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+.del .n small{font-size:14px;font-weight:500;-webkit-text-fill-color:var(--muted)}
+.del h4{font-family:'Sora',sans-serif;font-size:16.5px;font-weight:600;margin-bottom:6px}
+.del p{font-size:13.2px;color:#9db2cd;line-height:1.5}
+
+/* ---------------- 7 · VISÃO ---------------- */
+.vision{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media(max-width:900px){.vision{grid-template-columns:1fr}}
+.vision .v{border-left:2px solid var(--blue);padding:4px 0 4px 20px}
+.vision .v h4{font-family:'Sora',sans-serif;font-size:clamp(18px,1.4vw,23px);margin-bottom:6px}
+.vision .v p{font-size:13.8px;color:#a4b9d4;line-height:1.5}
+
+/* ---------------- 8 · INVESTIMENTO ---------------- */
+.anchor-box{border:1px solid rgba(224,180,92,.28);border-radius:18px;padding:clamp(18px,1.7vw,28px);
+  background:linear-gradient(160deg,rgba(224,180,92,.10),rgba(8,10,20,.72))}
+.lbl{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--brass);font-weight:600;margin-bottom:10px}
+.anchor-box .val{font-family:'Sora',sans-serif;font-size:clamp(26px,2.5vw,40px);font-weight:700;color:var(--brass-l);line-height:1.08}
+.anchor-box .val small{font-size:.42em;font-weight:400;color:var(--muted)}
+.anchor-box p{font-size:13.5px;color:#b8a789;margin-top:10px;max-width:46ch;line-height:1.5}
+
+.incl{list-style:none;margin-top:4px}
+.incl li{display:flex;align-items:center;gap:12px;padding:10.5px 2px;
+  border-bottom:1px solid rgba(224,180,92,.13);font-size:14px}
+.incl li:last-child{border-bottom:0}
+.incl li .ck{width:18px;height:18px;flex:0 0 18px;border-radius:50%;display:grid;place-items:center;
+  font-size:10px;background:rgba(224,180,92,.16);color:var(--brass-l)}
+.incl li .v{margin-left:auto;color:var(--muted);font-size:12.5px;white-space:nowrap}
+.incl li strong{font-weight:500;color:#e7eef8}
+
+.reveal-price{border-radius:22px;padding:clamp(22px,2.2vw,38px);position:relative;overflow:hidden;
+  border:1px solid rgba(224,180,92,.4);background:linear-gradient(150deg,rgba(224,180,92,.2),rgba(10,10,16,.88) 62%)}
+.reveal-price::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.13) 48%,transparent 58%);
+  transform:translateX(-120%);animation:sheen 5.5s ease-in-out infinite 1s}
+@keyframes sheen{0%{transform:translateX(-120%)}55%,100%{transform:translateX(120%)}}
+.reveal-price .cond{display:inline-block;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  color:#1b1204;background:linear-gradient(100deg,var(--brass-l),var(--brass));border-radius:999px;
+  padding:6px 14px;margin-bottom:16px}
+.reveal-price .strike-mkt{color:#8a7a5e;text-decoration:line-through;font-size:17px;margin-bottom:4px;display:block}
+.reveal-price .big{font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(44px,5.6vw,92px);line-height:.94;
+  letter-spacing:-.04em;color:#fff}
+.reveal-price .big em{font-style:normal;font-size:.34em;font-weight:500;color:var(--brass-l);letter-spacing:0}
+.price-extra{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+@media(max-width:900px){.price-extra{grid-template-columns:1fr}}
+.price-extra .pe{border:1px solid var(--line);border-radius:15px;padding:18px;background:rgba(10,16,30,.6)}
+.price-extra .pe .t{font-family:'Sora',sans-serif;font-size:15.5px;font-weight:600;margin-bottom:7px;
+  display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.price-extra .pe .t .pill{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;border-radius:999px;
+  padding:3px 9px;border:1px solid rgba(31,142,241,.4);color:var(--cyan);font-weight:600}
+.price-extra .pe p{font-size:13px;color:#a4b9d4;line-height:1.5}
+.note{margin-top:18px;font-size:12.5px;color:var(--muted);line-height:1.55;
+  border-left:2px solid rgba(224,180,92,.35);padding-left:14px}
+
+/* ---------------- 9 · CTA ---------------- */
+#s-cta .wrap{display:flex;flex-direction:column;align-items:center;text-align:center}
+#s-cta h2{max-width:30ch}
+#s-cta .lead{margin-top:22px;text-align:center}
+.cta-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:36px}
+.btn{display:inline-flex;align-items:center;gap:10px;border-radius:999px;padding:16px 30px;font-weight:600;
+  font-size:15px;text-decoration:none;transition:.35s;font-family:'Sora',sans-serif}
+.btn.primary{background:linear-gradient(100deg,var(--blue),var(--cyan));color:#04101f;
+  box-shadow:0 16px 44px -18px var(--blue-glow)}
+.btn.primary:hover{transform:translateY(-3px)}
+.btn.ghost{border:1px solid var(--line);color:#d5e3f5}
+.btn.ghost:hover{border-color:var(--blue);color:#fff}
+
+footer{position:relative;z-index:10;padding:42px clamp(24px,3.6vw,64px) 50px;border-top:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;gap:22px;flex-wrap:wrap;background:rgba(3,5,11,.75)}
+footer .cr{font-size:12.5px;color:var(--muted)}
+footer .cr b{color:#dbe8f8;font-weight:600}
+
+/* No celular não há coluna livre para a peça: ela vira fundo, e a lista de
+   itens inclusos deixa de forçar uma linha só. */
+@media(max-width:900px){
+  #stage{opacity:.22!important}
+  .incl li{flex-wrap:wrap;gap:8px}
+  .incl li .v{white-space:normal;margin-left:30px;width:100%}
+}
+
+/* Modo leve: ligado sozinho se a máquina da apresentação não segurar 60fps.
+   Desliga só o enfeite de fundo — a peça 3D e a narrativa continuam intactas. */
+.lite #bg .caustic,.lite #bubbles,.lite .waves .w3{display:none}
+.lite #bg .blob,.lite #ring{animation:none}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="bg" aria-hidden="true">
+  <div class="grad"></div>
+  <div class="caustic"></div><div class="caustic c2"></div>
+  <div class="blob b1"></div><div class="blob b2"></div>
+  <div id="bubbles"></div>
+</div>
+
+<header id="topbar">
+  <div class="brands">
+    <!-- [SLOT LOGO MARKTIVA] -->
+    <div class="logo-mk">marktiva<span class="brk"></span></div>
+    <span class="x-mark">×</span>
+    <!-- [SLOT LOGO AQUABION] -->
+    <div class="logo-ab">
+      <svg width="28" height="28" viewBox="0 0 100 100" aria-hidden="true">
+        <defs><linearGradient id="gl" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#5ad9f0"/><stop offset="1" stop-color="#0b4fa4"/></linearGradient></defs>
+        <circle cx="50" cy="50" r="42" fill="none" stroke="url(#gl)" stroke-width="5"/>
+        <ellipse cx="50" cy="50" rx="18" ry="42" fill="none" stroke="url(#gl)" stroke-width="4"/>
+        <line x1="10" y1="50" x2="90" y2="50" stroke="url(#gl)" stroke-width="4"/>
+      </svg>
+      <div class="wm">AQUA<b>B</b>ION</div>
+    </div>
+  </div>
+  <div class="tag-top">Proposta de Posicionamento · 2026</div>
+</header>
+
+<nav id="dots" aria-label="Navegação das seções"></nav>
+
+<!-- ===================== PALCO 3D ===================== -->
+<div id="stage" aria-hidden="true">
+  <div id="stage-in">
+    <div id="halo"></div>
+    <div id="ring"></div>
+    <div id="device-wrap"><div id="device"></div></div>
+    <div id="sheen"></div>
+
+    <div class="callout L c1" style="left:-326px;top:-224px">
+      <b>Corpo em aço inoxidável</b><span>Nirosta · usinagem alemã</span><i class="dot"></i><i class="ln"></i></div>
+    <div class="callout L c2" style="left:-326px;top:-48px">
+      <b>Corpo de turbulência</b><span>gera o fluxo em espiral</span><i class="dot"></i><i class="ln"></i></div>
+    <div class="callout L c3" style="left:-326px;top:128px">
+      <b>Água com eletrólitos</b><span>meio de ativação iônica</span><i class="dot"></i><i class="ln"></i></div>
+    <div class="callout R c4" style="left:140px;top:-224px">
+      <b>Ânodo ativo de zinco</b><span>alta pureza · núcleo da tecnologia</span><i class="dot"></i><i class="ln"></i></div>
+    <div class="callout R c5" style="left:140px;top:-48px">
+      <b>Resistência 16 bar</b><span>PN 16 · até 85 °C</span><i class="dot"></i><i class="ln"></i></div>
+    <div class="callout R c6" style="left:140px;top:128px">
+      <b>Materiais reutilizáveis</b><span>norma alemã de água potável</span><i class="dot"></i><i class="ln"></i></div>
+  </div>
+</div>
+
+<main>
+
+<!-- ============================================================
+     1 · HERO
+     ============================================================ -->
+<section id="s-hero" data-label="Abertura"
+         data-dev='{"x":0.245,"y":0,"s":1.14,"cut":0,"op":1,"spin":0.55}'>
+  <div class="wrap">
+    <div class="half">
+      <div class="kicker rv">Marktiva × Aquabion · Proposta de posicionamento</div>
+      <h1 class="rv d1">O melhor tratamento de água do mundo.<br>
+        <span class="grad-b">E o Brasil ainda não sabe que ele existe.</span></h1>
+      <p class="lead rv d2" style="margin-top:26px">
+        Isso não é o seu problema — é a maior vantagem competitiva que uma marca pode ter,
+        e ela tem prazo de validade. Esta proposta é sobre ocupar esse espaço
+        antes que alguém ocupe.
+      </p>
+      <div class="hero-badges">
+        <span class="badge rv d3">Tecnologia alemã patenteada</span>
+        <span class="badge rv d4">Sem sal · sem química · sem energia</span>
+        <span class="badge gold rv d5">Brasil: zero concorrência</span>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint"><div class="mouse"></div><span>role para descobrir</span></div>
+  <div class="waves bot" aria-hidden="true">
+    <svg viewBox="0 0 2400 150" preserveAspectRatio="none" class="w1">
+      <path d="M0,80 C300,140 600,20 900,80 C1200,140 1500,20 1800,80 C2100,140 2250,50 2400,80 L2400,150 L0,150 Z" fill="#1f8ef1"/></svg>
+    <svg viewBox="0 0 2400 150" preserveAspectRatio="none" class="w2">
+      <path d="M0,100 C400,40 700,150 1100,95 C1500,40 1800,140 2400,90 L2400,150 L0,150 Z" fill="#5ad9f0"/></svg>
+    <svg viewBox="0 0 2400 150" preserveAspectRatio="none" class="w3">
+      <path d="M0,110 C350,160 650,60 1000,110 C1350,160 1700,60 2400,110 L2400,150 L0,150 Z" fill="#ffffff"/></svg>
+  </div>
+</section>
+
+<!-- ============================================================
+     2 · A VIRADA
+     ============================================================ -->
+<section id="s-virada" data-label="A virada"
+         data-dev='{"x":0.295,"y":0,"s":1.0,"cut":0.5,"op":0.95,"spin":0.95}'>
+  <div class="wrap">
+    <div class="half">
+      <div class="kicker rv">A verdade desconfortável</div>
+      <h2 class="rv d1">Tudo que parece<br>ser contra vocês…</h2>
+
+      <div class="strike-list">
+        <div class="strike rv d2"><span class="no">01</span><span class="txt">Ninguém conhece a Aquabion no Brasil.</span></div>
+        <div class="strike rv d3"><span class="no">02</span><span class="txt">Não existe demanda buscando o produto.</span></div>
+        <div class="strike rv d4"><span class="no">03</span><span class="txt">O cliente tem medo de investir no que não conhece.</span></div>
+      </div>
+
+      <div class="turn-arrow rv d5"><span>é exatamente por isso</span><span class="bar"></span></div>
+
+      <p class="lead rv d5" style="margin-bottom:20px">
+        Um mercado sem demanda é um mercado <strong>sem disputa</strong>. Quem chega primeiro não briga por
+        espaço: <strong>define o preço, a narrativa e a régua</strong> que todo mundo depois vai ter que seguir.
+      </p>
+
+      <div class="blue-cards">
+        <div class="blue-card rv d5"><div class="n">01</div><h4>Oceano azul</h4>
+          <p>Categoria inexistente no país. Não se compete — se cria o mercado.</p></div>
+        <div class="blue-card rv d6"><div class="n">02</div><h4>Zero concorrência</h4>
+          <p>Nenhum anunciante disputando as mesmas palavras, o mesmo público, o mesmo leilão.</p></div>
+        <div class="blue-card rv d7"><div class="n">03</div><h4>Pioneirismo</h4>
+          <p>A primeira marca a educar um mercado vira sinônimo da solução. Isso não se compra depois.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     3 · ESTUDO DE MERCADO (B2B)
+     ============================================================ -->
+<section id="s-mercado" data-label="Mercado B2B"
+         data-dev='{"x":0.19,"y":-0.235,"s":0.66,"cut":1,"op":0.55,"spin":0.35}'>
+  <div class="wrap">
+    <div style="max-width:64ch;margin-bottom:clamp(26px,3.4vh,44px)">
+      <div class="kicker rv">Estudo de mercado · B2B</div>
+      <h2 class="rv d1">O mercado que já perde dinheiro <span class="grad-b">e sofre calado.</span></h2>
+      <p class="lead rv d2" style="margin-top:18px">
+        Não precisamos criar dor. Ela já existe, já é cara e já está no orçamento de manutenção —
+        só não tem nome nem solução conhecida. Nosso trabalho é dar nome a ela.
+      </p>
+    </div>
+
+    <div class="grid g4">
+
+      <article class="card sector rv d1">
+        <div class="top">
+          <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/></svg></div>
+          <h3>Hospital</h3></div>
+        <div class="ba">
+          <div class="row bad"><span class="p">✕</span><span>Calcário em autoclave e tubulação compromete a esterilização e para equipamento crítico.</span></div>
+          <div class="sector-sep"></div>
+          <div class="row good"><span class="p">✓</span><span><strong>Segurança sanitária</strong> preservada e menos parada de equipamento essencial.</span></div>
+        </div>
+      </article>
+
+      <article class="card sector rv d2">
+        <div class="top">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 2s4 4.5 4 8a4 4 0 0 1-8 0c0-3.5 4-8 4-8Z"/><path d="M5 21h14M8 21v-3M16 21v-3"/></svg></div>
+          <h3>Caldeiras</h3></div>
+        <div class="ba">
+          <div class="row bad"><span class="p">✕</span><span>Incrustação derruba a troca térmica, dispara o consumo de energia e cria risco de explosão.</span></div>
+          <div class="sector-sep"></div>
+          <div class="row good"><span class="p">✓</span><span><strong>Proteção, economia de energia e fim das paradas</strong> de manutenção — a hora trabalhada do funcionário passa a valer mais.</span></div>
+        </div>
+      </article>
+
+      <article class="card sector rv d3">
+        <div class="top">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 2v20M3.5 7l17 10M20.5 7l-17 10"/></svg></div>
+          <h3>Frigorífico</h3></div>
+        <div class="ba">
+          <div class="row bad"><span class="p">✕</span><span>Perda de eficiência térmica nos trocadores, desperdício de água e de energia.</span></div>
+          <div class="sector-sep"></div>
+          <div class="row good"><span class="p">✓</span><span><strong>Mais eficiência e economia direta</strong> na conta que mais pesa na operação.</span></div>
+        </div>
+      </article>
+
+      <article class="card sector rv d4">
+        <div class="top">
+          <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="13.5" r="4.2"/><circle cx="7.2" cy="7" r=".9"/></svg></div>
+          <h3>Lavanderia industrial</h3></div>
+        <div class="ba">
+          <div class="row bad"><span class="p">✕</span><span>Entope, exige mais sabão e mais água e destrói a máquina antes do tempo.</span></div>
+          <div class="sector-sep"></div>
+          <div class="row good"><span class="p">✓</span><span><strong>Corta insumo e prolonga a vida útil</strong> do parque de máquinas.</span></div>
+        </div>
+      </article>
+
+      <article class="card sector rv d1">
+        <div class="top">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M3 21V9l9-6 9 6v12"/><path d="M9.5 21v-6h5v6"/></svg></div>
+          <h3>Hotel, motel e hospedagem</h3></div>
+        <div class="ba">
+          <div class="row bad"><span class="p">✕</span><span>Chuveiro fraco, resistência queimada, piscina incrustada — e a reclamação vira avaliação pública.</span></div>
+          <div class="sector-sep"></div>
+          <div class="row good"><span class="p">✓</span><span><strong>Experiência do hóspede preservada</strong> e menos troca de equipamento.</span></div>
+        </div>
+      </article>
+
+      <article class="card sector rv d2">
+        <div class="top">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3c3 3.5 3 6 0 9-3-3-3-5.5 0-9Z"/><path d="M4 16c3 3 5 3 8 0 3 3 5 3 8 0M4 20.5c3 3 5 3 8 0 3 3 5 3 8 0"/></svg></div>
+          <h3>Spa e lazer</h3></div>
+        <div class="ba">
+          <div class="row bad"><span class="p">✕</span><span>Hidromassagem entupida e sistema de aquecimento comprometido travam a operação.</span></div>
+          <div class="sector-sep"></div>
+          <div class="row good"><span class="p">✓</span><span><strong>Estrutura sempre funcionando</strong>, sem cancelar reserva por manutenção.</span></div>
+        </div>
+      </article>
+
+      <article class="card sector rv d3">
+        <div class="top">
+          <div class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h2M14 6h2M8 10h2M14 10h2M8 14h2M14 14h2M10 22v-4h4v4"/></svg></div>
+          <h3>Condomínio</h3></div>
+        <div class="ba">
+          <div class="row bad"><span class="p">✕</span><span>Toda a tubulação predial envelhece antes da hora e o chamado de manutenção não para.</span></div>
+          <div class="sector-sep"></div>
+          <div class="row good"><span class="p">✓</span><span><strong>Menos chamado, menos rateio extra</strong> e imóvel valorizado por infraestrutura.</span></div>
+        </div>
+      </article>
+
+      <article class="card sector rv d4" style="background:linear-gradient(160deg,rgba(31,142,241,.2),rgba(8,16,32,.8));border-color:rgba(31,142,241,.34)">
+        <div class="top"><h3 style="font-size:19px">O padrão se repete</h3></div>
+        <p style="font-size:13.4px;color:#bcd3ee;line-height:1.55">
+          Em todos eles a conta já é paga — em energia, insumo, troca de equipamento e parada de operação.
+          A diferença é que hoje ela é paga <strong>sem solução</strong>. É esse orçamento que a Aquabion disputa,
+          e ele não depende de o cliente “querer” um produto novo: ele já está sangrando.
+        </p>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     4 · POR QUE O PRODUTO É IMBATÍVEL
+     ============================================================ -->
+<section id="s-produto" data-label="O produto"
+         data-dev='{"x":-0.27,"y":0,"s":1.12,"cut":1,"op":1,"spin":0.75,"callouts":true}'>
+  <div class="wrap">
+    <div class="half-r">
+      <div class="kicker rv">Por dentro da tecnologia</div>
+      <h2 class="rv d1">Não é filtro.<br><span class="grad-b">É engenharia alemã.</span></h2>
+      <p class="lead rv d2" style="margin:16px 0 22px">
+        O Aquabion não amolece a água nem tira mineral: ele muda o comportamento do cálcio para que
+        ele não incruste. Sem consumo, sem reposição, sem técnico voltando todo mês.
+      </p>
+
+      <div class="rv d3">
+        <div class="spec">
+          <div class="k"><svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6l-8-4Z"/></svg></div>
+          <div><h4>Patente alemã, fabricação alemã</h4>
+            <p>Materiais testados pelo TÜV e certificados pela DVGW (W 270), WRAS, ACS e ofi.</p></div>
+        </div>
+        <div class="spec">
+          <div class="k"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M8.5 9.5h7M8.5 14.5h7"/></svg></div>
+          <div><h4>Ânodo ativo de zinco de alta pureza</h4>
+            <p>O coração da tecnologia: libera íons que impedem a formação de crosta e protegem contra corrosão.</p></div>
+        </div>
+        <div class="spec">
+          <div class="k"><svg viewBox="0 0 24 24"><path d="M4 14c3-3 5-3 8 0s5 3 8 0M4 19c3-3 5-3 8 0s5 3 8 0M12 3v7"/></svg></div>
+          <div><h4>Corpo de turbulência em Nirosta</h4>
+            <p>Cria o fluxo em espiral que ativa a reação — sem parte móvel, sem desgaste.</p></div>
+        </div>
+        <div class="spec">
+          <div class="k"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-7-10a7 7 0 0 1 14 0c0 5.6-7 10-7 10Z"/><circle cx="12" cy="11" r="2.5"/></svg></div>
+          <div><h4>Instala uma vez e esquece</h4>
+            <p>Zero manutenção, zero reposição, zero energia. PN 16 (até 16 bar) e até 85 °C.</p></div>
+        </div>
+        <div class="spec">
+          <div class="k"><svg viewBox="0 0 24 24"><path d="M7 20a5 5 0 0 1-1-9.5A6 6 0 0 1 18 9a4.5 4.5 0 0 1-.5 11H7Z"/><path d="M12 12v5M9.5 14.5 12 12l2.5 2.5"/></svg></div>
+          <div><h4>Ecológico de verdade</h4>
+            <p>Não joga sal nem químico na rede. Materiais reutilizáveis segundo a norma alemã de água potável.</p></div>
+        </div>
+        <div class="spec">
+          <div class="k"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16M8 15l4-5 3 3 4-7"/></svg></div>
+          <div><h4>O fator econômico é gigante</h4>
+            <p>Energia, insumo, equipamento e parada de operação — o retorno aparece na conta, não no discurso.</p></div>
+        </div>
+      </div>
+
+      <div class="nots rv d4">
+        <span class="not">Sem sal</span><span class="not">Sem química</span><span class="not">Sem eletricidade</span>
+        <span class="not">Sem manutenção</span><span class="not">Sem ímã</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     5 · ESTRATÉGIA / FUNIL
+     ============================================================ -->
+<section id="s-estrategia" data-label="Estratégia"
+         data-dev='{"x":0.32,"y":-0.16,"s":0.72,"cut":0.62,"op":0.42,"spin":1.15}'>
+  <div class="wrap">
+    <div style="max-width:64ch;margin-bottom:clamp(24px,3.2vh,40px)">
+      <div class="kicker rv">O que vamos fazer</div>
+      <h2 class="rv d1">Quatro etapas para <span class="grad-b">criar um mercado do zero.</span></h2>
+      <p class="lead rv d2" style="margin-top:18px">
+        Ninguém compra o que não conhece — então não começamos vendendo. Começamos existindo.
+        O funil inteiro foi desenhado para um público que hoje está frio, e para levá-lo até
+        o formulário já sabendo por que precisa.
+      </p>
+    </div>
+
+    <div class="funnel">
+      <div class="step rv d1"><div class="fill"></div><div class="num">ETAPA 01</div><h3>Espalhar</h3>
+        <p>Conteúdo e podcast criam alcance num mercado que ainda não busca o produto. Primeiro o mercado precisa esbarrar na marca.</p></div>
+      <div class="step rv d2"><div class="fill"></div><div class="num">ETAPA 02</div><h3>Educar</h3>
+        <p>Mostramos o problema do calcário setor por setor, com número e consequência. É aqui que nasce a consciência — e a demanda.</p></div>
+      <div class="step rv d3"><div class="fill"></div><div class="num">ETAPA 03</div><h3>Remarketing</h3>
+        <p>Quem consumiu e não converteu é reimpactado com o ângulo certo. Decisão B2B leva tempo — a marca precisa estar lá o tempo todo.</p></div>
+      <div class="step rv d4"><div class="fill"></div><div class="num">ETAPA 04</div><h3>Vender</h3>
+        <p>O lead já consciente cai no formulário do perfil e chega ao comercial qualificado — sabendo o que é, para que serve e quanto economiza.</p></div>
+      <div class="arrow a1">&#8594;</div><div class="arrow a2">&#8594;</div><div class="arrow a3">&#8594;</div>
+    </div>
+
+    <div class="lang">
+      <div class="box emo rv d5"><div class="t">Linguagem emocional</div>
+        <h4>Residencial, hotelaria e lazer</h4>
+        <p>Cabelo, pele, banho, segurança para bebê, casa que não estraga. Aqui a compra é sentida antes de ser calculada.</p></div>
+      <div class="box fin rv d6"><div class="t">Linguagem financeira</div>
+        <h4>Indústria, caldeira e hospitalar</h4>
+        <p>ROI, economia de energia, insumo, vida útil do ativo e fim da parada de manutenção. Aqui a compra é uma planilha.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     6 · ENTREGAS
+     ============================================================ -->
+<section id="s-entregas" data-label="Entregas"
+         data-dev='{"x":0.17,"y":-0.255,"s":0.62,"cut":0.45,"op":0.5,"spin":0.4}'>
+  <div class="wrap">
+    <div style="max-width:64ch;margin-bottom:clamp(24px,3.2vh,40px)">
+      <div class="kicker rv">Entregas mensais</div>
+      <h2 class="rv d1">O que entra em operação <span class="grad-b">todo mês.</span></h2>
+    </div>
+
+    <div class="grid g4">
+      <article class="card del rv d1"><div class="n">25<small> /mês</small></div><h4>Conteúdos</h4>
+        <p>Produção completa para alimentar o topo e o meio do funil, em formato de alcance e de educação.</p></article>
+      <article class="card del rv d2"><div class="n">2–3<small> /mês</small></div><h4>Podcasts</h4>
+        <p>Episódios de autoridade com <strong>8 cortes cada</strong>, virando dezenas de peças de distribuição.</p></article>
+      <article class="card del rv d3"><div class="n">✓</div><h4>Distribuição multiplataforma</h4>
+        <p>O mesmo ativo trabalhando em todas as plataformas relevantes — alcance máximo por conteúdo produzido.</p></article>
+      <article class="card del rv d4"><div class="n">1<small> /mês</small></div><h4>Treinamento comercial</h4>
+        <p>Time treinado em WhatsApp e atendimento. Lead qualificado sem atendimento à altura é lead perdido.</p></article>
+      <article class="card del rv d1"><div class="n">✓</div><h4>Otimização de perfil</h4>
+        <p>Perfil transformado em página de conversão: posicionamento, prova, oferta e caminho claro para o contato.</p></article>
+      <article class="card del rv d2"><div class="n">✓</div><h4>Tráfego pago com formulário</h4>
+        <p>Campanhas focadas no perfil com <strong>formulário no link</strong>, capturando lead qualificado direto para o comercial.</p></article>
+      <article class="card del rv d3"><div class="n">✓</div><h4>Equipe mesclada e distribuída</h4>
+        <p>Estratégia, produção, edição, tráfego e atendimento — time dividido por função para dar conta do volume com qualidade.</p></article>
+      <article class="card del rv d4" style="background:linear-gradient(160deg,rgba(31,142,241,.18),rgba(8,16,32,.78));border-color:rgba(31,142,241,.32)">
+        <h4 style="font-size:18px">Tudo apontando para o mesmo lugar</h4>
+        <p style="margin-top:8px">Cada peça produzida existe para empurrar o mercado frio um degrau adiante no funil — e terminar em contato qualificado.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     7 · O QUE A AQUABION VAI SE TORNAR
+     ============================================================ -->
+<section id="s-visao" data-label="A visão"
+         data-dev='{"x":0.295,"y":0,"s":1.05,"cut":0,"op":1,"spin":0.6}'>
+  <div class="wrap">
+    <div class="half">
+      <div class="kicker rv">O destino</div>
+      <h2 class="rv d1">O que a Aquabion<br><span class="grad-b">vai se tornar.</span></h2>
+      <p class="lead rv d2" style="margin:18px 0 32px">
+        Não é sobre postar. É sobre chegar num ponto em que, quando alguém no Brasil
+        falar em tratamento de água sem sal, o nome que vier na cabeça seja um só.
+      </p>
+      <div class="vision">
+        <div class="v rv d3"><h4>Referência nacional</h4>
+          <p>A marca que ensinou o país sobre calcário vira a marca dona da categoria.</p></div>
+        <div class="v rv d4"><h4>Autoridade no nicho</h4>
+          <p>Conteúdo e podcast constroem o repertório técnico que nenhum concorrente futuro terá.</p></div>
+        <div class="v rv d5"><h4>Base de leads qualificados</h4>
+          <p>Um ativo próprio que cresce todo mês e não depende de leilão de anúncio para existir.</p></div>
+        <div class="v rv d6"><h4>Canal de venda validado</h4>
+          <p>Um caminho testado do desconhecido ao fechamento — replicável por região e por setor.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     8 · INVESTIMENTO
+     ============================================================ -->
+<section id="s-invest" data-label="Investimento"
+         data-dev='{"x":0.36,"y":0,"s":0.6,"cut":0,"op":0.14,"spin":0.5}'>
+  <div class="waves top" aria-hidden="true">
+    <svg viewBox="0 0 2400 150" preserveAspectRatio="none" class="w1">
+      <path d="M0,80 C300,140 600,20 900,80 C1200,140 1500,20 1800,80 C2100,140 2250,50 2400,80 L2400,150 L0,150 Z" fill="#e0b45c"/></svg>
+    <svg viewBox="0 0 2400 150" preserveAspectRatio="none" class="w2">
+      <path d="M0,100 C400,40 700,150 1100,95 C1500,40 1800,140 2400,90 L2400,150 L0,150 Z" fill="#f8e3ab"/></svg>
+  </div>
+
+  <div class="wrap">
+    <div style="max-width:64ch;margin-bottom:clamp(20px,2.8vh,36px)">
+      <div class="kicker rv" style="color:var(--brass)">Investimento</div>
+      <h2 class="rv d1">Quanto custa lançar <span class="grad-g">uma categoria inteira.</span></h2>
+    </div>
+
+    <div class="grid g2" style="align-items:start;gap:clamp(16px,1.8vw,30px)">
+      <div>
+        <div class="anchor-box rv d2">
+          <div class="lbl">Valor de mercado deste escopo</div>
+          <div class="val">R$ 13.000 a R$ 15.000 <small>/ mês</small></div>
+          <p>É o que uma operação de lançamento internacional do zero — construção de categoria,
+             produção pesada de conteúdo, podcast, tráfego e treinamento comercial — custa hoje no mercado.</p>
+        </div>
+
+        <div class="rv d3" style="margin-top:22px">
+          <div class="lbl">O que está incluso</div>
+          <ul class="incl">
+            <li><span class="ck">✓</span><strong>25 conteúdos por mês</strong><span class="v">produção completa</span></li>
+            <li><span class="ck">✓</span><strong>2 a 3 podcasts por mês</strong><span class="v">com 8 cortes cada</span></li>
+            <li><span class="ck">✓</span><strong>Distribuição multiplataforma</strong><span class="v">todos os canais</span></li>
+            <li><span class="ck">✓</span><strong>Otimização de perfil</strong><span class="v">perfil como página de conversão</span></li>
+            <li><span class="ck">✓</span><strong>Gestão de tráfego pago</strong><span class="v">com formulário no link</span></li>
+            <li><span class="ck">✓</span><strong>Estratégia e funil completo</strong><span class="v">espalhar → educar → remarketing → vender</span></li>
+            <li><span class="ck">✓</span><strong>Treinamento comercial mensal</strong><span class="v">WhatsApp e atendimento</span></li>
+            <li><span class="ck">✓</span><strong>Equipe mesclada e distribuída</strong><span class="v">por função</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <div class="reveal-price rv d3">
+          <span class="cond">Condição de lançamento</span>
+          <span class="strike-mkt">R$ 13.000 — R$ 15.000 / mês</span>
+          <div class="big">R$ 6.500<em> /mês</em></div>
+          <p style="margin-top:14px;color:#d8c9a8;font-size:15px;max-width:44ch">
+            Metade do valor de mercado. Não é desconto: é o preço de entrar junto,
+            no começo, e construir isso com vocês.
+          </p>
+        </div>
+
+        <div class="price-extra">
+          <div class="pe rv d4">
+            <div class="t">Comissão sobre vendas <span class="pill">parceria</span></div>
+            <p>Um <strong>percentual sobre o faturamento total</strong>, a definir em contrato com modelo de vesting,
+               com acesso aos números de venda para conferência. Se a Aquabion cresce, a Marktiva cresce junto —
+               é o que garante que ninguém aqui trabalha por entrega, e sim por resultado.</p>
+          </div>
+          <div class="pe rv d5">
+            <div class="t">Verba de tráfego <span class="pill">separado</span></div>
+            <p><strong>R$ 2.000 iniciais</strong>, pagos diretamente à plataforma e por conta da Aquabion.
+               Nunca sai do fee — verba de mídia é investimento em alcance, não pagamento de agência.
+               Assim vocês enxergam exatamente para onde cada real vai.</p>
+          </div>
+        </div>
+
+        <p class="note rv d6">
+          Fee fixo mensal de R$ 6.500 + percentual sobre faturamento + verba de tráfego separada.
+          O escopo acima é o que sustenta esse valor — qualquer ajuste no investimento é ajuste no escopo,
+          nunca na qualidade da entrega.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     9 · CTA FINAL
+     ============================================================ -->
+<section id="s-cta" data-label="Fechamento"
+         data-dev='{"x":0,"y":0,"s":1.45,"cut":0.2,"op":0.15,"spin":0.7}'>
+  <div class="wrap">
+    <div class="kicker rv" style="align-self:center">Para fechar</div>
+    <h2 class="rv d1">Vocês já têm o melhor produto.<br>
+      <span class="grad-b">Falta o digital à altura dele.</span></h2>
+    <p class="lead rv d2">
+      O produto está pronto, certificado e é superior a tudo que existe aqui. O que ainda não existe
+      é um mercado que saiba disso. É exatamente esse o trabalho — e ele começa agora,
+      enquanto ninguém mais está olhando para essa categoria.
+    </p>
+    <div class="cta-btns">
+      <a class="btn primary rv d3" href="#s-invest">Ver o investimento</a>
+      <a class="btn ghost rv d4" href="#s-hero">Rever a proposta</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div style="display:flex;align-items:center;gap:16px">
+    <div class="logo-mk">marktiva<span class="brk"></span></div>
+    <span class="x-mark">×</span>
+    <div class="logo-ab"><div class="wm">AQUA<b>B</b>ION</div></div>
+  </div>
+  <div class="cr">Proposta desenvolvida pela agência <b>Marktiva</b> · documento confidencial</div>
+</footer>
+
+<script>
+/* ==========================================================================
+   1 · O produto AQUABION construído em CSS 3D
+   Cada peça é um cilindro de N faces. A textura metálica é uma única
+   rampa "desenrolada" (a circunferência aberta em linha reta) reposicionada
+   por face — assim o metal fica contínuo, sem listras, e sem custo por frame.
+   ========================================================================== */
+(function buildDevice(){
+  const dev = document.getElementById('device');
+  if(!dev) return;
+
+  const BODY_R=72, BODY_H=310;   // corpo
+  const NUT_R =78, NUT_H =50;    // sextavados
+  const THR_R =46, THR_H =60;    // roscas
+  const LBL_H =160;              // etiqueta
+  const CORE_R=48, CORE_H=200;   // coluna de água com eletrólitos
+  const AN_R  =28, AN_H  =142;   // ânodo de zinco
+
+  const outer=[], inner=[];
+
+  /* rampas metálicas desenroladas (0% → 100% = uma volta completa) */
+  const RAMP = {
+    brass:'#241905 0%,#5c4211 11%,#a37c2c 24%,#e2c477 37%,#fff6dd 45%,#f0d692 52%,'+
+          '#c39a45 63%,#7d5b18 77%,#3d2c0c 89%,#1d1405 100%',
+    steel:'#111721 0%,#2c3542 12%,#5f6b79 26%,#a9b5c1 39%,#f2f6fa 46%,#c3ceda 53%,'+
+          '#7d8896 66%,#3d4652 82%,#151a23 100%',
+    zinc:'#152230 0%,#31485f 12%,#6b8ba8 26%,#b9d2e6 39%,#ffffff 46%,#cfe2f0 53%,'+
+         '#7f9fbb 67%,#3d566e 83%,#182533 100%',
+    water:'rgba(14,44,74,.62) 0%,rgba(38,110,168,.55) 16%,rgba(96,190,232,.5) 32%,'+
+          'rgba(186,238,255,.6) 45%,rgba(225,250,255,.68) 50%,rgba(150,222,250,.55) 60%,'+
+          'rgba(52,132,186,.5) 76%,rgba(16,50,82,.62) 100%'
+  };
+
+  /* Superfície cilíndrica de N segmentos.
+     A largura da face é a aresta real do polígono (2·r·tan(π/N)), senão
+     sobram frestas entre facetas quando N é pequeno, como no sextavado.
+     `flat` = faceta chapada com brilho próprio (sextavado); caso contrário a
+     face recebe uma fatia da rampa metálica desenrolada, dando metal contínuo. */
+  function cylinder(parent,{r,h,seg,y=0,ramp,list,layer='',layerSize='',shade=.5,flat=null}){
+    const g=document.createElement('div');
+    g.className='part';
+    g.style.transform=`translateY(${y}px)`;
+    const w=2*r*Math.tan(Math.PI/seg)+1.2, W=w*seg;
+    for(let i=0;i<seg;i++){
+      const a=(360/seg)*i;
+      const f=document.createElement('div');
+      f.className='face';
+      const bgs=[],szs=[],pos=[];
+      if(layer){bgs.push(layer);szs.push(layerSize||'auto');pos.push('0 0');}
+      bgs.push(`linear-gradient(180deg,rgba(0,0,0,${shade}),rgba(0,0,0,0) 13%,rgba(0,0,0,0) 87%,rgba(0,0,0,${shade}))`);
+      szs.push('100% 100%'); pos.push('0 0');
+      if(flat){
+        const m=.24+1.02*Math.pow(Math.max(0,Math.cos((a-20)*Math.PI/180)),.8);
+        const c=k=>Math.min(255,Math.round(flat[k]*m));
+        bgs.push(`linear-gradient(100deg,rgb(${c(0)},${c(1)},${c(2)}),`+
+                 `rgb(${Math.round(c(0)*.78)},${Math.round(c(1)*.78)},${Math.round(c(2)*.78)}))`);
+        szs.push('100% 100%'); pos.push('0 0');
+      }else{
+        bgs.push(`linear-gradient(90deg,${ramp})`);
+        szs.push(`${W}px 100%`); pos.push(`${-i*w}px 0`);
+      }
+      f.style.cssText=`width:${w}px;height:${h}px;margin-left:${-w/2}px;margin-top:${-h/2}px;`+
+        `transform:rotateY(${a}deg) translateZ(${r}px);`+
+        `background-image:${bgs.join(',')};background-size:${szs.join(',')};`+
+        `background-position:${pos.join(',')};background-repeat:repeat;`;
+      f.dataset.a=a;
+      g.appendChild(f);
+      if(list) list.push(f);
+    }
+    parent.appendChild(g);
+    return g;
+  }
+
+  function disc(parent,{r,y,bg}){
+    const d=document.createElement('div');
+    d.className='cap';
+    d.style.cssText=`width:${r*2}px;height:${r*2}px;margin-left:${-r}px;margin-top:${-r}px;`+
+      `transform:translateY(${y}px) rotateX(90deg);background:${bg};`;
+    parent.appendChild(d);
+    return d;
+  }
+
+  /* ---------- corpo externo ---------- */
+  cylinder(dev,{r:BODY_R,h:BODY_H,seg:28,ramp:RAMP.brass,list:outer});
+
+  /* ---------- sextavados (facetas chapadas, para o hexágono aparecer) ---------- */
+  [-1,1].forEach(s=>{
+    const y=s*(BODY_H/2+NUT_H/2-4);
+    cylinder(dev,{r:NUT_R*.9,h:NUT_H,seg:6,y,list:outer,shade:.55,flat:[201,155,70]});
+    disc(dev,{r:NUT_R*.9,y:y+s*NUT_H/2,bg:'radial-gradient(circle,#cfa54e,#5d4413 74%,#2c1f08)'});
+  });
+
+  /* ---------- roscas ---------- */
+  [-1,1].forEach(s=>{
+    const y=s*(BODY_H/2+NUT_H+THR_H/2-8);
+    cylinder(dev,{r:THR_R,h:THR_H,seg:18,y,ramp:RAMP.brass,list:outer,shade:.35,
+      layer:'repeating-linear-gradient(180deg,rgba(0,0,0,.46) 0 2px,rgba(255,255,255,.22) 2px 4px,rgba(0,0,0,0) 4px 7px)',
+      layerSize:'100% auto'});
+    disc(dev,{r:THR_R,y:y+s*THR_H/2,bg:'radial-gradient(circle,#080b12 28%,#8a6a26 32%,#dcb768 66%,#5d4413)'});
+  });
+
+  /* ---------- etiqueta (SVG único usado como textura desenrolada) ---------- */
+  (function label(){
+    const seg=28, r=BODY_R+1.6;
+    const w=2*Math.PI*r/seg+1.2, W=w*seg, blk=W/2;
+    const block = k=>`
+      <g transform="translate(${k*blk},0)">
+        <rect x="1" y="0" width="${blk-2}" height="${LBL_H}" fill="#f6f9fc" stroke="#c4d2e2" stroke-width="1.5"/>
+        <rect x="1" y="0" width="5" height="${LBL_H}" fill="#1f8ef1" opacity=".85"/>
+        <text x="${blk/2}" y="30" text-anchor="middle" font-family="Helvetica,Arial,sans-serif"
+              font-size="11" letter-spacing="2.6" fill="#1f8ef1" font-weight="bold">ION DEUTSCHLAND</text>
+        <text x="${blk/2}" y="74" text-anchor="middle" font-family="Helvetica,Arial,sans-serif"
+              font-size="34" font-weight="bold" fill="#0a1526">AQUA<tspan fill="#1f8ef1">B</tspan>ION<tspan
+              font-size="14" dy="-12">&#174;</tspan></text>
+        <text x="${blk/2}" y="102" text-anchor="middle" font-family="Helvetica,Arial,sans-serif"
+              font-size="18" font-weight="bold" fill="#22344c" letter-spacing="1.4">S15 &#183; 1/2"</text>
+        <line x1="${blk*.22}" y1="115" x2="${blk*.78}" y2="115" stroke="#c4d2e2" stroke-width="1.4"/>
+        <text x="${blk/2}" y="134" text-anchor="middle" font-family="Helvetica,Arial,sans-serif"
+              font-size="10.5" fill="#5a6b82" letter-spacing=".7">16 bar &#183; m&#225;x. 85 &#176;C &#183; MADE IN GERMANY</text>
+        <text x="${blk/2}" y="150" text-anchor="middle" font-family="Helvetica,Arial,sans-serif"
+              font-size="9" fill="#8fa2b8" letter-spacing="1.6">DVGW W270 &#183; WRAS &#183; ACS &#183; T&#220;V</text>
+      </g>`;
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${LBL_H}" viewBox="0 0 ${W} ${LBL_H}">`+
+      `<rect width="${W}" height="${LBL_H}" fill="#f6f9fc"/>${block(0)}${block(1)}</svg>`;
+    const uri=`url("data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}")`;
+
+    const g=document.createElement('div');
+    g.className='part';
+    for(let i=0;i<seg;i++){
+      const a=(360/seg)*i;
+      const f=document.createElement('div');
+      f.className='face';
+      f.style.cssText=`width:${w}px;height:${LBL_H}px;margin-left:${-w/2}px;margin-top:${-LBL_H/2}px;`+
+        `transform:rotateY(${a}deg) translateZ(${r}px);`+
+        `background-image:linear-gradient(180deg,rgba(0,0,0,.30),rgba(0,0,0,0) 16%,rgba(0,0,0,0) 84%,rgba(0,0,0,.30)),${uri};`+
+        `background-size:100% 100%,${W}px 100%;background-position:0 0,${-i*w}px 0;background-repeat:repeat;`;
+      f.dataset.a=a;
+      g.appendChild(f); outer.push(f);
+    }
+    dev.appendChild(g);
+  })();
+
+  /* ---------- interior ---------- */
+  const core=document.createElement('div');
+  core.className='part';
+  dev.appendChild(core);
+
+  cylinder(core,{r:CORE_R,h:CORE_H,seg:18,ramp:RAMP.water,list:inner,shade:.18});
+  cylinder(core,{r:AN_R,h:AN_H,seg:16,ramp:RAMP.zinc,list:inner,shade:.3,
+    layer:'repeating-linear-gradient(180deg,rgba(255,255,255,.34) 0 3px,rgba(10,25,45,.5) 3px 11px)',
+    layerSize:'100% auto'});
+  disc(core,{r:AN_R,y:-AN_H/2,bg:'radial-gradient(circle,#eaf6ff,#7ba2c2 64%,#2c4258)'});
+  disc(core,{r:AN_R,y:AN_H/2,bg:'radial-gradient(circle,#eaf6ff,#7ba2c2 64%,#2c4258)'});
+
+  /* corpos de turbulência em Nirosta (topo e base) */
+  [-1,1].forEach(s=>{
+    const y=s*(CORE_H/2+14), R=CORE_R*.84;
+    cylinder(core,{r:R,h:32,seg:14,y,ramp:RAMP.steel,list:inner,shade:.5});
+    const sw=document.createElement('div');
+    sw.className='cap';
+    sw.style.cssText=`width:${R*2}px;height:${R*2}px;margin-left:${-R}px;margin-top:${-R}px;`+
+      `transform:translateY(${y-s*16}px) rotateX(90deg);`;
+    sw.innerHTML=
+      `<svg viewBox="0 0 100 100" style="width:100%;height:100%;display:block">
+         <defs><radialGradient id="sg${s>0?'a':'b'}">
+           <stop offset="0" stop-color="#eaf1f8"/><stop offset=".6" stop-color="#93a6b8"/>
+           <stop offset="1" stop-color="#39454f"/></radialGradient></defs>
+         <circle cx="50" cy="50" r="49" fill="url(#sg${s>0?'a':'b'})" stroke="#20303f" stroke-width="2"/>
+         ${[0,120,240].map(d=>`<g transform="rotate(${d} 50 50)">
+            <path d="M50 50 C65 46 73 33 66 23" stroke="#2b3a49" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+            <circle cx="50" cy="22" r="8.5" fill="#111a24"/>
+            <circle cx="50" cy="22" r="8.5" fill="none" stroke="#c3d2de" stroke-width="1.6"/></g>`).join('')}
+         <circle cx="50" cy="50" r="10" fill="#cbd8e4" stroke="#33424f" stroke-width="2"/>
+       </svg>`;
+    core.appendChild(sw); inner.push(sw);
+  });
+
+  /* bolhas subindo dentro da coluna de água */
+  for(let i=0;i<10;i++){
+    const a=Math.random()*360, rr=16+Math.random()*26, sz=5+Math.random()*7;
+    const h=document.createElement('div');
+    h.className='face';
+    h.style.cssText=`width:${sz}px;height:${sz}px;margin-left:${-sz/2}px;margin-top:${-sz/2}px;`+
+      `transform:rotateY(${a}deg) translateZ(${rr}px);`;
+    const b=document.createElement('div');
+    b.style.cssText=`width:100%;height:100%;border-radius:50%;will-change:transform;`+
+      `background:radial-gradient(circle at 34% 30%,rgba(255,255,255,.95),rgba(170,230,255,.3) 52%,rgba(170,230,255,0) 72%);`+
+      `animation:innerRise ${4.5+Math.random()*4}s linear ${Math.random()*5}s infinite;`;
+    h.appendChild(b); core.appendChild(h); inner.push(h);
+  }
+  const kf=document.createElement('style');
+  kf.textContent='@keyframes innerRise{0%{transform:translateY(92px) scale(.5);opacity:0}'+
+                 '12%{opacity:.9}88%{opacity:.7}100%{transform:translateY(-92px) scale(1.1);opacity:0}}';
+  document.head.appendChild(kf);
+
+  /* ---------- reflexo especular fixo, alinhado a cada peça ---------- */
+  (function(){
+    const sheen=document.getElementById('sheen');
+    const T=.985;   // a peça é inclinada ~9°, o que comprime a altura aparente
+    [['body',149,BODY_H,0],
+     ['nut',153,NUT_H,-(BODY_H/2+NUT_H/2-4)],
+     ['nut',153,NUT_H, (BODY_H/2+NUT_H/2-4)],
+     ['thr', 95,THR_H,-(BODY_H/2+NUT_H+THR_H/2-8)],
+     ['thr', 95,THR_H, (BODY_H/2+NUT_H+THR_H/2-8)]
+    ].forEach(([cls,w,h,y])=>{
+      const d=document.createElement('div');
+      d.className=cls;
+      d.style.cssText=`width:${w}px;height:${h}px;margin-left:${-w/2}px;margin-top:${-h/2}px;`+
+        `transform:translateY(${(y*T).toFixed(1)}px)`;
+      sheen.appendChild(d);
+    });
+  })();
+
+  window.__aqua={outer,inner};
+})();
+
+
+/* ==========================================================================
+   2 · Motor de rolagem: gira a peça, corta o corpo em 3D e reposiciona
+   ========================================================================== */
+(function engine(){
+  const stage=document.getElementById('stage');
+  const stageIn=document.getElementById('stage-in');
+  const device=document.getElementById('device');
+  const halo=document.getElementById('halo');
+  const sheen=document.getElementById('sheen');
+  const bar=document.getElementById('progress');
+  const sections=Array.from(document.querySelectorAll('section[data-dev]'));
+  const A=window.__aqua||{outer:[],inner:[]};
+  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  const target={x:.245,y:0,s:1,cut:0,op:1,spin:.55};
+  const cur={x:.245,y:0,s:1,cut:0,op:1};
+  let rotY=0, rotYT=0, lastY=scrollY, lastCut=-1, curSec=-1;
+
+  const lerp=(a,b,t)=>a+(b-a)*t;
+
+  function pickSection(){
+    const vh=innerHeight; let best=-1, score=-1;
+    for(let i=0;i<sections.length;i++){
+      const r=sections[i].getBoundingClientRect();
+      const v=(Math.min(r.bottom,vh)-Math.max(r.top,0))/vh;
+      if(v>score){score=v;best=i;}
+    }
+    if(best<0||best===curSec) return;
+    curSec=best;
+    const c=JSON.parse(sections[best].dataset.dev);
+    target.x=c.x; target.y=c.y||0; target.s=c.s;
+    target.cut=c.cut; target.op=c.op; target.spin=c.spin||.6;
+    stage.classList.toggle('show-callouts',!!c.callouts);
+    const bs=document.querySelectorAll('#dots button');
+    for(let i=0;i<bs.length;i++) bs[i].classList.toggle('on',i===best);
+  }
+
+  function onScroll(){
+    const sy=scrollY, max=document.body.scrollHeight-innerHeight;
+    bar.style.width=(max>0?(sy/max)*100:0)+'%';
+    rotYT+=(sy-lastY)*.30;          // a peça gira conforme a rolagem
+    lastY=sy;
+    pickSection();
+  }
+
+  let t0=performance.now();
+  function frame(now){
+    const dt=Math.min(80,now-t0); t0=now;
+    const k=reduce?1:1-Math.pow(.0015,dt/1000);   // suavização independente de FPS
+
+    rotYT+=target.spin*dt*.018;                   // giro contínuo
+    rotY=lerp(rotY,rotYT,reduce?1:1-Math.pow(.002,dt/1000));
+
+    cur.x=lerp(cur.x,target.x,k); cur.y=lerp(cur.y,target.y,k);
+    cur.s=lerp(cur.s,target.s,k); cur.cut=lerp(cur.cut,target.cut,k);
+    cur.op=lerp(cur.op,target.op,k);
+
+    stageIn.style.transform=`translate3d(${(cur.x*innerWidth).toFixed(1)}px,${(cur.y*innerHeight).toFixed(1)}px,0) scale(${cur.s.toFixed(3)})`;
+    stage.style.opacity=cur.op.toFixed(3);
+
+    const tilt=-9+Math.sin(now*.00035)*3;
+    device.style.transform=`rotateX(${tilt.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg)`;
+
+    /* corte 3D: as faces viradas para a câmera somem e revelam o interior.
+       Como o corte gira junto com a peça, o "raio-x" acompanha a rotação. */
+    const RAD=Math.PI/180, o=A.outer;
+    if(cur.cut>.003){
+      for(let i=0;i<o.length;i++){
+        const f=o[i];
+        const front=Math.max(0,Math.cos((rotY+(+f.dataset.a))*RAD));
+        f.style.opacity=(1-front*cur.cut*.97).toFixed(3);
+      }
+    }else if(lastCut>.003){
+      for(let i=0;i<o.length;i++) o[i].style.opacity='1';
+    }
+    /* interior, halo e reflexo: só reescreve quando o corte realmente muda.
+       O reflexo some junto com o corpo, senão brilharia sobre o interior. */
+    if(Math.abs(cur.cut-lastCut)>.004){
+      const v=(.2+cur.cut*.8).toFixed(3), n=A.inner;
+      for(let i=0;i<n.length;i++) n[i].style.opacity=v;
+      halo.style.opacity=(.35+cur.cut*.5).toFixed(2);
+      sheen.style.opacity=(1-cur.cut*.94).toFixed(3);
+      lastCut=cur.cut;
+    }
+    requestAnimationFrame(frame);
+  }
+
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',()=>{curSec=-1;pickSection();});
+  pickSection(); onScroll();
+  requestAnimationFrame(frame);
+
+  /* pontos de navegação */
+  const dots=document.getElementById('dots');
+  sections.forEach(sec=>{
+    const b=document.createElement('button');
+    b.type='button'; b.dataset.l=sec.dataset.label||'';
+    b.setAttribute('aria-label',sec.dataset.label||'Seção');
+    b.addEventListener('click',()=>sec.scrollIntoView({behavior:'smooth'}));
+    dots.appendChild(b);
+  });
+
+  /* teclado — para conduzir a apresentação */
+  addEventListener('keydown',e=>{
+    const next=['ArrowRight','ArrowDown','PageDown',' '].includes(e.key);
+    const prev=['ArrowLeft','ArrowUp','PageUp'].includes(e.key);
+    if(!next&&!prev) return;
+    e.preventDefault();
+    let i=curSec<0?0:curSec;
+    i=Math.max(0,Math.min(sections.length-1,i+(next?1:-1)));
+    sections[i].scrollIntoView({behavior:'smooth'});
+  });
+})();
+
+
+/* ==========================================================================
+   3 · Trava de desempenho
+   Mede o framerate real da máquina nos primeiros segundos. Se ela não estiver
+   segurando a taxa, corta as camadas decorativas de fundo automaticamente —
+   melhor um fundo mais simples do que uma apresentação engasgando na TV.
+   ========================================================================== */
+(function perfGuard(){
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  let n=0; const t0=performance.now();
+  (function tick(){
+    n++;
+    const el=performance.now()-t0;
+    if(el<1800) requestAnimationFrame(tick);
+    else if(n/(el/1000)<32) document.documentElement.classList.add('lite');
+  })();
+})();
+
+
+/* ==========================================================================
+   4 · Revelações ao rolar + bolhas de fundo
+   ========================================================================== */
+(function reveals(){
+  const io=new IntersectionObserver(es=>{
+    for(const e of es) if(e.isIntersecting) e.target.classList.add('in');
+  },{threshold:.16,rootMargin:'0px 0px -6% 0px'});
+  document.querySelectorAll('.rv,.strike,.step').forEach(el=>io.observe(el));
+
+  const host=document.getElementById('bubbles');
+  for(let i=0;i<18;i++){
+    const b=document.createElement('div');
+    b.className='bubble';
+    const s=4+Math.random()*14;
+    b.style.cssText=`width:${s}px;height:${s}px;left:${(Math.random()*100).toFixed(1)}vw;`+
+      `animation-duration:${(17+Math.random()*22).toFixed(1)}s;animation-delay:${(-Math.random()*32).toFixed(1)}s;opacity:.4`;
+    host.appendChild(b);
+  }
+})();
+</script>
+</body>
+</html>
