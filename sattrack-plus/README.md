@@ -21,10 +21,15 @@ Toda movimentação é salva na hora e registrada no histórico do caso.
 
 Não precisa instalar nada nem compilar: é HTML, CSS e JavaScript puros.
 
-**Opção 1 — abrir direto**
-Dê dois cliques em `index.html`.
+**Opção 1 — arquivo único (mais simples)**
+Dê dois cliques em **`sattrack-plus.html`**. É a aplicação inteira num só
+arquivo — dá para copiar num pen drive, mandar por e-mail ou WhatsApp e abrir
+em qualquer computador, sem pasta de apoio e sem internet.
 
-**Opção 2 — servidor local** (recomendado para uso em rede)
+**Opção 2 — abrir os fontes**
+Dê dois cliques em `index.html` (usa as pastas `css/` e `js/`).
+
+**Opção 3 — servidor local** (recomendado para uso em rede)
 
 ```bash
 cd sattrack-plus
@@ -32,8 +37,9 @@ python3 -m http.server 8080
 # acesse http://localhost:8080
 ```
 
-**Opção 3 — publicar**
-Suba a pasta `sattrack-plus/` em qualquer hospedagem de sites estáticos
+**Opção 4 — publicar**
+Suba a pasta `sattrack-plus/` (ou só o `sattrack-plus.html`) em qualquer
+hospedagem de sites estáticos
 (Vercel, Netlify, GitHub Pages, IIS, Apache, Nginx).
 
 ### Acessos de demonstração
@@ -186,6 +192,8 @@ precisa mudar, porque só conversa com esse arquivo.
 
 ```
 sattrack-plus/
+├── sattrack-plus.html    ARQUIVO ÚNICO pronto para usar (gerado)
+├── build.mjs             gera o arquivo único a partir dos fontes
 ├── index.html            estrutura da página, login e painéis
 ├── favicon.svg
 ├── css/
@@ -201,7 +209,16 @@ sattrack-plus/
     └── app.js            menu, rotas, indicadores e busca
 ```
 
-Sem dependências externas, sem build, sem instalação.
+Sem dependências externas e sem instalação.
+
+Ao mexer em qualquer fonte, regenere o arquivo único:
+
+```bash
+node build.mjs
+```
+
+Ele junta o CSS e os oito scripts dentro do HTML, embute o ícone e confere que
+nada ficou apontando para arquivo externo.
 
 ---
 

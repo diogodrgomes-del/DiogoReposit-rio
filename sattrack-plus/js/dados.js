@@ -89,17 +89,39 @@ const Dados = (() => {
   const aoMudar = (fn) => ouvintes.push(fn);
   const notificar = () => ouvintes.forEach((fn) => fn());
 
+  /** Alguns navegadores bloqueiam o armazenamento (aba anônima, arquivo
+      aberto direto do disco com restrição, política do sistema). Nesse caso
+      o sistema continua funcionando na memória e avisa uma única vez. */
+  let semArmazenamento = false;
+  const armazenamentoIndisponivel = () => semArmazenamento;
+
+  function ehCotaCheia(e) {
+    return e && (e.name === "QuotaExceededError" || e.name === "NS_ERROR_DOM_QUOTA_REACHED" || e.code === 22);
+  }
+
   function salvar() {
     try {
       localStorage.setItem(CHAVE, JSON.stringify(estado));
       return true;
     } catch (e) {
-      // Cota estourada normalmente é anexo grande demais.
-      console.error("Falha ao salvar", e);
-      throw new Error(
-        "Não foi possível salvar: o armazenamento do navegador está cheio. " +
-        "Remova anexos antigos e tente de novo."
-      );
+      if (ehCotaCheia(e)) {
+        // Cota estourada normalmente é anexo grande demais.
+        throw new Error(
+          "Não foi possível salvar: o armazenamento do navegador está cheio. " +
+          "Remova anexos antigos e tente de novo."
+        );
+      }
+      // Armazenamento indisponível: nada de travar o trabalho da equipe.
+      console.error("Armazenamento indisponível; trabalhando apenas na memória.", e);
+      if (!semArmazenamento) {
+        semArmazenamento = true;
+        setTimeout(() => {
+          if (typeof UI !== "undefined") {
+            UI.erro("Este navegador está bloqueando o armazenamento local. O trabalho continua, mas os dados se perdem ao fechar a página. Use um servidor local ou saia da janela anônima.");
+          }
+        }, 400);
+      }
+      return false;
     }
   }
 
@@ -952,7 +974,7 @@ const Dados = (() => {
   return {
     STATUS, PRIORIDADES, TIPOS, CLASSIFICACOES, TIPOS_ACOMPANHAMENTO, PERFIS,
     nomeStatus, nomePrioridade, corStatus, nomePerfil,
-    carregar, salvar, aoMudar,
+    carregar, salvar, aoMudar, armazenamentoIndisponivel,
     entrar, sair, usuarioAtual, ehAdmin, listaUsuarios, salvarUsuario, excluirUsuario,
     lista, obter, porStatus, proximoNumeroSinistro, proximoProtocolo,
     ultimaAtualizacao, ultimoContatoAssociado,

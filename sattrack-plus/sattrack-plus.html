@@ -1,0 +1,4313 @@
+<!--
+  SatTrack Plus — Controle de Sinistros · Setor Plus
+  Arquivo único gerado por build.mjs a partir dos fontes em sattrack-plus/.
+  Não edite este arquivo à mão: altere os fontes e rode "node build.mjs".
+-->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SatTrack Plus — Controle de Sinistros</title>
+<meta name="description" content="Controle interno dos sinistros do Setor Plus da SatTrack Proteção Veicular." />
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiMwZDJjNGUiLz4KICA8cGF0aCBkPSJNMzIgMTAgTDUyIDE5IHYxNGMwIDEyLTggMTktMjAgMjMtMTItNC0yMC0xMS0yMC0yM1YxOXoiIGZpbGw9IiMyZjgwZDIiLz4KICA8cGF0aCBkPSJNMjIgMzMgbDcgNyAxNC0xNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" type="image/svg+xml" />
+<style>
+/* ==================================================================
+   SatTrack Plus — Controle de Sinistros
+   Identidade: fundo branco, azul-escuro e azul-claro na navegação,
+   verde para confirmar, vermelho para urgência, cinza-claro para
+   divisórias e apoio.
+   ================================================================== */
+
+:root {
+  --azul-escuro: #0d2c4e;
+  --azul-medio: #14477a;
+  --azul-claro: #2f80d2;
+  --azul-suave: #eaf2fb;
+  --verde: #148f4b;
+  --verde-escuro: #0f7a3f;
+  --verde-suave: #e6f5ec;
+  --vermelho: #c62828;
+  --vermelho-suave: #fdecea;
+  --amarelo: #b97e04;
+  --amarelo-suave: #fdf3dd;
+  --cinza-borda: #e2e7ee;
+  --cinza-fundo: #f5f7fa;
+  --cinza-texto: #61708a;
+  --texto: #1b2536;
+  --branco: #ffffff;
+
+  --raio: 10px;
+  --raio-g: 14px;
+  --sombra: 0 1px 2px rgba(13, 44, 78, .06), 0 4px 14px rgba(13, 44, 78, .06);
+  --sombra-forte: 0 10px 40px rgba(13, 44, 78, .18);
+  --lateral-larg: 246px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--cinza-fundo);
+  color: var(--texto);
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-text-size-adjust: 100%;
+}
+
+h1, h2, h3, h4 { margin: 0; color: var(--azul-escuro); font-weight: 700; letter-spacing: -.01em; }
+p { margin: 0; }
+button, input, select, textarea { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+
+/* ------------------------------------------------------------------ */
+/* Botões                                                              */
+/* ------------------------------------------------------------------ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 15px;
+  border: 1px solid transparent;
+  border-radius: var(--raio);
+  background: var(--azul-medio);
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: filter .15s, background .15s, border-color .15s;
+}
+a.btn { text-decoration: none; }
+.btn:hover { filter: brightness(1.08); }
+.btn:active { filter: brightness(.94); }
+.btn:focus-visible { outline: 3px solid var(--azul-claro); outline-offset: 2px; }
+.btn[disabled] { opacity: .5; cursor: not-allowed; filter: none; }
+
+.btn-verde { background: var(--verde); }
+.btn-vermelho { background: var(--vermelho); }
+.btn-azul-claro { background: var(--azul-claro); }
+.btn-vazio { background: #fff; color: var(--azul-escuro); border-color: var(--cinza-borda); }
+.btn-vazio:hover { background: var(--azul-suave); }
+.btn-perigo-vazio { background: #fff; color: var(--vermelho); border-color: #f0c6c2; }
+.btn-perigo-vazio:hover { background: var(--vermelho-suave); }
+.btn-bloco { width: 100%; }
+.btn-pequeno { padding: 6px 11px; font-size: 13px; }
+
+.icone-btn {
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  padding: 6px 9px;
+  font-size: 16px;
+  line-height: 1;
+  color: inherit;
+  cursor: pointer;
+}
+.icone-btn:hover { background: rgba(13, 44, 78, .08); }
+
+.link {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--azul-claro);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* ------------------------------------------------------------------ */
+/* Login                                                               */
+/* ------------------------------------------------------------------ */
+.login {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(1100px 520px at 12% -10%, #17538e 0%, transparent 60%),
+    linear-gradient(160deg, var(--azul-escuro), #071c33);
+}
+.login-caixa {
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+  border-radius: var(--raio-g);
+  padding: 28px;
+  box-shadow: var(--sombra-forte);
+  display: grid;
+  gap: 14px;
+}
+.login-marca { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+.login-marca strong { display: block; color: var(--azul-escuro); font-size: 18px; }
+.login-marca small { color: var(--cinza-texto); }
+.login-erro {
+  background: var(--vermelho-suave);
+  color: var(--vermelho);
+  border: 1px solid #f2cbc7;
+  border-radius: var(--raio);
+  padding: 8px 11px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.login-dica { color: var(--cinza-texto); font-size: 12.5px; text-align: center; }
+
+.marca-simbolo {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border-radius: 11px;
+  background: linear-gradient(140deg, var(--azul-claro), var(--azul-escuro));
+  color: #fff;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: .5px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Estrutura                                                           */
+/* ------------------------------------------------------------------ */
+.app { display: flex; min-height: 100vh; }
+
+.lateral {
+  width: var(--lateral-larg);
+  flex: 0 0 var(--lateral-larg);
+  background: var(--azul-escuro);
+  color: #cfe0f2;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: 40;
+}
+.lateral-topo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, .12);
+}
+.lateral-marca { flex: 1; min-width: 0; }
+.lateral-marca strong { color: #fff; font-size: 15px; display: block; }
+.lateral-marca small { color: #9fbcdc; font-size: 11.5px; }
+.lateral-topo .icone-btn { color: #fff; }
+
+.menu { flex: 1; overflow-y: auto; padding: 10px 8px; display: grid; gap: 2px; align-content: start; }
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 11px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #cfe0f2;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+.menu-item:hover { background: rgba(255, 255, 255, .09); color: #fff; }
+.menu-item.ativo { background: var(--azul-claro); color: #fff; font-weight: 600; }
+.menu-item .menu-icone { width: 18px; text-align: center; opacity: .95; }
+.menu-item .selo {
+  margin-left: auto;
+  background: rgba(255, 255, 255, .18);
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.menu-item.ativo .selo { background: rgba(0, 0, 0, .22); }
+.menu-item .selo.selo-vermelho { background: var(--vermelho); color: #fff; }
+.menu-titulo {
+  padding: 14px 12px 4px;
+  font-size: 10.5px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #7fa3ca;
+  font-weight: 700;
+}
+
+.lateral-rodape { padding: 12px; border-top: 1px solid rgba(255, 255, 255, .12); display: grid; gap: 10px; }
+.usuario-box { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.usuario-box strong { color: #fff; font-size: 13.5px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.usuario-box small { color: #9fbcdc; font-size: 11.5px; }
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border-radius: 50%;
+  background: var(--azul-claro);
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+}
+.lateral-rodape .btn-vazio { background: transparent; color: #cfe0f2; border-color: rgba(255, 255, 255, .25); }
+.lateral-rodape .btn-vazio:hover { background: rgba(255, 255, 255, .12); color: #fff; }
+
+.lateral-fundo { position: fixed; inset: 0; background: rgba(6, 20, 36, .5); z-index: 35; }
+
+.principal { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+/* Topo ------------------------------------------------------------- */
+.topo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  background: #fff;
+  border-bottom: 1px solid var(--cinza-borda);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  flex-wrap: wrap;
+}
+.topo-titulo { min-width: 180px; flex: 1; }
+.topo-titulo h1 { font-size: 19px; }
+.topo-titulo p { color: var(--cinza-texto); font-size: 12.5px; }
+.topo-acoes { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.busca {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--cinza-fundo);
+  border: 1px solid var(--cinza-borda);
+  border-radius: var(--raio);
+  padding: 0 10px;
+  min-width: 280px;
+  flex: 1;
+}
+.busca input { border: 0; background: transparent; padding: 9px 0; width: 100%; outline: none; font-size: 14px; }
+.busca:focus-within { border-color: var(--azul-claro); box-shadow: 0 0 0 3px rgba(47, 128, 210, .15); }
+
+/* Indicadores ------------------------------------------------------- */
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+  gap: 10px;
+  padding: 14px 20px 0;
+}
+.indicador {
+  background: #fff;
+  border: 1px solid var(--cinza-borda);
+  border-left: 4px solid var(--azul-claro);
+  border-radius: var(--raio);
+  padding: 8px 11px;
+  box-shadow: var(--sombra);
+}
+.indicador span { display: block; color: var(--cinza-texto); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
+.indicador strong { display: block; font-size: 21px; color: var(--azul-escuro); line-height: 1.25; }
+.indicador small { color: var(--cinza-texto); font-size: 11.5px; }
+.indicador.vermelho { border-left-color: var(--vermelho); }
+.indicador.vermelho strong { color: var(--vermelho); }
+.indicador.verde { border-left-color: var(--verde); }
+.indicador.verde strong { color: var(--verde-escuro); }
+.indicador.amarelo { border-left-color: var(--amarelo); }
+.indicador.amarelo strong { color: var(--amarelo); }
+
+.conteudo { padding: 16px 20px 28px; flex: 1; min-width: 0; }
+
+/* ------------------------------------------------------------------ */
+/* Blocos genéricos                                                    */
+/* ------------------------------------------------------------------ */
+.cartao {
+  background: #fff;
+  border: 1px solid var(--cinza-borda);
+  border-radius: var(--raio-g);
+  box-shadow: var(--sombra);
+  padding: 16px;
+}
+.cartao + .cartao { margin-top: 14px; }
+.cartao-topo { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.cartao-topo h2 { font-size: 15.5px; }
+.cartao-topo p { color: var(--cinza-texto); font-size: 12.5px; }
+
+.grade-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+.grade-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+
+.vazio {
+  text-align: center;
+  color: var(--cinza-texto);
+  padding: 26px 14px;
+  border: 1px dashed var(--cinza-borda);
+  border-radius: var(--raio);
+  background: var(--cinza-fundo);
+  font-size: 13.5px;
+}
+
+/* Filtros ----------------------------------------------------------- */
+.filtros-barra { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.filtros-resumo { color: var(--cinza-texto); font-size: 12.5px; }
+.selo-num {
+  background: var(--azul-claro);
+  color: #fff;
+  border-radius: 999px;
+  padding: 0 7px;
+  font-size: 11.5px;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-end;
+  background: #fff;
+  border: 1px solid var(--cinza-borda);
+  border-radius: var(--raio-g);
+  padding: 12px;
+  margin-bottom: 14px;
+  box-shadow: var(--sombra);
+}
+.filtro { display: grid; gap: 3px; }
+.filtro span { font-size: 11.5px; font-weight: 700; color: var(--cinza-texto); text-transform: uppercase; letter-spacing: .04em; }
+.filtro select, .filtro input {
+  border: 1px solid var(--cinza-borda);
+  border-radius: 8px;
+  padding: 7px 9px;
+  background: #fff;
+  min-width: 140px;
+  font-size: 13.5px;
+}
+.filtro select:focus, .filtro input:focus { outline: none; border-color: var(--azul-claro); box-shadow: 0 0 0 3px rgba(47, 128, 210, .15); }
+.filtros-marcas { display: flex; flex-wrap: wrap; gap: 6px; }
+.marca-filtro {
+  border: 1px solid var(--cinza-borda);
+  background: #fff;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--cinza-texto);
+  cursor: pointer;
+}
+.marca-filtro:hover { border-color: var(--azul-claro); color: var(--azul-medio); }
+.marca-filtro.ativo { background: var(--azul-suave); border-color: var(--azul-claro); color: var(--azul-medio); }
+
+/* ------------------------------------------------------------------ */
+/* Kanban                                                              */
+/* ------------------------------------------------------------------ */
+.quadro {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(268px, 1fr));
+  gap: 12px;
+  align-items: start;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+.coluna {
+  background: var(--cinza-fundo);
+  border: 1px solid var(--cinza-borda);
+  border-radius: var(--raio-g);
+  display: flex;
+  flex-direction: column;
+  min-height: 220px;
+  max-height: calc(100vh - 250px);
+}
+.coluna-topo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--cinza-borda);
+  border-top: 3px solid var(--azul-claro);
+  border-radius: var(--raio-g) var(--raio-g) 0 0;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.coluna-topo h3 { font-size: 13.5px; }
+.coluna-topo .contador {
+  margin-left: auto;
+  background: var(--azul-suave);
+  color: var(--azul-medio);
+  border-radius: 999px;
+  padding: 1px 9px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.coluna[data-status="entrou"] .coluna-topo { border-top-color: var(--azul-claro); }
+.coluna[data-status="urgente"] .coluna-topo { border-top-color: var(--vermelho); }
+.coluna[data-status="urgente"] .contador { background: var(--vermelho-suave); color: var(--vermelho); }
+.coluna[data-status="resolvendo"] .coluna-topo { border-top-color: var(--amarelo); }
+.coluna[data-status="resolvendo"] .contador { background: var(--amarelo-suave); color: var(--amarelo); }
+.coluna[data-status="concluido"] .coluna-topo { border-top-color: var(--verde); }
+.coluna[data-status="concluido"] .contador { background: var(--verde-suave); color: var(--verde-escuro); }
+
+.coluna-lista { padding: 10px; display: grid; gap: 10px; align-content: start; overflow-y: auto; flex: 1; }
+.coluna-lista.recebendo { background: var(--azul-suave); outline: 2px dashed var(--azul-claro); outline-offset: -6px; border-radius: 0 0 var(--raio-g) var(--raio-g); }
+
+/* Card -------------------------------------------------------------- */
+.card {
+  background: #fff;
+  border: 1px solid var(--cinza-borda);
+  border-left: 4px solid var(--azul-claro);
+  border-radius: var(--raio);
+  padding: 11px 12px;
+  box-shadow: var(--sombra);
+  cursor: pointer;
+  position: relative;
+}
+.card:hover { border-color: var(--azul-claro); box-shadow: 0 4px 16px rgba(13, 44, 78, .12); }
+.card.arrastando { opacity: .45; }
+.card.prioridade-normal { border-left-color: var(--verde); }
+.card.prioridade-atencao { border-left-color: var(--amarelo); }
+.card.prioridade-urgente { border-left-color: var(--vermelho); background: #fffafa; }
+.card.concluido { opacity: .92; }
+
+.card-topo { display: flex; align-items: flex-start; gap: 8px; }
+.card-nome { font-weight: 700; color: var(--azul-escuro); font-size: 14px; flex: 1; word-break: break-word; }
+.card-numero { color: var(--cinza-texto); font-size: 11.5px; font-weight: 600; }
+.card-linha { display: flex; flex-wrap: wrap; gap: 5px 10px; font-size: 12.5px; color: var(--cinza-texto); margin-top: 6px; }
+.card-linha b { color: var(--texto); font-weight: 600; }
+.card-veiculo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  background: var(--cinza-fundo);
+  border: 1px solid var(--cinza-borda);
+  border-radius: 7px;
+  padding: 4px 8px;
+  font-size: 12.5px;
+}
+.placa {
+  font-family: "Roboto Mono", ui-monospace, Consolas, monospace;
+  font-weight: 700;
+  letter-spacing: .06em;
+  background: var(--azul-escuro);
+  color: #fff;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 11.5px;
+}
+.card-rodape {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 9px;
+  padding-top: 8px;
+  border-top: 1px solid var(--cinza-borda);
+  flex-wrap: wrap;
+}
+.card-tempo { color: var(--cinza-texto); font-size: 11.5px; margin-left: auto; }
+.card-mover { display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
+
+/* Etiquetas --------------------------------------------------------- */
+.etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 999px;
+  padding: 2px 9px;
+  font-size: 11.5px;
+  font-weight: 700;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.etiqueta.normal { background: var(--verde-suave); color: var(--verde-escuro); border-color: #c3e7d2; }
+.etiqueta.atencao { background: var(--amarelo-suave); color: var(--amarelo); border-color: #f0dcae; }
+.etiqueta.urgente { background: var(--vermelho-suave); color: var(--vermelho); border-color: #f2cbc7; }
+.etiqueta.azul { background: var(--azul-suave); color: var(--azul-medio); border-color: #c9dcf3; }
+.etiqueta.cinza { background: var(--cinza-fundo); color: var(--cinza-texto); border-color: var(--cinza-borda); }
+.etiqueta.verde { background: var(--verde-suave); color: var(--verde-escuro); border-color: #c3e7d2; }
+.etiqueta.vermelha { background: var(--vermelho-suave); color: var(--vermelho); border-color: #f2cbc7; }
+.etiqueta.amarela { background: var(--amarelo-suave); color: var(--amarelo); border-color: #f0dcae; }
+.etiqueta.pulsa { animation: pulsa 1.9s ease-in-out infinite; }
+@keyframes pulsa { 0%, 100% { opacity: 1; } 50% { opacity: .62; } }
+
+.alertas-card { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.alerta-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--vermelho-suave);
+  color: var(--vermelho);
+  border: 1px solid #f2cbc7;
+  border-radius: 6px;
+  padding: 1px 7px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.alerta-mini.aviso { background: var(--amarelo-suave); color: var(--amarelo); border-color: #f0dcae; }
+
+/* ------------------------------------------------------------------ */
+/* Tabelas                                                             */
+/* ------------------------------------------------------------------ */
+.tabela-rolagem { overflow-x: auto; }
+table.tabela { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+table.tabela th, table.tabela td { padding: 9px 10px; text-align: left; border-bottom: 1px solid var(--cinza-borda); vertical-align: top; }
+table.tabela th {
+  color: var(--cinza-texto);
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  background: var(--cinza-fundo);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+table.tabela tbody tr:hover { background: var(--azul-suave); }
+table.tabela tbody tr.clicavel { cursor: pointer; }
+table.tabela td.num, table.tabela th.num { text-align: right; }
+table.tabela td.num { font-variant-numeric: tabular-nums; }
+
+.barra-medida { background: var(--cinza-borda); border-radius: 999px; height: 8px; overflow: hidden; min-width: 90px; }
+.barra-medida i { display: block; height: 100%; background: var(--azul-claro); border-radius: 999px; }
+
+/* ------------------------------------------------------------------ */
+/* Formulários                                                         */
+/* ------------------------------------------------------------------ */
+.campo { display: grid; gap: 4px; }
+.campo > span { font-size: 12.5px; font-weight: 600; color: var(--azul-escuro); }
+.campo > span .obrig { color: var(--vermelho); }
+.campo input, .campo select, .campo textarea {
+  border: 1px solid var(--cinza-borda);
+  border-radius: 8px;
+  padding: 9px 10px;
+  background: #fff;
+  width: 100%;
+  font-size: 14px;
+}
+.campo textarea { min-height: 84px; resize: vertical; }
+.campo input:focus, .campo select:focus, .campo textarea:focus {
+  outline: none;
+  border-color: var(--azul-claro);
+  box-shadow: 0 0 0 3px rgba(47, 128, 210, .15);
+}
+.campo input.erro, .campo select.erro { border-color: var(--vermelho); background: #fffafa; }
+.campo .aviso-campo { color: var(--vermelho); font-size: 11.5px; font-weight: 600; }
+.campo-linha { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.campo-largo { grid-column: 1 / -1; }
+.campo-check { display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; color: var(--azul-escuro); }
+.campo-check input { width: auto; }
+
+fieldset.secao {
+  border: 1px solid var(--cinza-borda);
+  border-radius: var(--raio-g);
+  padding: 14px;
+  margin: 0 0 14px;
+  background: #fff;
+}
+fieldset.secao > legend {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--azul-claro);
+  padding: 0 6px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Gaveta lateral                                                      */
+/* ------------------------------------------------------------------ */
+.gaveta-fundo { position: fixed; inset: 0; background: rgba(6, 20, 36, .45); z-index: 50; }
+.gaveta {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: min(720px, 100vw);
+  background: var(--cinza-fundo);
+  z-index: 51;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--sombra-forte);
+}
+.gaveta-topo {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--azul-escuro);
+  color: #fff;
+}
+.gaveta-topo h2 { color: #fff; font-size: 16.5px; }
+.gaveta-topo p { color: #9fbcdc; font-size: 12.5px; }
+.gaveta-topo .icone-btn { color: #fff; margin-left: auto; }
+.gaveta-corpo { flex: 1; overflow-y: auto; padding: 16px; }
+.gaveta-rodape {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #fff;
+  border-top: 1px solid var(--cinza-borda);
+  flex-wrap: wrap;
+}
+.gaveta-rodape .direita { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Abas -------------------------------------------------------------- */
+.abas { display: flex; gap: 4px; border-bottom: 2px solid var(--cinza-borda); margin-bottom: 14px; overflow-x: auto; }
+.aba {
+  border: 0;
+  background: transparent;
+  padding: 9px 13px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--cinza-texto);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  white-space: nowrap;
+}
+.aba:hover { color: var(--azul-medio); }
+.aba.ativa { color: var(--azul-escuro); border-bottom-color: var(--azul-claro); }
+
+/* Dados exibidos ---------------------------------------------------- */
+.dados-grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px 14px; }
+.dado span { display: block; font-size: 11.5px; color: var(--cinza-texto); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.dado strong { font-weight: 600; color: var(--texto); word-break: break-word; }
+
+/* Linha do tempo ---------------------------------------------------- */
+.linha-tempo { display: grid; gap: 10px; }
+.evento {
+  position: relative;
+  background: #fff;
+  border: 1px solid var(--cinza-borda);
+  border-left: 3px solid var(--azul-claro);
+  border-radius: var(--raio);
+  padding: 10px 12px;
+}
+.evento-topo { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 4px; }
+.evento-topo strong { font-size: 13.5px; color: var(--azul-escuro); }
+.evento-quando { color: var(--cinza-texto); font-size: 11.5px; margin-left: auto; }
+.evento p { font-size: 13.5px; }
+.evento .detalhe { color: var(--cinza-texto); font-size: 12.5px; margin-top: 4px; }
+.evento.historico { border-left-color: var(--cinza-borda); background: #fff; }
+.evento.contato { border-left-color: var(--verde); }
+
+/* Anexos ------------------------------------------------------------ */
+.anexos { display: grid; gap: 8px; }
+.anexo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid var(--cinza-borda);
+  border-radius: var(--raio);
+  padding: 8px 10px;
+}
+.anexo img { width: 42px; height: 42px; object-fit: cover; border-radius: 6px; border: 1px solid var(--cinza-borda); }
+.anexo .anexo-icone {
+  width: 42px; height: 42px; flex: 0 0 42px;
+  display: grid; place-items: center;
+  background: var(--azul-suave); color: var(--azul-medio);
+  border-radius: 6px; font-size: 18px;
+}
+.anexo-info { flex: 1; min-width: 0; }
+.anexo-info strong { display: block; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.anexo-info small { color: var(--cinza-texto); font-size: 11.5px; }
+
+/* ------------------------------------------------------------------ */
+/* Modal e avisos                                                      */
+/* ------------------------------------------------------------------ */
+.modal-fundo { position: fixed; inset: 0; background: rgba(6, 20, 36, .5); display: grid; place-items: center; z-index: 60; padding: 20px; }
+.modal { background: #fff; border-radius: var(--raio-g); padding: 20px; width: min(430px, 100%); box-shadow: var(--sombra-forte); }
+.modal h3 { font-size: 16.5px; margin-bottom: 8px; }
+.modal p { color: var(--cinza-texto); font-size: 14px; }
+.modal-acoes { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+
+.avisos { position: fixed; right: 16px; bottom: 16px; display: grid; gap: 8px; z-index: 70; max-width: min(360px, calc(100vw - 32px)); }
+.aviso {
+  background: var(--azul-escuro);
+  color: #fff;
+  border-radius: var(--raio);
+  padding: 11px 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+  box-shadow: var(--sombra-forte);
+  animation: entra .18s ease-out;
+}
+.aviso.sucesso { background: var(--verde); }
+.aviso.erro { background: var(--vermelho); }
+.aviso.alerta { background: var(--amarelo); }
+@keyframes entra { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* ------------------------------------------------------------------ */
+/* Responsivo                                                          */
+/* ------------------------------------------------------------------ */
+.so-mobile { display: none; }
+
+@media (max-width: 1100px) {
+  .quadro { grid-template-columns: repeat(4, minmax(252px, 1fr)); }
+}
+
+@media (max-width: 900px) {
+  .so-mobile { display: inline-flex; }
+  .lateral {
+    position: fixed;
+    left: 0;
+    top: 0;
+    transform: translateX(-100%);
+    transition: transform .2s ease-out;
+  }
+  .lateral.aberta { transform: none; }
+  .topo { padding: 12px 14px; }
+  .topo-titulo h1 { font-size: 17px; }
+  .busca { min-width: 100%; order: 3; }
+  /* No celular os indicadores viram uma faixa que rola para o lado, para
+     o quadro Kanban continuar visível sem precisar rolar a página. */
+  .indicadores {
+    display: flex;
+    padding: 12px 14px 0;
+    gap: 8px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+  .indicadores .indicador { flex: 0 0 auto; min-width: 152px; scroll-snap-align: start; }
+  .conteudo { padding: 14px; }
+  .quadro { grid-template-columns: 1fr; overflow-x: visible; }
+  .coluna { max-height: none; }
+  .gaveta { width: 100vw; }
+  .card-mover { display: flex; }
+}
+
+@media (min-width: 901px) {
+  /* Em telas grandes o arrastar-e-soltar basta; os botões ficam ocultos
+     para não poluir o card, e reaparecem no toque. */
+  .card-mover { display: none; }
+  .card:hover .card-mover, .card:focus-within .card-mover { display: flex; }
+}
+
+@media (max-width: 520px) {
+  .topo-acoes { width: 100%; }
+  .topo-acoes .btn { flex: 1; }
+  .gaveta-rodape { flex-direction: column; }
+  .gaveta-rodape .direita { margin-left: 0; flex-direction: column; }
+  .gaveta-rodape .btn { width: 100%; }
+}
+
+/* ------------------------------------------------------------------ */
+/* Impressão (relatórios em PDF)                                       */
+/* ------------------------------------------------------------------ */
+@media print {
+  .lateral, .topo-acoes, .indicadores, .filtros, .gaveta, .gaveta-fundo,
+  .modal-fundo, .avisos, .lateral-fundo, .nao-imprime { display: none !important; }
+  body, html { background: #fff; }
+  .app { display: block; }
+  .topo { position: static; border: 0; padding: 0 0 10px; }
+  .conteudo { padding: 0; }
+  .cartao { break-inside: avoid; box-shadow: none; border-color: #ccc; }
+  table.tabela th { background: #eee !important; }
+  @page { margin: 14mm; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ------------------------------------------------------------------ -->
+<!-- Tela de acesso                                                      -->
+<!-- ------------------------------------------------------------------ -->
+<div id="tela-login" class="login" hidden>
+  <form class="login-caixa" id="form-login" autocomplete="off">
+    <div class="login-marca">
+      <span class="marca-simbolo" aria-hidden="true">ST</span>
+      <div>
+        <strong>SatTrack Plus</strong>
+        <small>Controle de Sinistros — Setor Plus</small>
+      </div>
+    </div>
+
+    <label class="campo">
+      <span>Usuário</span>
+      <input name="usuario" required autocomplete="username" placeholder="ex.: fernanda" />
+    </label>
+
+    <label class="campo">
+      <span>Senha</span>
+      <input name="senha" type="password" required autocomplete="current-password" placeholder="••••••" />
+    </label>
+
+    <p class="login-erro" id="login-erro" hidden></p>
+
+    <button class="btn btn-verde btn-bloco" type="submit">Entrar</button>
+
+    <p class="login-dica">
+      Acesso de demonstração —
+      <button type="button" class="link" data-preencher="admin">administrador</button> ou
+      <button type="button" class="link" data-preencher="atendente">atendente</button>.
+    </p>
+  </form>
+</div>
+
+<!-- ------------------------------------------------------------------ -->
+<!-- Aplicação                                                           -->
+<!-- ------------------------------------------------------------------ -->
+<div id="app" class="app" hidden>
+
+  <!-- Menu lateral -->
+  <aside class="lateral" id="lateral">
+    <div class="lateral-topo">
+      <span class="marca-simbolo" aria-hidden="true">ST</span>
+      <div class="lateral-marca">
+        <strong>SatTrack Plus</strong>
+        <small>Controle de Sinistros</small>
+      </div>
+      <button class="icone-btn so-mobile" id="fechar-menu" aria-label="Fechar menu">✕</button>
+    </div>
+
+    <nav class="menu" id="menu" aria-label="Menu principal"></nav>
+
+    <div class="lateral-rodape">
+      <div class="usuario-box">
+        <span class="avatar" id="usuario-avatar">—</span>
+        <div>
+          <strong id="usuario-nome">—</strong>
+          <small id="usuario-perfil">—</small>
+        </div>
+      </div>
+      <button class="btn btn-vazio btn-bloco" id="btn-sair">Sair</button>
+    </div>
+  </aside>
+
+  <div class="lateral-fundo" id="lateral-fundo" hidden></div>
+
+  <!-- Conteúdo -->
+  <div class="principal">
+    <header class="topo">
+      <button class="icone-btn so-mobile" id="abrir-menu" aria-label="Abrir menu">☰</button>
+
+      <div class="topo-titulo">
+        <h1 id="titulo-pagina">Visão geral</h1>
+        <p id="subtitulo-pagina">Resumo dos sinistros do Setor Plus.</p>
+      </div>
+
+      <div class="topo-acoes">
+        <div class="busca">
+          <span aria-hidden="true">🔎</span>
+          <input id="busca" type="search" placeholder="Buscar por associado, sinistro, protocolo, CPF, WhatsApp, placa…" aria-label="Buscar sinistros" />
+          <button class="icone-btn" id="limpar-busca" aria-label="Limpar busca" hidden>✕</button>
+        </div>
+        <button class="btn btn-verde" id="btn-novo">+ Cadastrar sinistro</button>
+      </div>
+    </header>
+
+    <section class="indicadores" id="indicadores" aria-label="Indicadores do painel"></section>
+
+    <main class="conteudo" id="conteudo"></main>
+  </div>
+</div>
+
+<!-- Painel lateral (cadastro / detalhe) -->
+<div class="gaveta-fundo" id="gaveta-fundo" hidden></div>
+<aside class="gaveta" id="gaveta" hidden aria-label="Painel do sinistro">
+  <header class="gaveta-topo">
+    <div>
+      <h2 id="gaveta-titulo">Cadastrar sinistro</h2>
+      <p id="gaveta-subtitulo"></p>
+    </div>
+    <button class="icone-btn" id="gaveta-fechar" aria-label="Fechar painel">✕</button>
+  </header>
+  <div class="gaveta-corpo" id="gaveta-corpo"></div>
+  <footer class="gaveta-rodape" id="gaveta-rodape"></footer>
+</aside>
+
+<!-- Caixa de confirmação -->
+<div class="modal-fundo" id="modal-fundo" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+    <h3 id="modal-titulo">Confirmar</h3>
+    <p id="modal-texto"></p>
+    <div class="modal-acoes">
+      <button class="btn btn-vazio" id="modal-cancelar">Cancelar</button>
+      <button class="btn btn-verde" id="modal-confirmar">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<div class="avisos" id="avisos" aria-live="polite"></div>
+
+<script>
+/* ===== js/util.js ===== */
+/* ==================================================================
+   Util — formatação, máscaras e apoio geral.
+   Tudo em pt-BR: o sistema é usado por uma equipe brasileira.
+   ================================================================== */
+const Util = (() => {
+
+  /* ---------------------------------------------------------------- */
+  /* Identificadores                                                   */
+  /* ---------------------------------------------------------------- */
+  function id(prefixo) {
+    return (prefixo || "id") + "_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Datas e horários                                                  */
+  /* ---------------------------------------------------------------- */
+  const agora = () => new Date();
+  const agoraISO = () => new Date().toISOString();
+
+  /** "2026-08-04" no fuso local (input type=date). */
+  function dataLocal(d) {
+    const x = d || new Date();
+    const mes = String(x.getMonth() + 1).padStart(2, "0");
+    const dia = String(x.getDate()).padStart(2, "0");
+    return `${x.getFullYear()}-${mes}-${dia}`;
+  }
+
+  /** "16:20" no fuso local (input type=time). */
+  function horaLocal(d) {
+    const x = d || new Date();
+    return `${String(x.getHours()).padStart(2, "0")}:${String(x.getMinutes()).padStart(2, "0")}`;
+  }
+
+  /** Junta "2026-08-04" + "16:20" num Date local. */
+  function juntarDataHora(data, hora) {
+    if (!data) return null;
+    const [a, m, d] = data.split("-").map(Number);
+    const [h, min] = (hora || "00:00").split(":").map(Number);
+    const dt = new Date(a, (m || 1) - 1, d || 1, h || 0, min || 0, 0, 0);
+    return isNaN(dt.getTime()) ? null : dt;
+  }
+
+  function paraData(valor) {
+    if (!valor) return null;
+    const d = valor instanceof Date ? valor : new Date(valor);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  /** 04/08/2026 */
+  function fmtData(valor) {
+    if (!valor) return "—";
+    if (typeof valor === "string" && /^\d{4}-\d{2}-\d{2}$/.test(valor)) {
+      const [a, m, d] = valor.split("-");
+      return `${d}/${m}/${a}`;
+    }
+    const d = paraData(valor);
+    return d ? d.toLocaleDateString("pt-BR") : "—";
+  }
+
+  /** 16:20 */
+  function fmtHora(valor) {
+    if (!valor) return "—";
+    if (typeof valor === "string" && /^\d{2}:\d{2}/.test(valor)) return valor.slice(0, 5);
+    const d = paraData(valor);
+    return d ? horaLocal(d) : "—";
+  }
+
+  /** 04/08/2026 às 16h20 — formato usado no histórico. */
+  function fmtDataHora(valor) {
+    const d = paraData(valor);
+    if (!d) return "—";
+    return `${d.toLocaleDateString("pt-BR")} às ${String(d.getHours()).padStart(2, "0")}h${String(d.getMinutes()).padStart(2, "0")}`;
+  }
+
+  /** "20 minutos", "4 horas", "3 dias" — sem o prefixo. */
+  function duracao(ms) {
+    const min = Math.max(0, Math.floor(ms / 60000));
+    if (min < 1) return "menos de 1 minuto";
+    if (min < 60) return min === 1 ? "1 minuto" : `${min} minutos`;
+    const horas = Math.floor(min / 60);
+    if (horas < 24) return horas === 1 ? "1 hora" : `${horas} horas`;
+    const dias = Math.floor(horas / 24);
+    if (dias < 30) return dias === 1 ? "1 dia" : `${dias} dias`;
+    const meses = Math.floor(dias / 30);
+    return meses === 1 ? "1 mês" : `${meses} meses`;
+  }
+
+  /** "Aberto há 4 horas" a partir de uma data de referência. */
+  function tempoDesde(valor) {
+    const d = paraData(valor);
+    if (!d) return "—";
+    return duracao(Date.now() - d.getTime());
+  }
+
+  function horasDesde(valor) {
+    const d = paraData(valor);
+    if (!d) return Infinity;
+    return (Date.now() - d.getTime()) / 3600000;
+  }
+
+  function mesmoDia(a, b) {
+    const x = paraData(a), y = paraData(b);
+    if (!x || !y) return false;
+    return x.getFullYear() === y.getFullYear() && x.getMonth() === y.getMonth() && x.getDate() === y.getDate();
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Máscaras e normalizações                                          */
+  /* ---------------------------------------------------------------- */
+  const soNumeros = (v) => String(v || "").replace(/\D+/g, "");
+
+  /** (11) 98765-4321 — máscara brasileira, com 10 ou 11 dígitos. */
+  function mascaraTelefone(valor) {
+    const n = soNumeros(valor).slice(0, 11);
+    if (n.length <= 2) return n.length ? `(${n}` : "";
+    if (n.length <= 6) return `(${n.slice(0, 2)}) ${n.slice(2)}`;
+    if (n.length <= 10) return `(${n.slice(0, 2)}) ${n.slice(2, 6)}-${n.slice(6)}`;
+    return `(${n.slice(0, 2)}) ${n.slice(2, 7)}-${n.slice(7)}`;
+  }
+
+  /** 123.456.789-01 quando parecer CPF; caso contrário devolve como veio. */
+  function mascaraDocumento(valor) {
+    const bruto = String(valor || "");
+    const n = soNumeros(bruto);
+    if (n.length !== bruto.replace(/[.\-\/\s]/g, "").length) return bruto; // tem letras: outro documento
+    const c = n.slice(0, 11);
+    if (c.length <= 3) return c;
+    if (c.length <= 6) return `${c.slice(0, 3)}.${c.slice(3)}`;
+    if (c.length <= 9) return `${c.slice(0, 3)}.${c.slice(3, 6)}.${c.slice(6)}`;
+    return `${c.slice(0, 3)}.${c.slice(3, 6)}.${c.slice(6, 9)}-${c.slice(9)}`;
+  }
+
+  /** Placa sempre em maiúsculas: ABC1D23 / ABC-1234. */
+  function mascaraPlaca(valor) {
+    return String(valor || "").toUpperCase().replace(/[^A-Z0-9-]/g, "").slice(0, 8);
+  }
+
+  /** Texto sem acentos e em minúsculas — usado na busca. */
+  function normalizar(texto) {
+    return String(texto == null ? "" : texto)
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase().trim();
+  }
+
+  function inteiro(valor, minimo) {
+    const n = parseInt(soNumeros(valor), 10);
+    const piso = minimo == null ? 0 : minimo;
+    return isNaN(n) ? piso : Math.max(piso, n);
+  }
+
+  function tamanhoArquivo(bytes) {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1048576) return `${(bytes / 1024).toFixed(0)} KB`;
+    return `${(bytes / 1048576).toFixed(1)} MB`;
+  }
+
+  function iniciais(nome) {
+    const partes = String(nome || "?").trim().split(/\s+/).filter(Boolean);
+    if (!partes.length) return "?";
+    if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();
+    return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* HTML                                                              */
+  /* ---------------------------------------------------------------- */
+  /** Escapa tudo que vem do usuário antes de entrar em innerHTML. */
+  function esc(texto) {
+    return String(texto == null ? "" : texto)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  /** Valor de exibição: cai para "—" quando vazio. */
+  function ou(valor, alternativa) {
+    const v = valor == null ? "" : String(valor).trim();
+    return v === "" ? (alternativa || "—") : v;
+  }
+
+  function plural(n, singular, pluralPalavra) {
+    return `${n} ${n === 1 ? singular : pluralPalavra}`;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Exportação de arquivos                                            */
+  /* ---------------------------------------------------------------- */
+  function baixar(nomeArquivo, conteudo, mime) {
+    const blob = new Blob([conteudo], { type: (mime || "text/plain") + ";charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = nomeArquivo;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  }
+
+  /** CSV com ponto-e-vírgula e BOM: abre direto no Excel em pt-BR. */
+  function baixarCSV(nomeArquivo, linhas) {
+    const corpo = linhas
+      .map((linha) => linha.map((celula) => {
+        const v = celula == null ? "" : String(celula).replace(/"/g, '""');
+        return `"${v}"`;
+      }).join(";"))
+      .join("\r\n");
+    baixar(nomeArquivo, "﻿" + corpo, "text/csv");
+  }
+
+  return {
+    id, agora, agoraISO, dataLocal, horaLocal, juntarDataHora, paraData,
+    fmtData, fmtHora, fmtDataHora, duracao, tempoDesde, horasDesde, mesmoDia,
+    soNumeros, mascaraTelefone, mascaraDocumento, mascaraPlaca, normalizar,
+    inteiro, tamanhoArquivo, iniciais, esc, ou, plural, baixar, baixarCSV,
+  };
+})();
+
+/* ===== js/dados.js ===== */
+/* ==================================================================
+   Dados — modelo, persistência e regras do controle de sinistros.
+
+   Tudo fica no navegador (localStorage), sob uma única chave. É o que
+   garante que nada se perde ao atualizar a página: toda escrita passa
+   por salvar().
+   ================================================================== */
+const Dados = (() => {
+
+  const CHAVE = "sattrack.plus.sinistros.v1";
+
+  /* ---------------------------------------------------------------- */
+  /* Listas fixas do domínio                                           */
+  /* ---------------------------------------------------------------- */
+  const STATUS = [
+    { id: "entrou", nome: "Acabou de entrar", cor: "azul", descricao: "Registrados agora, aguardando análise ou direcionamento." },
+    { id: "urgente", nome: "Caso urgente", cor: "vermelha", descricao: "Graves ou que precisam de atendimento imediato." },
+    { id: "resolvendo", nome: "Resolvendo", cor: "amarela", descricao: "Em acompanhamento pela equipe responsável." },
+    { id: "concluido", nome: "Caso concluído", cor: "verde", descricao: "Finalizados, resolvidos ou encerrados." },
+  ];
+
+  const PRIORIDADES = [
+    { id: "normal", nome: "Normal", cor: "normal" },
+    { id: "atencao", nome: "Atenção", cor: "atencao" },
+    { id: "urgente", nome: "Urgente", cor: "urgente" },
+  ];
+
+  const TIPOS = [
+    "Colisão", "Roubo", "Furto", "Perda total", "Alagamento", "Incêndio",
+    "Capotamento", "Danos a terceiros", "Assistência emergencial", "Outro",
+  ];
+
+  const CLASSIFICACOES = [
+    "Em análise", "Dano parcial", "Perda total", "Danos a terceiros",
+    "Assistência", "Sem cobertura", "Recuperado", "Indenização",
+  ];
+
+  const TIPOS_ACOMPANHAMENTO = [
+    "Contato realizado com o associado",
+    "Documentação solicitada",
+    "Documentação recebida",
+    "Veículo encaminhado para oficina",
+    "Guincho solicitado",
+    "Vistoria solicitada",
+    "Vistoria realizada",
+    "Orçamento recebido",
+    "Análise em andamento",
+    "Pagamento autorizado",
+    "Reparo iniciado",
+    "Reparo concluído",
+    "Veículo entregue",
+    "Caso encerrado",
+    "Observação interna",
+  ];
+
+  const PERFIS = [
+    { id: "admin", nome: "Administrador" },
+    { id: "atendente", nome: "Atendente" },
+  ];
+
+  const CONFIG_PADRAO = {
+    empresa: "SatTrack Proteção Veicular",
+    setor: "Setor Plus",
+    horasUrgenteSemAtualizacao: 24,
+    horasSemAtualizacao: 48,
+    diasParado: 7,
+    diasSemContato: 5,
+    limiteAnexoMB: 2,
+  };
+
+  const nomeStatus = (id) => (STATUS.find((s) => s.id === id) || {}).nome || id || "—";
+  const nomePrioridade = (id) => (PRIORIDADES.find((p) => p.id === id) || {}).nome || id || "—";
+  const corStatus = (id) => (STATUS.find((s) => s.id === id) || {}).cor || "cinza";
+  const nomePerfil = (id) => (PERFIS.find((p) => p.id === id) || {}).nome || id;
+
+  /* ---------------------------------------------------------------- */
+  /* Estado em memória                                                 */
+  /* ---------------------------------------------------------------- */
+  let estado = {
+    versao: 1,
+    sinistros: [],
+    usuarios: [],
+    config: Object.assign({}, CONFIG_PADRAO),
+    sessao: null,
+    proximoNumero: 1,
+  };
+
+  const ouvintes = [];
+  const aoMudar = (fn) => ouvintes.push(fn);
+  const notificar = () => ouvintes.forEach((fn) => fn());
+
+  /** Alguns navegadores bloqueiam o armazenamento (aba anônima, arquivo
+      aberto direto do disco com restrição, política do sistema). Nesse caso
+      o sistema continua funcionando na memória e avisa uma única vez. */
+  let semArmazenamento = false;
+  const armazenamentoIndisponivel = () => semArmazenamento;
+
+  function ehCotaCheia(e) {
+    return e && (e.name === "QuotaExceededError" || e.name === "NS_ERROR_DOM_QUOTA_REACHED" || e.code === 22);
+  }
+
+  function salvar() {
+    try {
+      localStorage.setItem(CHAVE, JSON.stringify(estado));
+      return true;
+    } catch (e) {
+      if (ehCotaCheia(e)) {
+        // Cota estourada normalmente é anexo grande demais.
+        throw new Error(
+          "Não foi possível salvar: o armazenamento do navegador está cheio. " +
+          "Remova anexos antigos e tente de novo."
+        );
+      }
+      // Armazenamento indisponível: nada de travar o trabalho da equipe.
+      console.error("Armazenamento indisponível; trabalhando apenas na memória.", e);
+      if (!semArmazenamento) {
+        semArmazenamento = true;
+        setTimeout(() => {
+          if (typeof UI !== "undefined") {
+            UI.erro("Este navegador está bloqueando o armazenamento local. O trabalho continua, mas os dados se perdem ao fechar a página. Use um servidor local ou saia da janela anônima.");
+          }
+        }, 400);
+      }
+      return false;
+    }
+  }
+
+  function carregar() {
+    let bruto = null;
+    try { bruto = localStorage.getItem(CHAVE); } catch (e) { bruto = null; }
+
+    if (bruto) {
+      try {
+        const lido = JSON.parse(bruto);
+        estado = Object.assign(estado, lido);
+        estado.config = Object.assign({}, CONFIG_PADRAO, lido.config || {});
+        estado.sinistros = (lido.sinistros || []).map(normalizarSinistro);
+        if (!estado.usuarios || !estado.usuarios.length) estado.usuarios = usuariosPadrao();
+        return;
+      } catch (e) {
+        console.error("Base local corrompida; recriando com dados de demonstração.", e);
+      }
+    }
+
+    estado.usuarios = usuariosPadrao();
+    estado.sinistros = semente();
+    estado.proximoNumero = estado.sinistros.length + 1;
+    salvar();
+  }
+
+  /** Garante os campos novos em registros gravados por versões anteriores. */
+  function normalizarSinistro(s) {
+    return Object.assign({
+      acompanhamentos: [], historico: [], anexos: [], contatos: [],
+      documentosPendentes: false, vitimas: 0, veiculosEnvolvidos: 1,
+    }, s);
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Usuários e sessão                                                 */
+  /* ---------------------------------------------------------------- */
+  function usuariosPadrao() {
+    return [
+      { id: "u_admin", usuario: "admin", senha: "admin123", nome: "Diogo Gomes", perfil: "admin", ativo: true, criadoEm: Util.agoraISO() },
+      { id: "u_fernanda", usuario: "fernanda", senha: "1234", nome: "Fernanda Alves", perfil: "atendente", ativo: true, criadoEm: Util.agoraISO() },
+      { id: "u_carla", usuario: "carla", senha: "1234", nome: "Carla Menezes", perfil: "atendente", ativo: true, criadoEm: Util.agoraISO() },
+      { id: "u_rafael", usuario: "rafael", senha: "1234", nome: "Rafael Souza", perfil: "atendente", ativo: true, criadoEm: Util.agoraISO() },
+    ];
+  }
+
+  function entrar(usuario, senha) {
+    const achado = estado.usuarios.find(
+      (u) => Util.normalizar(u.usuario) === Util.normalizar(usuario) && u.senha === senha
+    );
+    if (!achado) return { ok: false, erro: "Usuário ou senha inválidos." };
+    if (!achado.ativo) return { ok: false, erro: "Usuário desativado. Procure um administrador." };
+    estado.sessao = { usuarioId: achado.id, desde: Util.agoraISO() };
+    salvar();
+    return { ok: true, usuario: achado };
+  }
+
+  function sair() {
+    estado.sessao = null;
+    salvar();
+  }
+
+  function usuarioAtual() {
+    if (!estado.sessao) return null;
+    return estado.usuarios.find((u) => u.id === estado.sessao.usuarioId) || null;
+  }
+
+  const ehAdmin = () => {
+    const u = usuarioAtual();
+    return !!u && u.perfil === "admin";
+  };
+
+  function listaUsuarios() { return estado.usuarios.slice(); }
+
+  function salvarUsuario(dados) {
+    if (!ehAdmin()) throw new Error("Somente administradores podem gerenciar usuários.");
+    const login = Util.normalizar(dados.usuario);
+    if (!login) throw new Error("Informe o nome de acesso.");
+    if (!String(dados.nome || "").trim()) throw new Error("Informe o nome completo.");
+
+    const repetido = estado.usuarios.some((u) => Util.normalizar(u.usuario) === login && u.id !== dados.id);
+    if (repetido) throw new Error("Já existe um usuário com esse nome de acesso.");
+
+    if (dados.id) {
+      const u = estado.usuarios.find((x) => x.id === dados.id);
+      if (!u) throw new Error("Usuário não encontrado.");
+      u.nome = dados.nome.trim();
+      u.usuario = dados.usuario.trim();
+      u.perfil = dados.perfil;
+      u.ativo = !!dados.ativo;
+      if (dados.senha) u.senha = dados.senha;
+    } else {
+      if (!dados.senha) throw new Error("Informe uma senha para o novo usuário.");
+      estado.usuarios.push({
+        id: Util.id("u"), usuario: dados.usuario.trim(), senha: dados.senha,
+        nome: dados.nome.trim(), perfil: dados.perfil || "atendente",
+        ativo: dados.ativo !== false, criadoEm: Util.agoraISO(),
+      });
+    }
+    salvar();
+    notificar();
+  }
+
+  function excluirUsuario(id) {
+    if (!ehAdmin()) throw new Error("Somente administradores podem excluir usuários.");
+    const atual = usuarioAtual();
+    if (atual && atual.id === id) throw new Error("Você não pode excluir o próprio usuário.");
+    estado.usuarios = estado.usuarios.filter((u) => u.id !== id);
+    salvar();
+    notificar();
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Histórico automático                                              */
+  /* ---------------------------------------------------------------- */
+  function registrar(sin, acao, detalhe, de, para) {
+    const u = usuarioAtual();
+    sin.historico = sin.historico || [];
+    sin.historico.push({
+      id: Util.id("h"),
+      criadoEm: Util.agoraISO(),
+      usuario: u ? u.nome : "Sistema",
+      acao,
+      detalhe: detalhe || "",
+      de: de || "",
+      para: para || "",
+    });
+    sin.atualizadoEm = Util.agoraISO();
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Sinistros — leitura                                               */
+  /* ---------------------------------------------------------------- */
+  const lista = () => estado.sinistros.slice();
+  const obter = (id) => estado.sinistros.find((s) => s.id === id) || null;
+  const porStatus = (status) => estado.sinistros.filter((s) => s.status === status);
+
+  function proximoNumeroSinistro() {
+    const ano = new Date().getFullYear();
+    const usados = estado.sinistros
+      .map((s) => parseInt(String(s.numero || "").split("-").pop(), 10))
+      .filter((n) => !isNaN(n));
+    const seq = (usados.length ? Math.max.apply(null, usados) : 0) + 1;
+    return `SIN-${ano}-${String(seq).padStart(4, "0")}`;
+  }
+
+  function proximoProtocolo() {
+    const ano = new Date().getFullYear();
+    return `PLUS-${ano}-${String(estado.sinistros.length + 1).padStart(4, "0")}`;
+  }
+
+  /** Última movimentação de verdade: acompanhamento, contato ou abertura. */
+  function ultimaAtualizacao(sin) {
+    const datas = [sin.criadoEm];
+    (sin.acompanhamentos || []).forEach((a) => datas.push(a.criadoEm));
+    (sin.contatos || []).forEach((c) => datas.push(c.criadoEm));
+    return datas.filter(Boolean).sort().pop();
+  }
+
+  function ultimoContatoAssociado(sin) {
+    const datas = (sin.contatos || [])
+      .filter((c) => c.tipo === "associado")
+      .map((c) => c.criadoEm)
+      .concat(
+        (sin.acompanhamentos || [])
+          .filter((a) => Util.normalizar(a.tipo).indexOf("contato realizado") === 0)
+          .map((a) => a.criadoEm)
+      );
+    return datas.filter(Boolean).sort().pop() || null;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Validação                                                         */
+  /* ---------------------------------------------------------------- */
+  const OBRIGATORIOS = [
+    ["associado", "Nome completo do associado"],
+    ["whatsapp", "Número do WhatsApp"],
+    ["placa", "Placa do veículo"],
+    ["numero", "Número do sinistro"],
+    ["dataIncidente", "Data do incidente"],
+    ["horaIncidente", "Horário do incidente"],
+    ["atendente", "Nome da atendente"],
+    ["responsavel", "Responsável pelo caso"],
+  ];
+
+  function validar(dados) {
+    const erros = {};
+    OBRIGATORIOS.forEach(([campo, rotulo]) => {
+      if (!String(dados[campo] || "").trim()) erros[campo] = `${rotulo} é obrigatório.`;
+    });
+    if (dados.whatsapp && Util.soNumeros(dados.whatsapp).length < 10) {
+      erros.whatsapp = "Informe DDD e número (10 ou 11 dígitos).";
+    }
+    if (dados.placa && Util.soNumeros(dados.placa).length + dados.placa.replace(/[^A-Za-z]/g, "").length < 7) {
+      erros.placa = "Placa incompleta.";
+    }
+    return erros;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Sinistros — escrita                                               */
+  /* ---------------------------------------------------------------- */
+  function limpar(dados) {
+    return {
+      // Registro
+      dataAtendimento: dados.dataAtendimento || Util.dataLocal(),
+      horaAtendimento: dados.horaAtendimento || Util.horaLocal(),
+      atendente: String(dados.atendente || "").trim(),
+      responsavel: String(dados.responsavel || "").trim(),
+      status: dados.status || "entrou",
+      prioridade: dados.prioridade || "normal",
+      // Associado
+      associado: String(dados.associado || "").trim(),
+      whatsapp: Util.mascaraTelefone(dados.whatsapp),
+      documento: String(dados.documento || "").trim(),
+      contrato: String(dados.contrato || "").trim(),
+      // Incidente
+      dataIncidente: dados.dataIncidente || "",
+      horaIncidente: dados.horaIncidente || "",
+      local: String(dados.local || "").trim(),
+      tipo: dados.tipo || "Colisão",
+      descricao: String(dados.descricao || "").trim(),
+      vitimas: Util.inteiro(dados.vitimas, 0),
+      veiculosEnvolvidos: Util.inteiro(dados.veiculosEnvolvidos, 0),
+      temBO: !!dados.temBO,
+      numeroBO: String(dados.numeroBO || "").trim(),
+      guincho: !!dados.guincho,
+      atendimentoMedico: !!dados.atendimentoMedico,
+      // Veículo
+      placa: Util.mascaraPlaca(dados.placa),
+      marca: String(dados.marca || "").trim(),
+      modelo: String(dados.modelo || "").trim(),
+      ano: String(dados.ano || "").trim(),
+      cor: String(dados.cor || "").trim(),
+      // Sinistro
+      numero: String(dados.numero || "").trim().toUpperCase(),
+      protocolo: String(dados.protocolo || "").trim().toUpperCase(),
+      classificacao: dados.classificacao || "Em análise",
+      prestador: String(dados.prestador || "").trim(),
+      observacoes: String(dados.observacoes || "").trim(),
+      // Prazos
+      proximaAcao: String(dados.proximaAcao || "").trim(),
+      prazoRetorno: dados.prazoRetorno || "",
+      documentosPendentes: !!dados.documentosPendentes,
+    };
+  }
+
+  function criar(dadosBrutos) {
+    const dados = limpar(dadosBrutos);
+    const erros = validar(dados);
+    if (Object.keys(erros).length) return { ok: false, erros };
+
+    if (estado.sinistros.some((s) => Util.normalizar(s.numero) === Util.normalizar(dados.numero))) {
+      return { ok: false, erros: { numero: "Já existe um sinistro com esse número." } };
+    }
+
+    const sin = Object.assign({
+      id: Util.id("sin"),
+      criadoEm: Util.agoraISO(),
+      atualizadoEm: Util.agoraISO(),
+      concluidoEm: dados.status === "concluido" ? Util.agoraISO() : null,
+      acompanhamentos: [], historico: [], anexos: [], contatos: [],
+    }, dados);
+
+    registrar(sin, "Sinistro cadastrado", `Aberto em ${nomeStatus(sin.status)} com prioridade ${nomePrioridade(sin.prioridade)}.`, "", nomeStatus(sin.status));
+    estado.sinistros.unshift(sin);
+    salvar();
+    notificar();
+    return { ok: true, sinistro: sin };
+  }
+
+  /** Atualiza e registra no histórico cada campo relevante que mudou. */
+  function atualizar(id, dadosBrutos) {
+    const sin = obter(id);
+    if (!sin) return { ok: false, erros: { geral: "Sinistro não encontrado." } };
+
+    const dados = limpar(dadosBrutos);
+    const erros = validar(dados);
+    if (Object.keys(erros).length) return { ok: false, erros };
+
+    const repetido = estado.sinistros.some(
+      (s) => s.id !== id && Util.normalizar(s.numero) === Util.normalizar(dados.numero)
+    );
+    if (repetido) return { ok: false, erros: { numero: "Já existe um sinistro com esse número." } };
+
+    const antes = Object.assign({}, sin);
+    Object.assign(sin, dados);
+
+    if (antes.status !== sin.status) {
+      registrar(sin, "Status alterado", `Sinistro movido de “${nomeStatus(antes.status)}” para “${nomeStatus(sin.status)}”.`, nomeStatus(antes.status), nomeStatus(sin.status));
+      sin.concluidoEm = sin.status === "concluido" ? Util.agoraISO() : null;
+    }
+    if (antes.prioridade !== sin.prioridade) {
+      registrar(sin, "Prioridade alterada", `Prioridade alterada de ${nomePrioridade(antes.prioridade)} para ${nomePrioridade(sin.prioridade)}.`, nomePrioridade(antes.prioridade), nomePrioridade(sin.prioridade));
+    }
+    if (antes.responsavel !== sin.responsavel) {
+      registrar(sin, "Responsável alterado", `Responsável alterado de ${Util.ou(antes.responsavel, "sem responsável")} para ${Util.ou(sin.responsavel, "sem responsável")}.`, antes.responsavel, sin.responsavel);
+    }
+    if (antes.atendente !== sin.atendente) {
+      registrar(sin, "Atendente alterada", `Atendimento alterado de ${Util.ou(antes.atendente, "não informada")} para ${Util.ou(sin.atendente, "não informada")}.`, antes.atendente, sin.atendente);
+    }
+    if (antes.observacoes !== sin.observacoes && sin.observacoes) {
+      registrar(sin, "Observação adicionada", "Observações internas atualizadas.");
+    }
+    if (antes.prazoRetorno !== sin.prazoRetorno) {
+      registrar(sin, "Prazo alterado", `Prazo de retorno definido para ${Util.ou(Util.fmtData(sin.prazoRetorno), "sem prazo")}.`, Util.fmtData(antes.prazoRetorno), Util.fmtData(sin.prazoRetorno));
+    }
+    if (antes.documentosPendentes !== sin.documentosPendentes) {
+      registrar(sin, "Documentação", sin.documentosPendentes ? "Marcado como aguardando documentos." : "Documentação regularizada.");
+    }
+
+    registrar(sin, "Cadastro editado", "Dados do sinistro atualizados.");
+    salvar();
+    notificar();
+    return { ok: true, sinistro: sin };
+  }
+
+  /** Movimentação entre colunas — sempre salva e sempre registra. */
+  function mover(id, novoStatus) {
+    const sin = obter(id);
+    if (!sin || sin.status === novoStatus) return null;
+
+    const de = sin.status;
+    sin.status = novoStatus;
+    if (novoStatus === "concluido") {
+      sin.concluidoEm = Util.agoraISO();
+    } else if (de === "concluido") {
+      sin.concluidoEm = null;
+      registrar(sin, "Caso reaberto", `Sinistro reaberto e movido para “${nomeStatus(novoStatus)}”.`, nomeStatus(de), nomeStatus(novoStatus));
+      salvar();
+      notificar();
+      return sin;
+    }
+    if (novoStatus === "urgente" && sin.prioridade !== "urgente") {
+      const antiga = sin.prioridade;
+      sin.prioridade = "urgente";
+      registrar(sin, "Prioridade alterada", `Prioridade alterada de ${nomePrioridade(antiga)} para Urgente ao entrar em “Caso urgente”.`, nomePrioridade(antiga), "Urgente");
+    }
+    registrar(sin, "Movimentação", `Sinistro movido de “${nomeStatus(de)}” para “${nomeStatus(novoStatus)}”.`, nomeStatus(de), nomeStatus(novoStatus));
+    salvar();
+    notificar();
+    return sin;
+  }
+
+  function alterarPrioridade(id, prioridade) {
+    const sin = obter(id);
+    if (!sin || sin.prioridade === prioridade) return null;
+    const de = sin.prioridade;
+    sin.prioridade = prioridade;
+    registrar(sin, "Prioridade alterada", `Prioridade alterada de ${nomePrioridade(de)} para ${nomePrioridade(prioridade)}.`, nomePrioridade(de), nomePrioridade(prioridade));
+    salvar();
+    notificar();
+    return sin;
+  }
+
+  function alterarPessoa(id, campo, valor) {
+    const sin = obter(id);
+    if (!sin) return null;
+    const de = sin[campo] || "";
+    if (de === valor) return sin;
+    sin[campo] = valor;
+    registrar(
+      sin,
+      campo === "responsavel" ? "Responsável alterado" : "Atendente alterada",
+      `${campo === "responsavel" ? "Responsável" : "Atendimento"} alterado de ${Util.ou(de, "não informado")} para ${Util.ou(valor, "não informado")}.`,
+      de, valor
+    );
+    salvar();
+    notificar();
+    return sin;
+  }
+
+  /** Só administradores excluem — e casos concluídos ficam preservados. */
+  function excluir(id) {
+    if (!ehAdmin()) throw new Error("Somente administradores podem excluir registros.");
+    const sin = obter(id);
+    if (!sin) throw new Error("Sinistro não encontrado.");
+    estado.sinistros = estado.sinistros.filter((s) => s.id !== id);
+    salvar();
+    notificar();
+    return sin;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Acompanhamento, contatos e anexos                                 */
+  /* ---------------------------------------------------------------- */
+  function adicionarAcompanhamento(id, dados) {
+    const sin = obter(id);
+    if (!sin) throw new Error("Sinistro não encontrado.");
+    if (!String(dados.descricao || "").trim()) throw new Error("Descreva a atualização.");
+
+    const u = usuarioAtual();
+    const registro = {
+      id: Util.id("acomp"),
+      criadoEm: Util.agoraISO(),
+      data: dados.data || Util.dataLocal(),
+      hora: dados.hora || Util.horaLocal(),
+      autor: String(dados.autor || (u ? u.nome : "")).trim() || "Equipe Plus",
+      tipo: dados.tipo || "Análise em andamento",
+      descricao: String(dados.descricao).trim(),
+      proximaAcao: String(dados.proximaAcao || "").trim(),
+      prazoRetorno: dados.prazoRetorno || "",
+    };
+    sin.acompanhamentos = sin.acompanhamentos || [];
+    sin.acompanhamentos.push(registro);
+
+    // A próxima ação e o prazo do caso acompanham a última atualização.
+    if (registro.proximaAcao) sin.proximaAcao = registro.proximaAcao;
+    if (registro.prazoRetorno) sin.prazoRetorno = registro.prazoRetorno;
+
+    registrar(sin, "Atualização registrada", `${registro.tipo} — ${registro.descricao}`);
+    salvar();
+    notificar();
+    return registro;
+  }
+
+  function removerAcompanhamento(id, acompId) {
+    const sin = obter(id);
+    if (!sin) return;
+    sin.acompanhamentos = (sin.acompanhamentos || []).filter((a) => a.id !== acompId);
+    registrar(sin, "Atualização removida", "Uma atualização do acompanhamento foi removida.");
+    salvar();
+    notificar();
+  }
+
+  function adicionarObservacao(id, texto) {
+    const sin = obter(id);
+    if (!sin) throw new Error("Sinistro não encontrado.");
+    const limpo = String(texto || "").trim();
+    if (!limpo) throw new Error("Escreva a observação.");
+    const u = usuarioAtual();
+    const carimbo = `[${Util.fmtDataHora(Util.agoraISO())} — ${u ? u.nome : "Equipe"}]`;
+    sin.observacoes = (sin.observacoes ? sin.observacoes + "\n\n" : "") + `${carimbo} ${limpo}`;
+    registrar(sin, "Observação adicionada", limpo);
+    salvar();
+    notificar();
+    return sin;
+  }
+
+  function adicionarContato(id, dados) {
+    const sin = obter(id);
+    if (!sin) throw new Error("Sinistro não encontrado.");
+    if (!String(dados.resumo || "").trim()) throw new Error("Descreva o contato realizado.");
+    const u = usuarioAtual();
+    const contato = {
+      id: Util.id("ct"),
+      criadoEm: Util.agoraISO(),
+      tipo: dados.tipo === "prestador" ? "prestador" : "associado",
+      canal: dados.canal || "WhatsApp",
+      quem: String(dados.quem || "").trim(),
+      resumo: String(dados.resumo).trim(),
+      autor: u ? u.nome : "Equipe Plus",
+    };
+    sin.contatos = sin.contatos || [];
+    sin.contatos.push(contato);
+    registrar(
+      sin, "Contato registrado",
+      `Contato com ${contato.tipo === "associado" ? "o associado" : "oficina/prestador"}${contato.quem ? ` (${contato.quem})` : ""} por ${contato.canal}: ${contato.resumo}`
+    );
+    salvar();
+    notificar();
+    return contato;
+  }
+
+  function adicionarAnexo(id, arquivo) {
+    const sin = obter(id);
+    if (!sin) return Promise.reject(new Error("Sinistro não encontrado."));
+
+    const limite = (estado.config.limiteAnexoMB || 2) * 1024 * 1024;
+    if (arquivo.size > limite) {
+      return Promise.reject(new Error(
+        `“${arquivo.name}” tem ${Util.tamanhoArquivo(arquivo.size)}. O limite por arquivo é ${estado.config.limiteAnexoMB} MB.`
+      ));
+    }
+
+    return new Promise((resolve, reject) => {
+      const leitor = new FileReader();
+      leitor.onerror = () => reject(new Error("Não foi possível ler o arquivo."));
+      leitor.onload = () => {
+        const u = usuarioAtual();
+        const anexo = {
+          id: Util.id("anx"),
+          nome: arquivo.name,
+          tipo: arquivo.type || "application/octet-stream",
+          tamanho: arquivo.size,
+          conteudo: leitor.result,
+          enviadoPor: u ? u.nome : "Equipe Plus",
+          criadoEm: Util.agoraISO(),
+        };
+        sin.anexos = sin.anexos || [];
+        sin.anexos.push(anexo);
+        registrar(sin, "Documento anexado", `Arquivo “${anexo.nome}” (${Util.tamanhoArquivo(anexo.tamanho)}).`);
+        try {
+          salvar();
+        } catch (e) {
+          // Desfaz para não deixar o estado em memória diferente do salvo.
+          sin.anexos = sin.anexos.filter((a) => a.id !== anexo.id);
+          sin.historico.pop();
+          reject(e);
+          return;
+        }
+        notificar();
+        resolve(anexo);
+      };
+      leitor.readAsDataURL(arquivo);
+    });
+  }
+
+  function removerAnexo(id, anexoId) {
+    const sin = obter(id);
+    if (!sin) return;
+    const anexo = (sin.anexos || []).find((a) => a.id === anexoId);
+    sin.anexos = (sin.anexos || []).filter((a) => a.id !== anexoId);
+    registrar(sin, "Documento removido", anexo ? `Arquivo “${anexo.nome}” removido.` : "Anexo removido.");
+    salvar();
+    notificar();
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Alertas e prazos                                                  */
+  /* ---------------------------------------------------------------- */
+  function prazoVencido(sin) {
+    if (sin.status === "concluido" || !sin.prazoRetorno) return false;
+    const limite = Util.juntarDataHora(sin.prazoRetorno, "23:59");
+    return !!limite && limite.getTime() < Date.now();
+  }
+
+  function alertas(sin) {
+    const c = estado.config;
+    const saida = [];
+    if (sin.status === "concluido") return saida;
+
+    const horas = Util.horasDesde(ultimaAtualizacao(sin));
+
+    if ((sin.status === "urgente" || sin.prioridade === "urgente") && horas > c.horasUrgenteSemAtualizacao) {
+      saida.push({ chave: "urgente-parado", nivel: "grave", texto: `Urgente sem atualização há ${Util.duracao(horas * 3600000)}` });
+    }
+    if (prazoVencido(sin)) {
+      saida.push({ chave: "prazo", nivel: "grave", texto: `Prazo de retorno vencido em ${Util.fmtData(sin.prazoRetorno)}` });
+    }
+    if (sin.documentosPendentes) {
+      saida.push({ chave: "documentos", nivel: "aviso", texto: "Documentos pendentes" });
+    }
+    if (horas > c.diasParado * 24) {
+      saida.push({ chave: "parado", nivel: "aviso", texto: `Parado há ${Util.duracao(horas * 3600000)}` });
+    } else if (horas > c.horasSemAtualizacao) {
+      saida.push({ chave: "sem-atualizacao", nivel: "aviso", texto: `Sem atualização há ${Util.duracao(horas * 3600000)}` });
+    }
+    if (!String(sin.responsavel || "").trim()) {
+      saida.push({ chave: "sem-responsavel", nivel: "aviso", texto: "Caso sem responsável" });
+    }
+    const contato = ultimoContatoAssociado(sin);
+    if (!contato) {
+      saida.push({ chave: "sem-contato", nivel: "aviso", texto: "Sem contato registrado com o associado" });
+    } else if (Util.horasDesde(contato) > c.diasSemContato * 24) {
+      saida.push({ chave: "sem-contato", nivel: "aviso", texto: `Sem contato com o associado há ${Util.duracao(Util.horasDesde(contato) * 3600000)}` });
+    }
+    return saida;
+  }
+
+  const temAlerta = (sin, chave) => alertas(sin).some((a) => a.chave === chave);
+  const semAtualizacao = (sin) =>
+    sin.status !== "concluido" && Util.horasDesde(ultimaAtualizacao(sin)) > estado.config.horasSemAtualizacao;
+
+  /* ---------------------------------------------------------------- */
+  /* Indicadores                                                       */
+  /* ---------------------------------------------------------------- */
+  function indicadores() {
+    const todos = estado.sinistros;
+    const abertos = todos.filter((s) => s.status !== "concluido");
+    const concluidos = todos.filter((s) => s.status === "concluido");
+
+    const tempos = concluidos
+      .filter((s) => s.concluidoEm && s.criadoEm)
+      .map((s) => new Date(s.concluidoEm) - new Date(s.criadoEm))
+      .filter((ms) => ms >= 0);
+    const media = tempos.length ? tempos.reduce((a, b) => a + b, 0) / tempos.length : 0;
+
+    return {
+      total: todos.length,
+      abertos: abertos.length,
+      entrou: todos.filter((s) => s.status === "entrou").length,
+      urgentes: todos.filter((s) => s.status === "urgente" || (s.prioridade === "urgente" && s.status !== "concluido")).length,
+      resolvendo: todos.filter((s) => s.status === "resolvendo").length,
+      concluidos: concluidos.length,
+      concluidosHoje: concluidos.filter((s) => Util.mesmoDia(s.concluidoEm, new Date())).length,
+      comVitimas: todos.filter((s) => Number(s.vitimas) > 0 && s.status !== "concluido").length,
+      prazoVencido: abertos.filter(prazoVencido).length,
+      semAtualizacao: abertos.filter(semAtualizacao).length,
+      documentosPendentes: abertos.filter((s) => s.documentosPendentes).length,
+      semResponsavel: abertos.filter((s) => !String(s.responsavel || "").trim()).length,
+      tempoMedio: media ? Util.duracao(media) : "—",
+      tempoMedioMs: media,
+    };
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Busca e filtros                                                   */
+  /* ---------------------------------------------------------------- */
+  const CAMPOS_BUSCA = ["associado", "numero", "protocolo", "documento", "whatsapp", "placa", "modelo", "marca", "atendente", "responsavel", "local", "tipo"];
+
+  function combina(sin, termo) {
+    if (!termo) return true;
+    const alvo = Util.normalizar(CAMPOS_BUSCA.map((c) => sin[c]).join(" ") + " " + Util.soNumeros(sin.whatsapp) + " " + Util.soNumeros(sin.documento));
+    return Util.normalizar(termo).split(/\s+/).every((p) => alvo.indexOf(p) >= 0);
+  }
+
+  function filtrar(termo, filtros) {
+    const f = filtros || {};
+    return estado.sinistros.filter((s) => {
+      if (!combina(s, termo)) return false;
+      if (f.status && s.status !== f.status) return false;
+      if (f.prioridade && s.prioridade !== f.prioridade) return false;
+      if (f.tipo && s.tipo !== f.tipo) return false;
+      if (f.atendente && s.atendente !== f.atendente) return false;
+      if (f.responsavel && s.responsavel !== f.responsavel) return false;
+      if (f.incidenteDe && (!s.dataIncidente || s.dataIncidente < f.incidenteDe)) return false;
+      if (f.incidenteAte && (!s.dataIncidente || s.dataIncidente > f.incidenteAte)) return false;
+      if (f.aberturaDe && Util.dataLocal(Util.paraData(s.criadoEm)) < f.aberturaDe) return false;
+      if (f.aberturaAte && Util.dataLocal(Util.paraData(s.criadoEm)) > f.aberturaAte) return false;
+      if (f.comVitimas && !(Number(s.vitimas) > 0)) return false;
+      if (f.urgentes && !(s.prioridade === "urgente" || s.status === "urgente")) return false;
+      if (f.documentosPendentes && !s.documentosPendentes) return false;
+      if (f.prazoVencido && !prazoVencido(s)) return false;
+      if (f.concluidos && s.status !== "concluido") return false;
+      if (f.semAtualizacao && !semAtualizacao(s)) return false;
+      if (f.semResponsavel && String(s.responsavel || "").trim()) return false;
+      return true;
+    });
+  }
+
+  /** Nomes já usados em atendimento/responsabilidade + usuários cadastrados. */
+  function pessoas() {
+    const nomes = new Set(estado.usuarios.filter((u) => u.ativo).map((u) => u.nome));
+    estado.sinistros.forEach((s) => {
+      if (s.atendente) nomes.add(s.atendente);
+      if (s.responsavel) nomes.add(s.responsavel);
+    });
+    return Array.from(nomes).sort((a, b) => a.localeCompare(b, "pt-BR"));
+  }
+
+  function historicoGlobal(limite) {
+    const linhas = [];
+    estado.sinistros.forEach((s) => {
+      (s.historico || []).forEach((h) => linhas.push(Object.assign({ sinistroId: s.id, numero: s.numero, associado: s.associado }, h)));
+    });
+    linhas.sort((a, b) => String(b.criadoEm).localeCompare(String(a.criadoEm)));
+    return limite ? linhas.slice(0, limite) : linhas;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Configurações e backup                                            */
+  /* ---------------------------------------------------------------- */
+  const config = () => Object.assign({}, estado.config);
+
+  function salvarConfig(nova) {
+    estado.config = Object.assign({}, estado.config, nova);
+    salvar();
+    notificar();
+  }
+
+  function exportarBackup() {
+    return JSON.stringify({
+      versao: estado.versao, exportadoEm: Util.agoraISO(),
+      sinistros: estado.sinistros, usuarios: estado.usuarios, config: estado.config,
+    }, null, 2);
+  }
+
+  function importarBackup(texto) {
+    const lido = JSON.parse(texto);
+    if (!lido || !Array.isArray(lido.sinistros)) throw new Error("Arquivo de backup inválido.");
+    estado.sinistros = lido.sinistros.map(normalizarSinistro);
+    if (Array.isArray(lido.usuarios) && lido.usuarios.length) estado.usuarios = lido.usuarios;
+    if (lido.config) estado.config = Object.assign({}, CONFIG_PADRAO, lido.config);
+    salvar();
+    notificar();
+  }
+
+  function restaurarDemonstracao() {
+    if (!ehAdmin()) throw new Error("Somente administradores podem recriar a base de demonstração.");
+    estado.sinistros = semente();
+    salvar();
+    notificar();
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Dados de demonstração                                             */
+  /* ---------------------------------------------------------------- */
+  const menos = (horas) => new Date(Date.now() - horas * 3600000).toISOString();
+  const menosData = (dias) => Util.dataLocal(new Date(Date.now() - dias * 86400000));
+  const maisData = (dias) => Util.dataLocal(new Date(Date.now() + dias * 86400000));
+
+  function hist(quando, usuario, acao, detalhe, de, para) {
+    return { id: Util.id("h"), criadoEm: quando, usuario, acao, detalhe, de: de || "", para: para || "" };
+  }
+
+  function semente() {
+    const ano = new Date().getFullYear();
+
+    const s1 = {
+      id: Util.id("sin"), criadoEm: menos(0.6), atualizadoEm: menos(0.6), concluidoEm: null,
+      dataAtendimento: Util.dataLocal(), horaAtendimento: Util.horaLocal(new Date(Date.now() - 2160000)),
+      atendente: "Fernanda Alves", responsavel: "Rafael Souza", status: "entrou", prioridade: "normal",
+      associado: "Marcos Vinícius Pereira", whatsapp: "(11) 98842-3310", documento: "324.887.190-45", contrato: "PLUS-2291",
+      dataIncidente: Util.dataLocal(), horaIncidente: Util.horaLocal(new Date(Date.now() - 5400000)),
+      local: "Av. Marginal Tietê, altura do nº 4.500 — São Paulo/SP",
+      tipo: "Colisão", descricao: "Colisão traseira em congestionamento. Associado relata dano no para-choque e na tampa do porta-malas. Sem feridos.",
+      vitimas: 0, veiculosEnvolvidos: 2, temBO: false, numeroBO: "", guincho: false, atendimentoMedico: false,
+      placa: "RQP7D42", marca: "Chevrolet", modelo: "Onix 1.0 LT", ano: "2021", cor: "Prata",
+      numero: `SIN-${ano}-0001`, protocolo: `PLUS-${ano}-0001`, classificacao: "Em análise",
+      prestador: "", observacoes: "Associado enviará fotos pelo WhatsApp ainda hoje.",
+      proximaAcao: "Analisar fotos e direcionar para vistoria", prazoRetorno: maisData(1), documentosPendentes: false,
+      acompanhamentos: [], contatos: [], anexos: [],
+      historico: [hist(menos(0.6), "Fernanda Alves", "Sinistro cadastrado", "Aberto em Acabou de entrar com prioridade Normal.", "", "Acabou de entrar")],
+    };
+
+    const s2 = {
+      id: Util.id("sin"), criadoEm: menos(5), atualizadoEm: menos(1.2), concluidoEm: null,
+      dataAtendimento: Util.dataLocal(), horaAtendimento: Util.horaLocal(new Date(Date.now() - 18000000)),
+      atendente: "Carla Menezes", responsavel: "Diogo Gomes", status: "urgente", prioridade: "urgente",
+      associado: "Juliana Ramos de Lima", whatsapp: "(21) 99671-8820", documento: "108.552.447-09", contrato: "PLUS-1874",
+      dataIncidente: Util.dataLocal(), horaIncidente: Util.horaLocal(new Date(Date.now() - 19800000)),
+      local: "Rodovia BR-101, km 312 — Campos dos Goytacazes/RJ",
+      tipo: "Capotamento", descricao: "Veículo capotou após desvio de obstáculo na pista. Dois ocupantes levados ao hospital regional. Veículo removido por guincho e permanece no pátio credenciado.",
+      vitimas: 2, veiculosEnvolvidos: 1, temBO: true, numeroBO: "BO-2026-448192", guincho: true, atendimentoMedico: true,
+      placa: "LTA4F19", marca: "Hyundai", modelo: "HB20S 1.6 Vision", ano: "2019", cor: "Branco",
+      numero: `SIN-${ano}-0002`, protocolo: `PLUS-${ano}-0002`, classificacao: "Dano parcial",
+      prestador: "Guincho Litoral 24h / Pátio Credenciado Campos",
+      observacoes: "Familiares acompanham as vítimas no Hospital Ferreira Machado. Prioridade máxima do Setor Plus.",
+      proximaAcao: "Confirmar estado de saúde das vítimas e liberar vistoria no pátio", prazoRetorno: Util.dataLocal(), documentosPendentes: true,
+      acompanhamentos: [
+        { id: Util.id("acomp"), criadoEm: menos(4.6), data: Util.dataLocal(), hora: Util.horaLocal(new Date(Date.now() - 16560000)), autor: "Carla Menezes", tipo: "Guincho solicitado", descricao: "Guincho acionado no km 312 da BR-101. Previsão de chegada de 40 minutos.", proximaAcao: "Confirmar remoção do veículo", prazoRetorno: Util.dataLocal() },
+        { id: Util.id("acomp"), criadoEm: menos(3.1), data: Util.dataLocal(), hora: Util.horaLocal(new Date(Date.now() - 11160000)), autor: "Carla Menezes", tipo: "Contato realizado com o associado", descricao: "Falado com a irmã da associada: as duas vítimas estão estáveis, em observação.", proximaAcao: "Retornar contato à tarde", prazoRetorno: Util.dataLocal() },
+        { id: Util.id("acomp"), criadoEm: menos(1.2), data: Util.dataLocal(), hora: Util.horaLocal(new Date(Date.now() - 4320000)), autor: "Diogo Gomes", tipo: "Documentação solicitada", descricao: "Solicitados BO, CNH da condutora e laudo de atendimento médico.", proximaAcao: "Receber documentos e abrir vistoria", prazoRetorno: Util.dataLocal() },
+      ],
+      contatos: [
+        { id: Util.id("ct"), criadoEm: menos(3.1), tipo: "associado", canal: "Telefone", quem: "Irmã da associada", resumo: "Confirmado atendimento hospitalar das duas vítimas.", autor: "Carla Menezes" },
+        { id: Util.id("ct"), criadoEm: menos(4.5), tipo: "prestador", canal: "Telefone", quem: "Guincho Litoral 24h", resumo: "Remoção autorizada até o pátio credenciado de Campos.", autor: "Carla Menezes" },
+      ],
+      anexos: [],
+      historico: [
+        hist(menos(5), "Carla Menezes", "Sinistro cadastrado", "Aberto em Caso urgente com prioridade Urgente.", "", "Caso urgente"),
+        hist(menos(4.6), "Carla Menezes", "Atualização registrada", "Guincho solicitado — Guincho acionado no km 312 da BR-101."),
+        hist(menos(3.1), "Carla Menezes", "Contato registrado", "Contato com o associado (Irmã da associada) por Telefone: confirmado atendimento hospitalar."),
+        hist(menos(1.2), "Diogo Gomes", "Atualização registrada", "Documentação solicitada — BO, CNH e laudo médico."),
+      ],
+    };
+
+    const s3 = {
+      id: Util.id("sin"), criadoEm: menos(74), atualizadoEm: menos(20), concluidoEm: null,
+      dataAtendimento: menosData(3), horaAtendimento: "09:12",
+      atendente: "Fernanda Alves", responsavel: "Carla Menezes", status: "resolvendo", prioridade: "atencao",
+      associado: "André Luiz Barbosa", whatsapp: "(31) 98120-7744", documento: "770.219.336-11", contrato: "PLUS-2044",
+      dataIncidente: menosData(3), horaIncidente: "07:40",
+      local: "Rua Padre Eustáquio, 1.120 — Belo Horizonte/MG",
+      tipo: "Colisão", descricao: "Colisão lateral em cruzamento com veículo de terceiro. Danos na porta dianteira esquerda e no retrovisor. Terceiro com danos leves no para-choque.",
+      vitimas: 0, veiculosEnvolvidos: 2, temBO: true, numeroBO: "BO-2026-331004", guincho: false, atendimentoMedico: false,
+      placa: "PXH2E88", marca: "Volkswagen", modelo: "Polo 1.0 TSI", ano: "2022", cor: "Cinza",
+      numero: `SIN-${ano}-0003`, protocolo: `PLUS-${ano}-0003`, classificacao: "Dano parcial",
+      prestador: "Oficina Credenciada Savassi",
+      observacoes: "Terceiro será acionado pelo próprio seguro. Associado optou pela oficina credenciada.",
+      proximaAcao: "Acompanhar aprovação do orçamento e início do reparo", prazoRetorno: maisData(2), documentosPendentes: false,
+      acompanhamentos: [
+        { id: Util.id("acomp"), criadoEm: menos(70), data: menosData(3), hora: "10:05", autor: "Fernanda Alves", tipo: "Documentação recebida", descricao: "Recebidos BO, CNH e fotos dos danos.", proximaAcao: "Abrir vistoria", prazoRetorno: menosData(2) },
+        { id: Util.id("acomp"), criadoEm: menos(48), data: menosData(2), hora: "14:30", autor: "Carla Menezes", tipo: "Vistoria realizada", descricao: "Vistoria feita na oficina credenciada Savassi. Danos compatíveis com o relato.", proximaAcao: "Aguardar orçamento", prazoRetorno: menosData(1) },
+        { id: Util.id("acomp"), criadoEm: menos(20), data: menosData(1), hora: "11:15", autor: "Carla Menezes", tipo: "Orçamento recebido", descricao: "Orçamento de R$ 4.380,00 recebido, em análise pelo Setor Plus.", proximaAcao: "Autorizar pagamento e liberar reparo", prazoRetorno: maisData(2) },
+      ],
+      contatos: [
+        { id: Util.id("ct"), criadoEm: menos(70), tipo: "associado", canal: "WhatsApp", quem: "André Luiz Barbosa", resumo: "Orientado sobre documentos e prazo de vistoria.", autor: "Fernanda Alves" },
+        { id: Util.id("ct"), criadoEm: menos(20), tipo: "prestador", canal: "Telefone", quem: "Oficina Credenciada Savassi", resumo: "Confirmado envio do orçamento e prazo de reparo de 6 dias úteis.", autor: "Carla Menezes" },
+      ],
+      anexos: [],
+      historico: [
+        hist(menos(74), "Fernanda Alves", "Sinistro cadastrado", "Aberto em Acabou de entrar com prioridade Normal.", "", "Acabou de entrar"),
+        hist(menos(71), "Fernanda Alves", "Movimentação", "Sinistro movido de “Acabou de entrar” para “Resolvendo”.", "Acabou de entrar", "Resolvendo"),
+        hist(menos(70), "Fernanda Alves", "Atualização registrada", "Documentação recebida — BO, CNH e fotos dos danos."),
+        hist(menos(48), "Carla Menezes", "Atualização registrada", "Vistoria realizada na oficina credenciada."),
+        hist(menos(20), "Carla Menezes", "Atualização registrada", "Orçamento recebido — R$ 4.380,00 em análise."),
+      ],
+    };
+
+    const s4 = {
+      id: Util.id("sin"), criadoEm: menos(190), atualizadoEm: menos(150), concluidoEm: null,
+      dataAtendimento: menosData(8), horaAtendimento: "16:48",
+      atendente: "Carla Menezes", responsavel: "", status: "resolvendo", prioridade: "atencao",
+      associado: "Simone Cardoso Nunes", whatsapp: "(85) 98307-2255", documento: "441.902.708-73", contrato: "PLUS-1650",
+      dataIncidente: menosData(8), horaIncidente: "05:20",
+      local: "Estacionamento do Condomínio Vila Mar — Fortaleza/CE",
+      tipo: "Furto", descricao: "Furto do veículo no estacionamento do condomínio durante a madrugada. Imagens do circuito interno solicitadas ao síndico.",
+      vitimas: 0, veiculosEnvolvidos: 1, temBO: true, numeroBO: "BO-2026-119847", guincho: false, atendimentoMedico: false,
+      placa: "QOF5J07", marca: "Fiat", modelo: "Argo Drive 1.3", ano: "2020", cor: "Vermelho",
+      numero: `SIN-${ano}-0004`, protocolo: `PLUS-${ano}-0004`, classificacao: "Em análise",
+      prestador: "",
+      observacoes: "Aguardando documentação obrigatória: cópia do BO, chaves reserva e comprovante de residência.",
+      proximaAcao: "Cobrar documentação pendente e definir responsável pelo caso", prazoRetorno: menosData(2), documentosPendentes: true,
+      acompanhamentos: [
+        { id: Util.id("acomp"), criadoEm: menos(186), data: menosData(8), hora: "17:30", autor: "Carla Menezes", tipo: "Documentação solicitada", descricao: "Solicitados cópia do BO, chaves reserva e comprovante de residência.", proximaAcao: "Receber documentos", prazoRetorno: menosData(2) },
+        { id: Util.id("acomp"), criadoEm: menos(150), data: menosData(6), hora: "10:10", autor: "Carla Menezes", tipo: "Análise em andamento", descricao: "Documentação ainda não recebida. Associada informou dificuldade para retirar o BO.", proximaAcao: "Reforçar cobrança da documentação", prazoRetorno: menosData(2) },
+      ],
+      contatos: [
+        { id: Util.id("ct"), criadoEm: menos(150), tipo: "associado", canal: "WhatsApp", quem: "Simone Cardoso Nunes", resumo: "Reforçada a lista de documentos pendentes.", autor: "Carla Menezes" },
+      ],
+      anexos: [],
+      historico: [
+        hist(menos(190), "Carla Menezes", "Sinistro cadastrado", "Aberto em Acabou de entrar com prioridade Atenção.", "", "Acabou de entrar"),
+        hist(menos(188), "Carla Menezes", "Movimentação", "Sinistro movido de “Acabou de entrar” para “Resolvendo”.", "Acabou de entrar", "Resolvendo"),
+        hist(menos(186), "Carla Menezes", "Atualização registrada", "Documentação solicitada — BO, chaves reserva e comprovante."),
+        hist(menos(150), "Carla Menezes", "Atualização registrada", "Análise em andamento — documentação ainda pendente."),
+      ],
+    };
+
+    const s5 = {
+      id: Util.id("sin"), criadoEm: menos(560), atualizadoEm: menos(30), concluidoEm: menos(30),
+      dataAtendimento: menosData(23), horaAtendimento: "08:05",
+      atendente: "Fernanda Alves", responsavel: "Diogo Gomes", status: "concluido", prioridade: "normal",
+      associado: "Roberto Tanaka Ferreira", whatsapp: "(41) 99215-6688", documento: "285.663.410-22", contrato: "PLUS-1489",
+      dataIncidente: menosData(24), horaIncidente: "22:15",
+      local: "Rua XV de Novembro, 780 — Curitiba/PR",
+      tipo: "Perda total", descricao: "Incêndio no compartimento do motor após pane elétrica. Veículo considerado perda total pela vistoria técnica.",
+      vitimas: 0, veiculosEnvolvidos: 1, temBO: true, numeroBO: "BO-2026-902117", guincho: true, atendimentoMedico: false,
+      placa: "BFT9C51", marca: "Renault", modelo: "Sandero Expression 1.6", ano: "2017", cor: "Preto",
+      numero: `SIN-${ano}-0005`, protocolo: `PLUS-${ano}-0005`, classificacao: "Indenização",
+      prestador: "Vistoria Técnica Paraná / Setor de Indenizações",
+      observacoes: "Indenização paga conforme tabela vigente. Associado assinou o termo de quitação.",
+      proximaAcao: "", prazoRetorno: "", documentosPendentes: false,
+      acompanhamentos: [
+        { id: Util.id("acomp"), criadoEm: menos(540), data: menosData(22), hora: "09:40", autor: "Fernanda Alves", tipo: "Vistoria solicitada", descricao: "Vistoria técnica agendada para avaliação do veículo incendiado.", proximaAcao: "Aguardar laudo", prazoRetorno: menosData(20) },
+        { id: Util.id("acomp"), criadoEm: menos(430), data: menosData(18), hora: "15:20", autor: "Diogo Gomes", tipo: "Vistoria realizada", descricao: "Laudo confirma perda total do veículo.", proximaAcao: "Encaminhar para indenização", prazoRetorno: menosData(12) },
+        { id: Util.id("acomp"), criadoEm: menos(150), data: menosData(6), hora: "11:00", autor: "Diogo Gomes", tipo: "Pagamento autorizado", descricao: "Indenização autorizada e agendada para pagamento.", proximaAcao: "Confirmar recebimento com o associado", prazoRetorno: menosData(2) },
+        { id: Util.id("acomp"), criadoEm: menos(30), data: menosData(1), hora: "14:25", autor: "Fernanda Alves", tipo: "Caso encerrado", descricao: "Associado confirmou o recebimento da indenização. Caso encerrado.", proximaAcao: "", prazoRetorno: "" },
+      ],
+      contatos: [
+        { id: Util.id("ct"), criadoEm: menos(30), tipo: "associado", canal: "WhatsApp", quem: "Roberto Tanaka Ferreira", resumo: "Confirmado o recebimento da indenização e o encerramento do caso.", autor: "Fernanda Alves" },
+      ],
+      anexos: [],
+      historico: [
+        hist(menos(560), "Fernanda Alves", "Sinistro cadastrado", "Aberto em Acabou de entrar com prioridade Atenção.", "", "Acabou de entrar"),
+        hist(menos(556), "Fernanda Alves", "Movimentação", "Sinistro movido de “Acabou de entrar” para “Caso urgente”.", "Acabou de entrar", "Caso urgente"),
+        hist(menos(540), "Fernanda Alves", "Movimentação", "Sinistro movido de “Caso urgente” para “Resolvendo”.", "Caso urgente", "Resolvendo"),
+        hist(menos(430), "Diogo Gomes", "Atualização registrada", "Vistoria realizada — laudo confirma perda total."),
+        hist(menos(150), "Diogo Gomes", "Atualização registrada", "Pagamento autorizado."),
+        hist(menos(30), "Fernanda Alves", "Movimentação", "Sinistro movido de “Resolvendo” para “Caso concluído”.", "Resolvendo", "Caso concluído"),
+      ],
+    };
+
+    return [s1, s2, s3, s4, s5];
+  }
+
+  /* ---------------------------------------------------------------- */
+  return {
+    STATUS, PRIORIDADES, TIPOS, CLASSIFICACOES, TIPOS_ACOMPANHAMENTO, PERFIS,
+    nomeStatus, nomePrioridade, corStatus, nomePerfil,
+    carregar, salvar, aoMudar, armazenamentoIndisponivel,
+    entrar, sair, usuarioAtual, ehAdmin, listaUsuarios, salvarUsuario, excluirUsuario,
+    lista, obter, porStatus, proximoNumeroSinistro, proximoProtocolo,
+    ultimaAtualizacao, ultimoContatoAssociado,
+    criar, atualizar, mover, alterarPrioridade, alterarPessoa, excluir, validar,
+    adicionarAcompanhamento, removerAcompanhamento, adicionarObservacao,
+    adicionarContato, adicionarAnexo, removerAnexo,
+    alertas, temAlerta, prazoVencido, semAtualizacao, indicadores,
+    filtrar, pessoas, historicoGlobal,
+    config, salvarConfig, exportarBackup, importarBackup, restaurarDemonstracao,
+  };
+})();
+
+/* ===== js/ui.js ===== */
+/* ==================================================================
+   UI — avisos, confirmações, gaveta lateral e pedaços de HTML
+   reaproveitados pelas telas.
+   ================================================================== */
+const UI = (() => {
+
+  const $ = (sel, raiz) => (raiz || document).querySelector(sel);
+  const $$ = (sel, raiz) => Array.from((raiz || document).querySelectorAll(sel));
+
+  /* ---------------------------------------------------------------- */
+  /* Avisos                                                            */
+  /* ---------------------------------------------------------------- */
+  function aviso(texto, tipo) {
+    const caixa = $("#avisos");
+    const el = document.createElement("div");
+    el.className = "aviso " + (tipo || "");
+    el.textContent = texto;
+    caixa.appendChild(el);
+    setTimeout(() => {
+      el.style.transition = "opacity .25s";
+      el.style.opacity = "0";
+      setTimeout(() => el.remove(), 250);
+    }, tipo === "erro" ? 5200 : 3200);
+  }
+  const sucesso = (t) => aviso(t, "sucesso");
+  const erro = (t) => aviso(t, "erro");
+  const alerta = (t) => aviso(t, "alerta");
+
+  /* ---------------------------------------------------------------- */
+  /* Confirmação (usada antes de excluir, concluir e reabrir)          */
+  /* ---------------------------------------------------------------- */
+  let confirmarResolver = null;
+
+  function confirmar(opcoes) {
+    const o = typeof opcoes === "string" ? { texto: opcoes } : (opcoes || {});
+    $("#modal-titulo").textContent = o.titulo || "Confirmar";
+    $("#modal-texto").textContent = o.texto || "";
+    const btn = $("#modal-confirmar");
+    btn.textContent = o.rotulo || "Confirmar";
+    btn.className = "btn " + (o.perigo ? "btn-vermelho" : "btn-verde");
+    $("#modal-fundo").hidden = false;
+    btn.focus();
+    return new Promise((resolve) => { confirmarResolver = resolve; });
+  }
+
+  function fecharModal(resposta) {
+    $("#modal-fundo").hidden = true;
+    if (confirmarResolver) { confirmarResolver(resposta); confirmarResolver = null; }
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Gaveta lateral                                                    */
+  /* ---------------------------------------------------------------- */
+  let aoFecharGaveta = null;
+
+  function abrirGaveta(opcoes) {
+    $("#gaveta-titulo").textContent = opcoes.titulo || "";
+    $("#gaveta-subtitulo").innerHTML = opcoes.subtitulo || "";
+    $("#gaveta-corpo").innerHTML = opcoes.corpo || "";
+    $("#gaveta-rodape").innerHTML = opcoes.rodape || "";
+    $("#gaveta").hidden = false;
+    $("#gaveta-fundo").hidden = false;
+    document.body.style.overflow = "hidden";
+    aoFecharGaveta = opcoes.aoFechar || null;
+    if (typeof opcoes.depois === "function") opcoes.depois($("#gaveta-corpo"), $("#gaveta-rodape"));
+  }
+
+  function fecharGaveta() {
+    $("#gaveta").hidden = true;
+    $("#gaveta-fundo").hidden = true;
+    document.body.style.overflow = "";
+    $("#gaveta-corpo").innerHTML = "";
+    $("#gaveta-rodape").innerHTML = "";
+    const fn = aoFecharGaveta;
+    aoFecharGaveta = null;
+    if (fn) fn();
+  }
+
+  const gavetaAberta = () => !$("#gaveta").hidden;
+
+  /* ---------------------------------------------------------------- */
+  /* Pedaços de HTML reaproveitados                                    */
+  /* ---------------------------------------------------------------- */
+  const etiquetaPrioridade = (p) =>
+    `<span class="etiqueta ${Util.esc(p)}${p === "urgente" ? " pulsa" : ""}">${Util.esc(Dados.nomePrioridade(p))}</span>`;
+
+  const etiquetaStatus = (s) =>
+    `<span class="etiqueta ${Util.esc(Dados.corStatus(s))}">${Util.esc(Dados.nomeStatus(s))}</span>`;
+
+  const dado = (rotulo, valor) =>
+    `<div class="dado"><span>${Util.esc(rotulo)}</span><strong>${Util.esc(Util.ou(valor))}</strong></div>`;
+
+  function opcoes(itens, selecionado, vazio) {
+    const inicio = vazio ? `<option value="">${Util.esc(vazio)}</option>` : "";
+    return inicio + itens.map((i) => {
+      const valor = typeof i === "string" ? i : i.id;
+      const nome = typeof i === "string" ? i : i.nome;
+      return `<option value="${Util.esc(valor)}"${Util.normalizar(valor) === Util.normalizar(selecionado) ? " selected" : ""}>${Util.esc(nome)}</option>`;
+    }).join("");
+  }
+
+  /** Barra proporcional usada nos relatórios e na visão geral. */
+  function barra(valor, maximo, cor) {
+    const pct = maximo > 0 ? Math.round((valor / maximo) * 100) : 0;
+    const cores = { vermelho: "var(--vermelho)", verde: "var(--verde)", amarelo: "var(--amarelo)" };
+    return `<div class="barra-medida" title="${pct}%"><i style="width:${pct}%${cor ? `;background:${cores[cor] || cor}` : ""}"></i></div>`;
+  }
+
+  function alertasHTML(sin) {
+    const lista = Dados.alertas(sin);
+    if (!lista.length) return "";
+    return `<div class="alertas-card">${lista.map((a) =>
+      `<span class="alerta-mini${a.nivel === "aviso" ? " aviso" : ""}">${a.nivel === "aviso" ? "•" : "!"} ${Util.esc(a.texto)}</span>`
+    ).join("")}</div>`;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Ligações fixas                                                    */
+  /* ---------------------------------------------------------------- */
+  function iniciar() {
+    $("#modal-cancelar").addEventListener("click", () => fecharModal(false));
+    $("#modal-confirmar").addEventListener("click", () => fecharModal(true));
+    $("#modal-fundo").addEventListener("click", (e) => { if (e.target.id === "modal-fundo") fecharModal(false); });
+    $("#gaveta-fechar").addEventListener("click", fecharGaveta);
+    $("#gaveta-fundo").addEventListener("click", fecharGaveta);
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      if (!$("#modal-fundo").hidden) fecharModal(false);
+      else if (gavetaAberta()) fecharGaveta();
+    });
+  }
+
+  return {
+    $, $$, aviso, sucesso, erro, alerta, confirmar,
+    abrirGaveta, fecharGaveta, gavetaAberta,
+    etiquetaPrioridade, etiquetaStatus, dado, opcoes, barra, alertasHTML, iniciar,
+  };
+})();
+
+/* ===== js/formularios.js ===== */
+/* ==================================================================
+   Formulários — cadastro de sinistro e página interna do caso.
+   Ambos vivem na gaveta lateral.
+   ================================================================== */
+const Formularios = (() => {
+
+  const $ = UI.$;
+  const $$ = UI.$$;
+
+  let detalheId = null;
+  let abaAtual = "resumo";
+
+  /* ================================================================ */
+  /* Cadastro / edição                                                 */
+  /* ================================================================ */
+  function campo(nome, rotulo, valor, opcoes) {
+    const o = opcoes || {};
+    const obrig = o.obrigatorio ? ' <span class="obrig" title="Campo obrigatório">*</span>' : "";
+    const attrs = [
+      `name="${nome}"`,
+      `id="c-${nome}"`,
+      o.tipo ? `type="${o.tipo}"` : 'type="text"',
+      o.placeholder ? `placeholder="${Util.esc(o.placeholder)}"` : "",
+      o.min != null ? `min="${o.min}"` : "",
+      o.maxlength ? `maxlength="${o.maxlength}"` : "",
+      o.inputmode ? `inputmode="${o.inputmode}"` : "",
+      o.obrigatorio ? "required" : "",
+    ].filter(Boolean).join(" ");
+
+    return `<label class="campo${o.largo ? " campo-largo" : ""}">
+      <span>${Util.esc(rotulo)}${obrig}</span>
+      <input ${attrs} value="${Util.esc(valor == null ? "" : valor)}" />
+      <em class="aviso-campo" data-erro="${nome}" hidden></em>
+    </label>`;
+  }
+
+  function selecao(nome, rotulo, itens, valor, opcoes) {
+    const o = opcoes || {};
+    return `<label class="campo${o.largo ? " campo-largo" : ""}">
+      <span>${Util.esc(rotulo)}${o.obrigatorio ? ' <span class="obrig">*</span>' : ""}</span>
+      <select name="${nome}" id="c-${nome}">${UI.opcoes(itens, valor, o.vazio)}</select>
+      <em class="aviso-campo" data-erro="${nome}" hidden></em>
+    </label>`;
+  }
+
+  function area(nome, rotulo, valor, placeholder) {
+    return `<label class="campo campo-largo">
+      <span>${Util.esc(rotulo)}</span>
+      <textarea name="${nome}" id="c-${nome}" placeholder="${Util.esc(placeholder || "")}">${Util.esc(valor || "")}</textarea>
+      <em class="aviso-campo" data-erro="${nome}" hidden></em>
+    </label>`;
+  }
+
+  function marcador(nome, rotulo, marcado) {
+    return `<label class="campo-check"><input type="checkbox" name="${nome}" id="c-${nome}"${marcado ? " checked" : ""} /> ${Util.esc(rotulo)}</label>`;
+  }
+
+  function formularioHTML(sin) {
+    const s = sin || {};
+    const novo = !sin;
+    const usuario = Dados.usuarioAtual();
+    const pessoas = Dados.pessoas();
+
+    return `<form id="form-sinistro" novalidate>
+      <fieldset class="secao">
+        <legend>Dados do registro</legend>
+        <div class="campo-linha">
+          ${campo("dataAtendimento", "Data do atendimento", s.dataAtendimento || Util.dataLocal(), { tipo: "date" })}
+          ${campo("horaAtendimento", "Horário do atendimento", s.horaAtendimento || Util.horaLocal(), { tipo: "time" })}
+          ${selecao("atendente", "Nome da atendente", pessoas, s.atendente || (usuario ? usuario.nome : ""), { obrigatorio: true, vazio: "Selecione…" })}
+          ${selecao("responsavel", "Responsável pelo caso", pessoas, s.responsavel || "", { obrigatorio: true, vazio: "Selecione…" })}
+          ${selecao("status", novo ? "Status inicial" : "Status", Dados.STATUS, s.status || "entrou")}
+          ${selecao("prioridade", "Nível de prioridade", Dados.PRIORIDADES, s.prioridade || "normal")}
+        </div>
+      </fieldset>
+
+      <fieldset class="secao">
+        <legend>Dados do associado</legend>
+        <div class="campo-linha">
+          ${campo("associado", "Nome completo do associado", s.associado, { obrigatorio: true, largo: true, placeholder: "Ex.: Maria Aparecida da Silva" })}
+          ${campo("whatsapp", "Número do WhatsApp", s.whatsapp, { obrigatorio: true, placeholder: "(00) 00000-0000", inputmode: "tel" })}
+          ${campo("documento", "CPF ou documento", s.documento, { placeholder: "000.000.000-00" })}
+          ${campo("contrato", "Número do contrato ou associação", s.contrato, { placeholder: "Opcional" })}
+        </div>
+      </fieldset>
+
+      <fieldset class="secao">
+        <legend>Dados do incidente</legend>
+        <div class="campo-linha">
+          ${campo("dataIncidente", "Data do incidente", s.dataIncidente || Util.dataLocal(), { tipo: "date", obrigatorio: true })}
+          ${campo("horaIncidente", "Horário do incidente", s.horaIncidente || Util.horaLocal(), { tipo: "time", obrigatorio: true })}
+          ${campo("local", "Local do incidente", s.local, { largo: true, placeholder: "Rua, número, cidade e estado" })}
+          ${selecao("tipo", "Tipo de sinistro", Dados.TIPOS, s.tipo || "Colisão")}
+          ${campo("vitimas", "Quantidade de vítimas", s.vitimas == null ? 0 : s.vitimas, { tipo: "number", min: 0, inputmode: "numeric" })}
+          ${campo("veiculosEnvolvidos", "Veículos envolvidos", s.veiculosEnvolvidos == null ? 1 : s.veiculosEnvolvidos, { tipo: "number", min: 0, inputmode: "numeric" })}
+          ${campo("numeroBO", "Número do boletim de ocorrência", s.numeroBO, { placeholder: "Preencher quando houver BO" })}
+        </div>
+        ${area("descricao", "Descrição completa do ocorrido", s.descricao, "Relato do associado, danos observados, envolvidos e providências já tomadas.")}
+        <div class="campo-linha" style="margin-top:10px">
+          ${marcador("temBO", "Existe boletim de ocorrência", s.temBO)}
+          ${marcador("guincho", "Necessidade de guincho", s.guincho)}
+          ${marcador("atendimentoMedico", "Necessidade de atendimento médico", s.atendimentoMedico)}
+        </div>
+      </fieldset>
+
+      <fieldset class="secao">
+        <legend>Dados do veículo protegido</legend>
+        <div class="campo-linha">
+          ${campo("placa", "Placa", s.placa, { obrigatorio: true, placeholder: "ABC1D23", maxlength: 8 })}
+          ${campo("marca", "Marca", s.marca, { placeholder: "Ex.: Volkswagen" })}
+          ${campo("modelo", "Modelo", s.modelo, { placeholder: "Ex.: Polo 1.0 TSI" })}
+          ${campo("ano", "Ano", s.ano, { placeholder: "Ex.: 2022", inputmode: "numeric", maxlength: 9 })}
+          ${campo("cor", "Cor", s.cor, { placeholder: "Ex.: Prata" })}
+        </div>
+      </fieldset>
+
+      <fieldset class="secao">
+        <legend>Dados do sinistro</legend>
+        <div class="campo-linha">
+          ${campo("numero", "Número do sinistro", s.numero || Dados.proximoNumeroSinistro(), { obrigatorio: true })}
+          ${campo("protocolo", "Número do protocolo", s.protocolo || Dados.proximoProtocolo())}
+          ${selecao("classificacao", "Classificação do sinistro", Dados.CLASSIFICACOES, s.classificacao || "Em análise")}
+          ${campo("prestador", "Seguradora, oficina ou prestador", s.prestador, { largo: true, placeholder: "Quem está atendendo o caso" })}
+        </div>
+        ${area("observacoes", "Observações internas", s.observacoes, "Uso interno do Setor Plus.")}
+      </fieldset>
+
+      <fieldset class="secao">
+        <legend>Prazos e pendências</legend>
+        <div class="campo-linha">
+          ${campo("proximaAcao", "Próxima ação", s.proximaAcao, { largo: true, placeholder: "O que precisa ser feito a seguir" })}
+          ${campo("prazoRetorno", "Prazo para retorno", s.prazoRetorno, { tipo: "date" })}
+        </div>
+        <div style="margin-top:10px">${marcador("documentosPendentes", "Aguardando documentos do associado", s.documentosPendentes)}</div>
+      </fieldset>
+    </form>`;
+  }
+
+  /** Máscaras e travas de digitação. */
+  function ligarMascaras(raiz) {
+    const wpp = $("#c-whatsapp", raiz);
+    if (wpp) wpp.addEventListener("input", () => { wpp.value = Util.mascaraTelefone(wpp.value); });
+
+    const placa = $("#c-placa", raiz);
+    if (placa) placa.addEventListener("input", () => { placa.value = Util.mascaraPlaca(placa.value); });
+
+    const doc = $("#c-documento", raiz);
+    if (doc) doc.addEventListener("input", () => { doc.value = Util.mascaraDocumento(doc.value); });
+
+    ["vitimas", "veiculosEnvolvidos", "ano"].forEach((nome) => {
+      const el = $("#c-" + nome, raiz);
+      if (!el) return;
+      el.addEventListener("input", () => { el.value = Util.soNumeros(el.value); });
+    });
+  }
+
+  function lerFormulario(form) {
+    const dados = {};
+    Array.from(form.elements).forEach((el) => {
+      if (!el.name) return;
+      dados[el.name] = el.type === "checkbox" ? el.checked : el.value;
+    });
+    return dados;
+  }
+
+  function mostrarErros(raiz, erros) {
+    $$("[data-erro]", raiz).forEach((el) => { el.hidden = true; el.textContent = ""; });
+    $$(".erro", raiz).forEach((el) => el.classList.remove("erro"));
+
+    let primeiro = null;
+    Object.keys(erros).forEach((campoNome) => {
+      const alvo = $(`[data-erro="${campoNome}"]`, raiz);
+      const entrada = $(`#c-${campoNome}`, raiz);
+      if (alvo) { alvo.textContent = erros[campoNome]; alvo.hidden = false; }
+      if (entrada) { entrada.classList.add("erro"); if (!primeiro) primeiro = entrada; }
+    });
+    if (primeiro) primeiro.scrollIntoView({ behavior: "smooth", block: "center" });
+    UI.erro("Confira os campos obrigatórios destacados.");
+  }
+
+  function abrirCadastro(preset) {
+    UI.abrirGaveta({
+      titulo: "Cadastrar sinistro",
+      subtitulo: "Campos marcados com <b>*</b> são obrigatórios.",
+      corpo: formularioHTML(preset || null),
+      rodape: `<button class="btn btn-vazio" data-acao="cancelar">Cancelar</button>
+               <div class="direita">
+                 <button class="btn btn-verde" data-acao="salvar-novo">Salvar sinistro</button>
+               </div>`,
+      depois: (corpo, rodape) => {
+        ligarMascaras(corpo);
+        $('[data-acao="cancelar"]', rodape).addEventListener("click", UI.fecharGaveta);
+        $('[data-acao="salvar-novo"]', rodape).addEventListener("click", () => {
+          const form = $("#form-sinistro", corpo);
+          const r = Dados.criar(lerFormulario(form));
+          if (!r.ok) return mostrarErros(corpo, r.erros);
+          UI.sucesso(`Sinistro ${r.sinistro.numero} cadastrado.`);
+          abrirDetalhe(r.sinistro.id);
+        });
+        const form = $("#form-sinistro", corpo);
+        form.addEventListener("submit", (e) => e.preventDefault());
+      },
+    });
+  }
+
+  /* ================================================================ */
+  /* Página interna do sinistro                                        */
+  /* ================================================================ */
+  function abrirDetalhe(id, aba) {
+    detalheId = id;
+    abaAtual = aba || "resumo";
+    desenharDetalhe();
+  }
+
+  const ABAS = [
+    { id: "resumo", nome: "Resumo" },
+    { id: "acompanhamento", nome: "Acompanhamento do caso" },
+    { id: "contatos", nome: "Contatos" },
+    { id: "anexos", nome: "Documentos" },
+    { id: "historico", nome: "Histórico do sinistro" },
+    { id: "editar", nome: "Editar cadastro" },
+  ];
+
+  function desenharDetalhe() {
+    const sin = Dados.obter(detalheId);
+    if (!sin) { UI.fecharGaveta(); return; }
+
+    const abas = `<div class="abas">${ABAS.map((a) =>
+      `<button class="aba${a.id === abaAtual ? " ativa" : ""}" data-aba="${a.id}">${Util.esc(a.nome)}${
+        a.id === "acompanhamento" ? ` (${(sin.acompanhamentos || []).length})` :
+        a.id === "anexos" ? ` (${(sin.anexos || []).length})` :
+        a.id === "contatos" ? ` (${(sin.contatos || []).length})` : ""
+      }</button>`).join("")}</div>`;
+
+    const corpos = {
+      resumo: corpoResumo, acompanhamento: corpoAcompanhamento, contatos: corpoContatos,
+      anexos: corpoAnexos, historico: corpoHistorico, editar: () => formularioHTML(sin),
+    };
+
+    UI.abrirGaveta({
+      titulo: `${sin.associado}`,
+      subtitulo: `${Util.esc(sin.numero)} · ${Util.esc(sin.tipo)} · Aberto há ${Util.esc(Util.tempoDesde(sin.criadoEm))}`,
+      corpo: abas + `<div id="detalhe-corpo">${corpos[abaAtual](sin)}</div>`,
+      rodape: rodapeDetalhe(sin),
+      depois: (corpo, rodape) => ligarDetalhe(sin, corpo, rodape),
+    });
+  }
+
+  function rodapeDetalhe(sin) {
+    const admin = Dados.ehAdmin();
+    const botoes = [];
+
+    if (abaAtual === "editar") {
+      botoes.push('<button class="btn btn-vazio" data-acao="cancelar-edicao">Cancelar</button>');
+      botoes.push('<div class="direita"><button class="btn btn-verde" data-acao="salvar-edicao">Salvar alterações</button></div>');
+      return botoes.join("");
+    }
+
+    botoes.push('<button class="btn btn-vazio" data-acao="fechar">Fechar</button>');
+    if (admin) botoes.push(`<button class="btn btn-perigo-vazio" data-acao="excluir">Excluir</button>`);
+
+    const direita = ['<button class="btn btn-azul-claro" data-acao="editar">Editar</button>'];
+    if (sin.status !== "urgente" && sin.status !== "concluido") {
+      direita.push('<button class="btn btn-vermelho" data-acao="urgente">Marcar como urgente</button>');
+    }
+    if (sin.status !== "resolvendo" && sin.status !== "concluido") {
+      direita.push('<button class="btn" data-acao="resolvendo">Mover para resolvendo</button>');
+    }
+    if (sin.status === "concluido") {
+      direita.push('<button class="btn btn-azul-claro" data-acao="reabrir">Reabrir caso</button>');
+    } else {
+      direita.push('<button class="btn btn-verde" data-acao="concluir">Concluir caso</button>');
+    }
+    botoes.push(`<div class="direita">${direita.join("")}</div>`);
+    return botoes.join("");
+  }
+
+  /* --- Aba: resumo -------------------------------------------------- */
+  function corpoResumo(sin) {
+    const alertas = Dados.alertas(sin);
+    const pessoas = Dados.pessoas();
+
+    const faixaAlertas = alertas.length
+      ? `<div class="cartao" style="border-left:4px solid var(--vermelho)">
+           <div class="cartao-topo"><h2>Alertas do caso</h2></div>
+           <div class="alertas-card">${alertas.map((a) =>
+             `<span class="alerta-mini${a.nivel === "aviso" ? " aviso" : ""}">${a.nivel === "aviso" ? "•" : "!"} ${Util.esc(a.texto)}</span>`).join("")}</div>
+         </div>`
+      : "";
+
+    return `
+    <div class="cartao">
+      <div class="cartao-topo">
+        <div>
+          <h2>${Util.esc(sin.associado)}</h2>
+          <p>${Util.esc(sin.numero)} · Protocolo ${Util.esc(Util.ou(sin.protocolo))} · Aberto há ${Util.esc(Util.tempoDesde(sin.criadoEm))}</p>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${UI.etiquetaStatus(sin.status)} ${UI.etiquetaPrioridade(sin.prioridade)}
+          ${Number(sin.vitimas) > 0 ? `<span class="etiqueta vermelha">${Util.plural(Number(sin.vitimas), "vítima", "vítimas")}</span>` : ""}
+        </div>
+      </div>
+      <div class="campo-linha">
+        <label class="campo"><span>Status</span>
+          <select data-rapido="status">${UI.opcoes(Dados.STATUS, sin.status)}</select></label>
+        <label class="campo"><span>Prioridade</span>
+          <select data-rapido="prioridade">${UI.opcoes(Dados.PRIORIDADES, sin.prioridade)}</select></label>
+        <label class="campo"><span>Atendente</span>
+          <select data-rapido="atendente">${UI.opcoes(pessoas, sin.atendente, "Não informada")}</select></label>
+        <label class="campo"><span>Responsável</span>
+          <select data-rapido="responsavel">${UI.opcoes(pessoas, sin.responsavel, "Sem responsável")}</select></label>
+      </div>
+    </div>
+
+    ${faixaAlertas}
+
+    <div class="cartao">
+      <div class="cartao-topo"><h2>Associado</h2></div>
+      <div class="dados-grade">
+        ${UI.dado("Nome completo", sin.associado)}
+        ${UI.dado("WhatsApp", sin.whatsapp)}
+        ${UI.dado("CPF ou documento", sin.documento)}
+        ${UI.dado("Contrato/associação", sin.contrato)}
+      </div>
+      ${sin.whatsapp ? `<div style="margin-top:12px"><a class="btn btn-verde btn-pequeno" target="_blank" rel="noopener"
+          href="https://wa.me/55${Util.esc(Util.soNumeros(sin.whatsapp))}">Abrir conversa no WhatsApp</a></div>` : ""}
+    </div>
+
+    <div class="cartao">
+      <div class="cartao-topo"><h2>Incidente</h2></div>
+      <div class="dados-grade">
+        ${UI.dado("Data do incidente", Util.fmtData(sin.dataIncidente))}
+        ${UI.dado("Horário do incidente", Util.fmtHora(sin.horaIncidente))}
+        ${UI.dado("Tipo de sinistro", sin.tipo)}
+        ${UI.dado("Classificação", sin.classificacao)}
+        ${UI.dado("Local", sin.local)}
+        ${UI.dado("Vítimas", sin.vitimas)}
+        ${UI.dado("Veículos envolvidos", sin.veiculosEnvolvidos)}
+        ${UI.dado("Boletim de ocorrência", sin.temBO ? Util.ou(sin.numeroBO, "Sim") : "Não")}
+        ${UI.dado("Guincho", sin.guincho ? "Sim" : "Não")}
+        ${UI.dado("Atendimento médico", sin.atendimentoMedico ? "Sim" : "Não")}
+      </div>
+      <div style="margin-top:12px">
+        <div class="dado"><span>Descrição do ocorrido</span></div>
+        <p style="white-space:pre-wrap;margin-top:4px">${Util.esc(Util.ou(sin.descricao, "Sem descrição registrada."))}</p>
+      </div>
+    </div>
+
+    <div class="cartao">
+      <div class="cartao-topo"><h2>Veículo protegido</h2></div>
+      <div class="dados-grade">
+        ${UI.dado("Placa", sin.placa)}
+        ${UI.dado("Marca", sin.marca)}
+        ${UI.dado("Modelo", sin.modelo)}
+        ${UI.dado("Ano", sin.ano)}
+        ${UI.dado("Cor", sin.cor)}
+      </div>
+    </div>
+
+    <div class="cartao">
+      <div class="cartao-topo"><h2>Registro e prazos</h2></div>
+      <div class="dados-grade">
+        ${UI.dado("Data do atendimento", Util.fmtData(sin.dataAtendimento))}
+        ${UI.dado("Horário do atendimento", Util.fmtHora(sin.horaAtendimento))}
+        ${UI.dado("Atendente", sin.atendente)}
+        ${UI.dado("Responsável", sin.responsavel)}
+        ${UI.dado("Seguradora/oficina/prestador", sin.prestador)}
+        ${UI.dado("Próxima ação", sin.proximaAcao)}
+        ${UI.dado("Prazo de retorno", sin.prazoRetorno ? Util.fmtData(sin.prazoRetorno) : "—")}
+        ${UI.dado("Documentos pendentes", sin.documentosPendentes ? "Sim" : "Não")}
+        ${UI.dado("Última atualização", Util.fmtDataHora(Dados.ultimaAtualizacao(sin)))}
+        ${UI.dado("Concluído em", sin.concluidoEm ? Util.fmtDataHora(sin.concluidoEm) : "—")}
+      </div>
+    </div>
+
+    <div class="cartao">
+      <div class="cartao-topo"><h2>Observações internas</h2></div>
+      <p style="white-space:pre-wrap">${Util.esc(Util.ou(sin.observacoes, "Nenhuma observação registrada."))}</p>
+      <div class="campo" style="margin-top:12px">
+        <span>Adicionar observação</span>
+        <textarea id="nova-observacao" placeholder="A observação fica carimbada com data, horário e autor."></textarea>
+      </div>
+      <div style="margin-top:8px"><button class="btn btn-verde btn-pequeno" data-acao="observacao">Adicionar observação</button></div>
+    </div>`;
+  }
+
+  /* --- Aba: acompanhamento ------------------------------------------ */
+  function corpoAcompanhamento(sin) {
+    const usuario = Dados.usuarioAtual();
+    const itens = (sin.acompanhamentos || []).slice().sort((a, b) => String(b.criadoEm).localeCompare(String(a.criadoEm)));
+
+    const lista = itens.length ? `<div class="linha-tempo">${itens.map((a) => `
+      <div class="evento">
+        <div class="evento-topo">
+          <strong>${Util.esc(a.tipo)}</strong>
+          <span class="etiqueta cinza">${Util.esc(a.autor)}</span>
+          <span class="evento-quando">${Util.esc(Util.fmtData(a.data))} às ${Util.esc(Util.fmtHora(a.hora))}</span>
+        </div>
+        <p>${Util.esc(a.descricao)}</p>
+        ${a.proximaAcao || a.prazoRetorno ? `<p class="detalhe">
+          ${a.proximaAcao ? `<b>Próxima ação:</b> ${Util.esc(a.proximaAcao)}` : ""}
+          ${a.prazoRetorno ? ` · <b>Prazo:</b> ${Util.esc(Util.fmtData(a.prazoRetorno))}` : ""}</p>` : ""}
+        <div style="margin-top:8px"><button class="btn btn-perigo-vazio btn-pequeno" data-remover-acomp="${a.id}">Remover</button></div>
+      </div>`).join("")}</div>`
+      : `<div class="vazio">Nenhuma atualização registrada até agora.</div>`;
+
+    return `
+    <div class="cartao">
+      <div class="cartao-topo">
+        <div><h2>Registrar atualização</h2><p>Cada atualização entra no histórico do sinistro.</p></div>
+      </div>
+      <div class="campo-linha">
+        <label class="campo"><span>Tipo de atualização</span>
+          <select id="acomp-tipo">${UI.opcoes(Dados.TIPOS_ACOMPANHAMENTO, "Análise em andamento")}</select></label>
+        <label class="campo"><span>Data</span><input type="date" id="acomp-data" value="${Util.dataLocal()}" /></label>
+        <label class="campo"><span>Horário</span><input type="time" id="acomp-hora" value="${Util.horaLocal()}" /></label>
+        <label class="campo"><span>Registrado por</span>
+          <select id="acomp-autor">${UI.opcoes(Dados.pessoas(), usuario ? usuario.nome : "")}</select></label>
+      </div>
+      <div class="campo" style="margin-top:12px">
+        <span>Descrição da atualização <span class="obrig">*</span></span>
+        <textarea id="acomp-descricao" placeholder="O que foi feito, com quem foi falado, o que ficou definido."></textarea>
+      </div>
+      <div class="campo-linha" style="margin-top:12px">
+        <label class="campo"><span>Próxima ação</span><input id="acomp-proxima" placeholder="O que precisa ser feito a seguir" /></label>
+        <label class="campo"><span>Prazo para retorno</span><input type="date" id="acomp-prazo" /></label>
+      </div>
+      <div style="margin-top:12px"><button class="btn btn-verde" data-acao="add-acomp">Adicionar atualização</button></div>
+    </div>
+
+    <div class="cartao">
+      <div class="cartao-topo"><h2>Acompanhamento do caso</h2><p>${Util.plural(itens.length, "atualização registrada", "atualizações registradas")}</p></div>
+      ${lista}
+    </div>`;
+  }
+
+  /* --- Aba: contatos ------------------------------------------------ */
+  function corpoContatos(sin) {
+    const itens = (sin.contatos || []).slice().sort((a, b) => String(b.criadoEm).localeCompare(String(a.criadoEm)));
+    const lista = itens.length ? `<div class="linha-tempo">${itens.map((c) => `
+      <div class="evento contato">
+        <div class="evento-topo">
+          <strong>${c.tipo === "associado" ? "Contato com o associado" : "Contato com oficina/prestador"}</strong>
+          <span class="etiqueta cinza">${Util.esc(c.canal)}</span>
+          <span class="evento-quando">${Util.esc(Util.fmtDataHora(c.criadoEm))}</span>
+        </div>
+        ${c.quem ? `<p class="detalhe"><b>Com:</b> ${Util.esc(c.quem)}</p>` : ""}
+        <p>${Util.esc(c.resumo)}</p>
+        <p class="detalhe">Registrado por ${Util.esc(c.autor)}</p>
+      </div>`).join("")}</div>`
+      : `<div class="vazio">Nenhum contato registrado.</div>`;
+
+    return `
+    <div class="cartao">
+      <div class="cartao-topo"><h2>Registrar contato</h2></div>
+      <div class="campo-linha">
+        <label class="campo"><span>Tipo de contato</span>
+          <select id="contato-tipo">
+            <option value="associado">Associado</option>
+            <option value="prestador">Oficina, seguradora ou prestador</option>
+          </select></label>
+        <label class="campo"><span>Canal</span>
+          <select id="contato-canal">${UI.opcoes(["WhatsApp", "Telefone", "E-mail", "Presencial", "Outro"], "WhatsApp")}</select></label>
+        <label class="campo"><span>Com quem</span><input id="contato-quem" placeholder="Nome de quem atendeu" /></label>
+      </div>
+      <div class="campo" style="margin-top:12px">
+        <span>Resumo do contato <span class="obrig">*</span></span>
+        <textarea id="contato-resumo" placeholder="O que foi tratado no contato."></textarea>
+      </div>
+      <div style="margin-top:12px"><button class="btn btn-verde" data-acao="add-contato">Registrar contato</button></div>
+    </div>
+
+    <div class="cartao">
+      <div class="cartao-topo"><h2>Contatos do caso</h2><p>${Util.plural(itens.length, "contato registrado", "contatos registrados")}</p></div>
+      ${lista}
+    </div>`;
+  }
+
+  /* --- Aba: anexos -------------------------------------------------- */
+  function corpoAnexos(sin) {
+    const limite = Dados.config().limiteAnexoMB;
+    const itens = (sin.anexos || []).slice().sort((a, b) => String(b.criadoEm).localeCompare(String(a.criadoEm)));
+
+    const lista = itens.length ? `<div class="anexos">${itens.map((a) => `
+      <div class="anexo">
+        ${String(a.tipo).indexOf("image/") === 0
+          ? `<img src="${Util.esc(a.conteudo)}" alt="${Util.esc(a.nome)}" />`
+          : `<span class="anexo-icone">📄</span>`}
+        <div class="anexo-info">
+          <strong>${Util.esc(a.nome)}</strong>
+          <small>${Util.esc(Util.tamanhoArquivo(a.tamanho))} · ${Util.esc(a.enviadoPor)} · ${Util.esc(Util.fmtDataHora(a.criadoEm))}</small>
+        </div>
+        <a class="btn btn-vazio btn-pequeno" href="${Util.esc(a.conteudo)}" download="${Util.esc(a.nome)}" target="_blank" rel="noopener">Abrir</a>
+        <button class="btn btn-perigo-vazio btn-pequeno" data-remover-anexo="${a.id}">Remover</button>
+      </div>`).join("")}</div>`
+      : `<div class="vazio">Nenhum documento anexado.</div>`;
+
+    return `
+    <div class="cartao">
+      <div class="cartao-topo"><h2>Anexar documento ou imagem</h2><p>Até ${limite} MB por arquivo.</p></div>
+      <label class="campo">
+        <span>Selecionar arquivos</span>
+        <input type="file" id="anexo-arquivo" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt" />
+      </label>
+      <p class="detalhe" style="color:var(--cinza-texto);font-size:12.5px;margin-top:8px">
+        Fotos do veículo, boletim de ocorrência, CNH, orçamento da oficina e comprovantes.
+      </p>
+    </div>
+
+    <div class="cartao">
+      <div class="cartao-topo"><h2>Documentos do sinistro</h2><p>${Util.plural(itens.length, "arquivo", "arquivos")}</p></div>
+      ${lista}
+    </div>`;
+  }
+
+  /* --- Aba: histórico ----------------------------------------------- */
+  function corpoHistorico(sin) {
+    const itens = (sin.historico || []).slice().sort((a, b) => String(b.criadoEm).localeCompare(String(a.criadoEm)));
+    if (!itens.length) return `<div class="cartao"><div class="vazio">Sem histórico.</div></div>`;
+
+    return `<div class="cartao">
+      <div class="cartao-topo"><h2>Histórico do sinistro</h2><p>Registro automático de tudo que aconteceu no caso.</p></div>
+      <div class="linha-tempo">${itens.map((h) => `
+        <div class="evento historico">
+          <div class="evento-topo">
+            <strong>${Util.esc(h.acao)}</strong>
+            <span class="etiqueta cinza">${Util.esc(h.usuario)}</span>
+            <span class="evento-quando">${Util.esc(Util.fmtDataHora(h.criadoEm))}</span>
+          </div>
+          <p>${Util.esc(h.detalhe)}</p>
+          ${h.de || h.para ? `<p class="detalhe">${Util.esc(Util.ou(h.de, "—"))} → ${Util.esc(Util.ou(h.para, "—"))}</p>` : ""}
+        </div>`).join("")}</div>
+    </div>`;
+  }
+
+  /* --- Eventos do detalhe -------------------------------------------- */
+  function ligarDetalhe(sin, corpo, rodape) {
+    $$("[data-aba]", corpo).forEach((btn) => {
+      btn.addEventListener("click", () => { abaAtual = btn.dataset.aba; desenharDetalhe(); });
+    });
+
+    if (abaAtual === "editar") ligarMascaras(corpo);
+
+    // Alterações rápidas de status, prioridade, atendente e responsável.
+    $$("[data-rapido]", corpo).forEach((sel) => {
+      sel.addEventListener("change", () => {
+        const campoNome = sel.dataset.rapido;
+        const valor = sel.value;
+        if (campoNome === "status") {
+          if (valor === "concluido") return pedirConclusao(sin.id);
+          if (sin.status === "concluido") return pedirReabertura(sin.id, valor);
+          Dados.mover(sin.id, valor);
+          UI.sucesso(`Movido para “${Dados.nomeStatus(valor)}”.`);
+        } else if (campoNome === "prioridade") {
+          Dados.alterarPrioridade(sin.id, valor);
+          UI.sucesso(`Prioridade alterada para ${Dados.nomePrioridade(valor)}.`);
+        } else {
+          Dados.alterarPessoa(sin.id, campoNome, valor);
+          UI.sucesso("Equipe do caso atualizada.");
+        }
+        desenharDetalhe();
+      });
+    });
+
+    const clicar = (seletor, fn) => { const el = $(seletor, corpo) || $(seletor, rodape); if (el) el.addEventListener("click", fn); };
+
+    clicar('[data-acao="observacao"]', () => {
+      const txt = $("#nova-observacao", corpo);
+      try {
+        Dados.adicionarObservacao(sin.id, txt.value);
+        UI.sucesso("Observação adicionada.");
+        desenharDetalhe();
+      } catch (e) { UI.erro(e.message); }
+    });
+
+    clicar('[data-acao="add-acomp"]', () => {
+      try {
+        Dados.adicionarAcompanhamento(sin.id, {
+          tipo: $("#acomp-tipo", corpo).value,
+          data: $("#acomp-data", corpo).value,
+          hora: $("#acomp-hora", corpo).value,
+          autor: $("#acomp-autor", corpo).value,
+          descricao: $("#acomp-descricao", corpo).value,
+          proximaAcao: $("#acomp-proxima", corpo).value,
+          prazoRetorno: $("#acomp-prazo", corpo).value,
+        });
+        UI.sucesso("Atualização registrada.");
+        desenharDetalhe();
+      } catch (e) { UI.erro(e.message); }
+    });
+
+    $$("[data-remover-acomp]", corpo).forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const ok = await UI.confirmar({ titulo: "Remover atualização", texto: "A atualização sai do acompanhamento, mas a remoção fica registrada no histórico.", rotulo: "Remover", perigo: true });
+        if (!ok) return;
+        Dados.removerAcompanhamento(sin.id, btn.dataset.removerAcomp);
+        UI.sucesso("Atualização removida.");
+        desenharDetalhe();
+      });
+    });
+
+    clicar('[data-acao="add-contato"]', () => {
+      try {
+        Dados.adicionarContato(sin.id, {
+          tipo: $("#contato-tipo", corpo).value,
+          canal: $("#contato-canal", corpo).value,
+          quem: $("#contato-quem", corpo).value,
+          resumo: $("#contato-resumo", corpo).value,
+        });
+        UI.sucesso("Contato registrado.");
+        desenharDetalhe();
+      } catch (e) { UI.erro(e.message); }
+    });
+
+    const entradaAnexo = $("#anexo-arquivo", corpo);
+    if (entradaAnexo) {
+      entradaAnexo.addEventListener("change", async () => {
+        const arquivos = Array.from(entradaAnexo.files || []);
+        for (const arquivo of arquivos) {
+          try {
+            await Dados.adicionarAnexo(sin.id, arquivo);
+            UI.sucesso(`“${arquivo.name}” anexado.`);
+          } catch (e) { UI.erro(e.message); }
+        }
+        desenharDetalhe();
+      });
+    }
+
+    $$("[data-remover-anexo]", corpo).forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const ok = await UI.confirmar({ titulo: "Remover documento", texto: "O arquivo será apagado deste sinistro.", rotulo: "Remover", perigo: true });
+        if (!ok) return;
+        Dados.removerAnexo(sin.id, btn.dataset.removerAnexo);
+        UI.sucesso("Documento removido.");
+        desenharDetalhe();
+      });
+    });
+
+    // Rodapé
+    clicar('[data-acao="fechar"]', UI.fecharGaveta);
+    clicar('[data-acao="editar"]', () => { abaAtual = "editar"; desenharDetalhe(); });
+    clicar('[data-acao="cancelar-edicao"]', () => { abaAtual = "resumo"; desenharDetalhe(); });
+
+    clicar('[data-acao="salvar-edicao"]', () => {
+      const form = $("#form-sinistro", corpo);
+      const r = Dados.atualizar(sin.id, lerFormulario(form));
+      if (!r.ok) return mostrarErros(corpo, r.erros);
+      UI.sucesso("Sinistro atualizado.");
+      abaAtual = "resumo";
+      desenharDetalhe();
+    });
+
+    clicar('[data-acao="urgente"]', () => {
+      Dados.mover(sin.id, "urgente");
+      UI.alerta("Caso marcado como urgente.");
+      desenharDetalhe();
+    });
+
+    clicar('[data-acao="resolvendo"]', () => {
+      Dados.mover(sin.id, "resolvendo");
+      UI.sucesso("Caso movido para Resolvendo.");
+      desenharDetalhe();
+    });
+
+    clicar('[data-acao="concluir"]', () => pedirConclusao(sin.id));
+    clicar('[data-acao="reabrir"]', () => pedirReabertura(sin.id, "resolvendo"));
+
+    clicar('[data-acao="excluir"]', async () => {
+      const ok = await UI.confirmar({
+        titulo: "Excluir sinistro",
+        texto: `O cadastro ${sin.numero} — ${sin.associado} será apagado definitivamente, junto com o histórico e os anexos. Essa ação não pode ser desfeita.`,
+        rotulo: "Excluir definitivamente", perigo: true,
+      });
+      if (!ok) return;
+      try {
+        Dados.excluir(sin.id);
+        UI.sucesso("Sinistro excluído.");
+        UI.fecharGaveta();
+      } catch (e) { UI.erro(e.message); }
+    });
+  }
+
+  async function pedirConclusao(id) {
+    const sin = Dados.obter(id);
+    const ok = await UI.confirmar({
+      titulo: "Concluir caso",
+      texto: `Confirmar a conclusão do sinistro ${sin.numero} — ${sin.associado}? O caso vai para a coluna “Caso concluído” e continua disponível para consulta.`,
+      rotulo: "Concluir caso",
+    });
+    if (!ok) { desenharDetalhe(); return; }
+    Dados.mover(id, "concluido");
+    UI.sucesso("Caso concluído.");
+    desenharDetalhe();
+  }
+
+  async function pedirReabertura(id, destino) {
+    const sin = Dados.obter(id);
+    const alvo = destino && destino !== "concluido" ? destino : "resolvendo";
+    const ok = await UI.confirmar({
+      titulo: "Reabrir caso",
+      texto: `Reabrir o sinistro ${sin.numero} e mover para “${Dados.nomeStatus(alvo)}”?`,
+      rotulo: "Reabrir caso",
+    });
+    if (!ok) { desenharDetalhe(); return; }
+    Dados.mover(id, alvo);
+    UI.sucesso("Caso reaberto.");
+    desenharDetalhe();
+  }
+
+  return { abrirCadastro, abrirDetalhe, formularioHTML, ligarMascaras, lerFormulario, mostrarErros };
+})();
+
+/* ===== js/kanban.js ===== */
+/* ==================================================================
+   Kanban — o coração do sistema.
+   Quatro colunas, cards arrastáveis e movimentação salva na hora.
+   No toque (celular/tablet), os botões de mover fazem o mesmo papel
+   do arrastar.
+   ================================================================== */
+const Kanban = (() => {
+
+  const $ = UI.$;
+  const $$ = UI.$$;
+
+  let arrastandoId = null;
+
+  /* ---------------------------------------------------------------- */
+  /* Card                                                              */
+  /* ---------------------------------------------------------------- */
+  function cardHTML(sin) {
+    const veiculo = [sin.marca, sin.modelo].filter(Boolean).join(" ");
+    const destinos = Dados.STATUS.filter((s) => s.id !== sin.status);
+
+    return `<article class="card prioridade-${Util.esc(sin.prioridade)}${sin.status === "concluido" ? " concluido" : ""}"
+      draggable="true" data-id="${Util.esc(sin.id)}" tabindex="0"
+      aria-label="Sinistro ${Util.esc(sin.numero)} de ${Util.esc(sin.associado)}">
+
+      <div class="card-topo">
+        <div>
+          <div class="card-nome">${Util.esc(sin.associado)}</div>
+          <div class="card-numero">${Util.esc(sin.numero)}${sin.protocolo ? ` · ${Util.esc(sin.protocolo)}` : ""}</div>
+        </div>
+        ${UI.etiquetaPrioridade(sin.prioridade)}
+      </div>
+
+      <div class="card-linha">
+        <span class="etiqueta azul">${Util.esc(sin.tipo)}</span>
+        ${Number(sin.vitimas) > 0 ? `<span class="etiqueta vermelha">${Util.plural(Number(sin.vitimas), "vítima", "vítimas")}</span>` : ""}
+        ${Number(sin.veiculosEnvolvidos) > 1 ? `<span class="etiqueta cinza">${Number(sin.veiculosEnvolvidos)} veículos</span>` : ""}
+      </div>
+
+      <div class="card-veiculo">
+        <span class="placa">${Util.esc(Util.ou(sin.placa, "SEM PLACA"))}</span>
+        <span>${Util.esc(Util.ou(veiculo, "Veículo não informado"))}</span>
+      </div>
+
+      <div class="card-linha">
+        <span><b>Incidente:</b> ${Util.esc(Util.fmtData(sin.dataIncidente))} às ${Util.esc(Util.fmtHora(sin.horaIncidente))}</span>
+      </div>
+      <div class="card-linha">
+        <span><b>Atendente:</b> ${Util.esc(Util.ou(sin.atendente))}</span>
+        <span><b>Responsável:</b> ${Util.esc(Util.ou(sin.responsavel, "sem responsável"))}</span>
+      </div>
+
+      ${UI.alertasHTML(sin)}
+
+      <div class="card-rodape">
+        ${UI.etiquetaStatus(sin.status)}
+        <span class="card-tempo">${sin.status === "concluido"
+          ? `Concluído ${sin.concluidoEm ? "há " + Util.esc(Util.tempoDesde(sin.concluidoEm)) : ""}`
+          : `Aberto há ${Util.esc(Util.tempoDesde(sin.criadoEm))}`}</span>
+      </div>
+
+      <div class="card-mover">
+        ${destinos.map((d) => `<button class="btn btn-vazio btn-pequeno" data-mover="${d.id}" data-sin="${Util.esc(sin.id)}"
+          title="Mover para ${Util.esc(d.nome)}">→ ${Util.esc(d.nome)}</button>`).join("")}
+      </div>
+    </article>`;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Quadro                                                            */
+  /* ---------------------------------------------------------------- */
+  function quadroHTML(sinistros) {
+    return `<div class="quadro" id="quadro">${Dados.STATUS.map((coluna) => {
+      const itens = sinistros
+        .filter((s) => s.status === coluna.id)
+        .sort(ordenar);
+
+      return `<section class="coluna" data-status="${coluna.id}">
+        <header class="coluna-topo">
+          <h3>${Util.esc(coluna.nome)}</h3>
+          <span class="contador">${itens.length}</span>
+        </header>
+        <div class="coluna-lista" data-lista="${coluna.id}">
+          ${itens.length ? itens.map(cardHTML).join("") : `<div class="vazio">Nenhum sinistro nesta etapa.</div>`}
+        </div>
+      </section>`;
+    }).join("")}</div>`;
+  }
+
+  /** Urgentes primeiro, depois prazo vencido, depois mais antigos no topo. */
+  function ordenar(a, b) {
+    const peso = (s) => (s.prioridade === "urgente" ? 0 : s.prioridade === "atencao" ? 1 : 2);
+    if (peso(a) !== peso(b)) return peso(a) - peso(b);
+    const venc = (s) => (Dados.prazoVencido(s) ? 0 : 1);
+    if (venc(a) !== venc(b)) return venc(a) - venc(b);
+    if (a.status === "concluido") return String(b.concluidoEm || "").localeCompare(String(a.concluidoEm || ""));
+    return String(a.criadoEm).localeCompare(String(b.criadoEm));
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Interação                                                         */
+  /* ---------------------------------------------------------------- */
+  function ligar(raiz) {
+    $$(".card", raiz).forEach((card) => {
+      card.addEventListener("dragstart", (e) => {
+        arrastandoId = card.dataset.id;
+        card.classList.add("arrastando");
+        try {
+          e.dataTransfer.setData("text/plain", arrastandoId);
+          e.dataTransfer.effectAllowed = "move";
+        } catch (err) { /* navegadores antigos */ }
+      });
+
+      card.addEventListener("dragend", () => {
+        card.classList.remove("arrastando");
+        arrastandoId = null;
+        $$(".coluna-lista", raiz).forEach((l) => l.classList.remove("recebendo"));
+      });
+
+      card.addEventListener("click", (e) => {
+        if (e.target.closest("[data-mover]")) return;
+        Formularios.abrirDetalhe(card.dataset.id);
+      });
+
+      card.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          Formularios.abrirDetalhe(card.dataset.id);
+        }
+      });
+    });
+
+    $$("[data-mover]", raiz).forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        mover(btn.dataset.sin, btn.dataset.mover);
+      });
+    });
+
+    $$(".coluna-lista", raiz).forEach((lista) => {
+      lista.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+        lista.classList.add("recebendo");
+      });
+      lista.addEventListener("dragleave", (e) => {
+        if (!lista.contains(e.relatedTarget)) lista.classList.remove("recebendo");
+      });
+      lista.addEventListener("drop", (e) => {
+        e.preventDefault();
+        lista.classList.remove("recebendo");
+        let id = arrastandoId;
+        try { id = e.dataTransfer.getData("text/plain") || arrastandoId; } catch (err) { /* ignora */ }
+        if (id) mover(id, lista.dataset.lista);
+      });
+    });
+  }
+
+  /** Movimentação: conclusão e reabertura pedem confirmação; o resto salva direto. */
+  async function mover(id, destino) {
+    const sin = Dados.obter(id);
+    if (!sin || sin.status === destino) return;
+
+    if (destino === "concluido") {
+      const ok = await UI.confirmar({
+        titulo: "Concluir caso",
+        texto: `Confirmar a conclusão do sinistro ${sin.numero} — ${sin.associado}? O caso continua guardado no sistema.`,
+        rotulo: "Concluir caso",
+      });
+      if (!ok) { App.desenhar(); return; }
+    } else if (sin.status === "concluido") {
+      const ok = await UI.confirmar({
+        titulo: "Reabrir caso",
+        texto: `Reabrir o sinistro ${sin.numero} e mover para “${Dados.nomeStatus(destino)}”?`,
+        rotulo: "Reabrir caso",
+      });
+      if (!ok) { App.desenhar(); return; }
+    }
+
+    Dados.mover(id, destino);
+    if (destino === "concluido") UI.sucesso("Caso concluído.");
+    else if (destino === "urgente") UI.alerta(`${sin.numero} movido para Caso urgente.`);
+    else UI.sucesso(`${sin.numero} movido para “${Dados.nomeStatus(destino)}”.`);
+  }
+
+  return { quadroHTML, cardHTML, ligar, mover, ordenar };
+})();
+
+/* ===== js/paginas.js ===== */
+/* ==================================================================
+   Páginas — visão geral, listas por etapa, prazos, histórico,
+   usuários e configurações.
+   ================================================================== */
+const Paginas = (() => {
+
+  const $ = UI.$;
+  const $$ = UI.$$;
+
+  /* ---------------------------------------------------------------- */
+  /* Tabela de sinistros reaproveitada nas listas                       */
+  /* ---------------------------------------------------------------- */
+  function tabelaHTML(lista, opcoes) {
+    const o = opcoes || {};
+    if (!lista.length) return `<div class="vazio">${Util.esc(o.vazio || "Nenhum sinistro encontrado com os filtros atuais.")}</div>`;
+
+    return `<div class="tabela-rolagem"><table class="tabela">
+      <thead><tr>
+        <th>Sinistro</th><th>Associado</th><th>Veículo</th><th>Tipo</th>
+        <th>Incidente</th><th>Equipe</th><th>Prioridade</th><th>Status</th>
+        <th>${o.colunaTempo || "Aberto há"}</th><th>Alertas</th>
+      </tr></thead>
+      <tbody>${lista.map((s) => {
+        const alertas = Dados.alertas(s);
+        return `<tr class="clicavel" data-abrir="${Util.esc(s.id)}">
+          <td><strong>${Util.esc(s.numero)}</strong><br /><small>${Util.esc(Util.ou(s.protocolo))}</small></td>
+          <td>${Util.esc(s.associado)}<br /><small>${Util.esc(s.whatsapp)}</small></td>
+          <td><span class="placa">${Util.esc(Util.ou(s.placa, "—"))}</span><br /><small>${Util.esc([s.marca, s.modelo].filter(Boolean).join(" ") || "—")}</small></td>
+          <td>${Util.esc(s.tipo)}${Number(s.vitimas) > 0 ? `<br /><small style="color:var(--vermelho)">${Util.plural(Number(s.vitimas), "vítima", "vítimas")}</small>` : ""}</td>
+          <td>${Util.esc(Util.fmtData(s.dataIncidente))}<br /><small>${Util.esc(Util.fmtHora(s.horaIncidente))}</small></td>
+          <td><small>Atend.: ${Util.esc(Util.ou(s.atendente))}<br />Resp.: ${Util.esc(Util.ou(s.responsavel, "—"))}</small></td>
+          <td>${UI.etiquetaPrioridade(s.prioridade)}</td>
+          <td>${UI.etiquetaStatus(s.status)}</td>
+          <td><small>${s.status === "concluido" && s.concluidoEm
+              ? "Concluído há " + Util.esc(Util.tempoDesde(s.concluidoEm))
+              : Util.esc(Util.tempoDesde(s.criadoEm))}</small></td>
+          <td>${alertas.length
+              ? alertas.map((a) => `<span class="alerta-mini${a.nivel === "aviso" ? " aviso" : ""}">${Util.esc(a.texto)}</span>`).join(" ")
+              : '<small style="color:var(--cinza-texto)">—</small>'}</td>
+        </tr>`;
+      }).join("")}</tbody>
+    </table></div>`;
+  }
+
+  function ligarTabela(raiz) {
+    $$("[data-abrir]", raiz).forEach((linha) => {
+      linha.addEventListener("click", () => Formularios.abrirDetalhe(linha.dataset.abrir));
+    });
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Barra de filtros                                                   */
+  /* ---------------------------------------------------------------- */
+  const MARCAS = [
+    { chave: "comVitimas", nome: "Com vítimas" },
+    { chave: "urgentes", nome: "Urgentes" },
+    { chave: "documentosPendentes", nome: "Documentos pendentes" },
+    { chave: "prazoVencido", nome: "Prazo vencido" },
+    { chave: "semAtualizacao", nome: "Sem atualização" },
+    { chave: "semResponsavel", nome: "Sem responsável" },
+    { chave: "concluidos", nome: "Concluídos" },
+  ];
+
+  function filtrosHTML(f, esconder, aberto) {
+    const oculto = esconder || [];
+    const mostra = (chave) => oculto.indexOf(chave) < 0;
+    const pessoas = Dados.pessoas();
+    const ativos = Object.keys(f).filter((k) => f[k]).length;
+
+    const barra = `<div class="filtros-barra nao-imprime">
+      <button class="btn btn-vazio btn-pequeno" data-alternar-filtros>
+        ${aberto ? "▾" : "▸"} Filtros${ativos ? ` <span class="selo-num">${ativos}</span>` : ""}
+      </button>
+      ${ativos ? `<span class="filtros-resumo">${Util.plural(ativos, "filtro aplicado", "filtros aplicados")}</span>
+                  <button class="marca-filtro" data-limpar-filtros>Limpar filtros</button>` : ""}
+    </div>`;
+
+    return barra + `<div class="filtros nao-imprime" id="barra-filtros"${aberto ? "" : " hidden"}>
+      ${mostra("status") ? `<label class="filtro"><span>Status</span>
+        <select data-filtro="status">${UI.opcoes(Dados.STATUS, f.status, "Todos")}</select></label>` : ""}
+      <label class="filtro"><span>Prioridade</span>
+        <select data-filtro="prioridade">${UI.opcoes(Dados.PRIORIDADES, f.prioridade, "Todas")}</select></label>
+      <label class="filtro"><span>Tipo de sinistro</span>
+        <select data-filtro="tipo">${UI.opcoes(Dados.TIPOS, f.tipo, "Todos")}</select></label>
+      <label class="filtro"><span>Atendente</span>
+        <select data-filtro="atendente">${UI.opcoes(pessoas, f.atendente, "Todas")}</select></label>
+      <label class="filtro"><span>Responsável</span>
+        <select data-filtro="responsavel">${UI.opcoes(pessoas, f.responsavel, "Todos")}</select></label>
+      <label class="filtro"><span>Incidente de</span>
+        <input type="date" data-filtro="incidenteDe" value="${Util.esc(f.incidenteDe || "")}" /></label>
+      <label class="filtro"><span>até</span>
+        <input type="date" data-filtro="incidenteAte" value="${Util.esc(f.incidenteAte || "")}" /></label>
+      <label class="filtro"><span>Abertura de</span>
+        <input type="date" data-filtro="aberturaDe" value="${Util.esc(f.aberturaDe || "")}" /></label>
+      <label class="filtro"><span>até</span>
+        <input type="date" data-filtro="aberturaAte" value="${Util.esc(f.aberturaAte || "")}" /></label>
+
+      <div class="filtros-marcas">
+        ${MARCAS.filter((m) => mostra(m.chave)).map((m) =>
+          `<button class="marca-filtro${f[m.chave] ? " ativo" : ""}" data-marca="${m.chave}">${Util.esc(m.nome)}</button>`).join("")}
+        <button class="marca-filtro" data-limpar-filtros>Limpar filtros</button>
+      </div>
+    </div>`;
+  }
+
+  function ligarFiltros(raiz, aoMudar) {
+    const alternar = $("[data-alternar-filtros]", raiz);
+    if (alternar) alternar.addEventListener("click", () => aoMudar("__alternar__"));
+    $$("[data-filtro]", raiz).forEach((el) => {
+      el.addEventListener("change", () => aoMudar(el.dataset.filtro, el.value || null));
+    });
+    $$("[data-marca]", raiz).forEach((btn) => {
+      btn.addEventListener("click", () => aoMudar(btn.dataset.marca, !btn.classList.contains("ativo") || null));
+    });
+    $$("[data-limpar-filtros]", raiz).forEach((btn) => {
+      btn.addEventListener("click", () => aoMudar("__limpar__"));
+    });
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Visão geral                                                       */
+  /* ---------------------------------------------------------------- */
+  function visaoGeral() {
+    const todos = Dados.lista();
+    const ind = Dados.indicadores();
+    const abertos = todos.filter((s) => s.status !== "concluido");
+
+    const porStatus = Dados.STATUS.map((st) => ({ nome: st.nome, cor: st.cor, valor: todos.filter((s) => s.status === st.id).length }));
+    const maxStatus = Math.max.apply(null, porStatus.map((p) => p.valor).concat([1]));
+
+    const porTipo = Dados.TIPOS
+      .map((t) => ({ nome: t, valor: todos.filter((s) => s.tipo === t).length }))
+      .filter((t) => t.valor > 0)
+      .sort((a, b) => b.valor - a.valor);
+    const maxTipo = Math.max.apply(null, porTipo.map((p) => p.valor).concat([1]));
+
+    const pendencias = abertos
+      .map((s) => ({ sin: s, alertas: Dados.alertas(s) }))
+      .filter((x) => x.alertas.some((a) => a.nivel === "grave"))
+      .slice(0, 6);
+
+    const recentes = todos.slice().sort((a, b) => String(b.criadoEm).localeCompare(String(a.criadoEm))).slice(0, 5);
+    const atividade = Dados.historicoGlobal(8);
+
+    return `
+    <div class="grade-2">
+      <div class="cartao">
+        <div class="cartao-topo"><h2>Sinistros por etapa</h2><p>Distribuição atual do quadro</p></div>
+        ${porStatus.map((p) => `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span style="min-width:130px;font-size:13.5px">${Util.esc(p.nome)}</span>
+          ${UI.barra(p.valor, maxStatus, p.cor === "vermelha" ? "vermelho" : p.cor === "verde" ? "verde" : p.cor === "amarela" ? "amarelo" : null)}
+          <b style="min-width:26px;text-align:right">${p.valor}</b>
+        </div>`).join("")}
+      </div>
+
+      <div class="cartao">
+        <div class="cartao-topo"><h2>Sinistros por tipo</h2><p>Todos os casos registrados</p></div>
+        ${porTipo.length ? porTipo.map((p) => `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span style="min-width:150px;font-size:13.5px">${Util.esc(p.nome)}</span>
+          ${UI.barra(p.valor, maxTipo)}
+          <b style="min-width:26px;text-align:right">${p.valor}</b>
+        </div>`).join("") : '<div class="vazio">Nenhum sinistro cadastrado.</div>'}
+      </div>
+    </div>
+
+    <div class="cartao">
+      <div class="cartao-topo">
+        <div><h2>Precisam de atenção agora</h2><p>Casos com alerta grave em aberto</p></div>
+        <button class="btn btn-vazio btn-pequeno" data-ir="prazos">Ver todas as pendências</button>
+      </div>
+      ${pendencias.length ? `<div class="grade-3">${pendencias.map((x) => `
+        <div class="card prioridade-${Util.esc(x.sin.prioridade)}" data-abrir="${Util.esc(x.sin.id)}" style="cursor:pointer">
+          <div class="card-nome">${Util.esc(x.sin.associado)}</div>
+          <div class="card-numero">${Util.esc(x.sin.numero)} · ${Util.esc(Dados.nomeStatus(x.sin.status))}</div>
+          <div class="alertas-card">${x.alertas.map((a) =>
+            `<span class="alerta-mini${a.nivel === "aviso" ? " aviso" : ""}">${Util.esc(a.texto)}</span>`).join("")}</div>
+        </div>`).join("")}</div>`
+        : `<div class="vazio">Nenhum caso com alerta grave. Bom trabalho.</div>`}
+    </div>
+
+    <div class="grade-2">
+      <div class="cartao">
+        <div class="cartao-topo"><h2>Últimos sinistros cadastrados</h2></div>
+        ${recentes.length ? `<div class="linha-tempo">${recentes.map((s) => `
+          <div class="evento" data-abrir="${Util.esc(s.id)}" style="cursor:pointer">
+            <div class="evento-topo">
+              <strong>${Util.esc(s.associado)}</strong>
+              ${UI.etiquetaPrioridade(s.prioridade)}
+              <span class="evento-quando">há ${Util.esc(Util.tempoDesde(s.criadoEm))}</span>
+            </div>
+            <p class="detalhe">${Util.esc(s.numero)} · ${Util.esc(s.tipo)} · ${Util.esc(Util.ou(s.placa))} · ${Util.esc(Dados.nomeStatus(s.status))}</p>
+          </div>`).join("")}</div>` : '<div class="vazio">Nenhum sinistro cadastrado.</div>'}
+      </div>
+
+      <div class="cartao">
+        <div class="cartao-topo"><h2>Atividade recente</h2><p>Últimos registros do histórico</p></div>
+        ${atividade.length ? `<div class="linha-tempo">${atividade.map((h) => `
+          <div class="evento historico" data-abrir="${Util.esc(h.sinistroId)}" style="cursor:pointer">
+            <div class="evento-topo">
+              <strong>${Util.esc(h.acao)}</strong>
+              <span class="evento-quando">${Util.esc(Util.fmtDataHora(h.criadoEm))}</span>
+            </div>
+            <p class="detalhe">${Util.esc(h.numero)} — ${Util.esc(h.detalhe)} <em>(${Util.esc(h.usuario)})</em></p>
+          </div>`).join("")}</div>` : '<div class="vazio">Sem movimentação registrada.</div>'}
+      </div>
+    </div>
+
+    <div class="cartao">
+      <div class="cartao-topo">
+        <div><h2>Resumo operacional</h2><p>Números do Setor Plus neste momento</p></div>
+      </div>
+      <div class="dados-grade">
+        ${UI.dado("Sinistros abertos", ind.abertos)}
+        ${UI.dado("Casos urgentes", ind.urgentes)}
+        ${UI.dado("Casos com vítimas", ind.comVitimas)}
+        ${UI.dado("Documentos pendentes", ind.documentosPendentes)}
+        ${UI.dado("Prazo vencido", ind.prazoVencido)}
+        ${UI.dado("Sem atualização", ind.semAtualizacao)}
+        ${UI.dado("Sem responsável", ind.semResponsavel)}
+        ${UI.dado("Concluídos hoje", ind.concluidosHoje)}
+        ${UI.dado("Tempo médio de conclusão", ind.tempoMedio)}
+      </div>
+    </div>`;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Prazos e pendências                                               */
+  /* ---------------------------------------------------------------- */
+  function prazos() {
+    const abertos = Dados.lista().filter((s) => s.status !== "concluido");
+
+    const grupos = [
+      { chave: "urgente-parado", titulo: "Casos urgentes sem atualização", cor: "var(--vermelho)" },
+      { chave: "prazo", titulo: "Prazo de retorno vencido", cor: "var(--vermelho)" },
+      { chave: "documentos", titulo: "Documentos pendentes", cor: "var(--amarelo)" },
+      { chave: "parado", titulo: "Parados há muito tempo", cor: "var(--amarelo)" },
+      { chave: "sem-atualizacao", titulo: "Sem atualização recente", cor: "var(--amarelo)" },
+      { chave: "sem-responsavel", titulo: "Casos sem responsável", cor: "var(--amarelo)" },
+      { chave: "sem-contato", titulo: "Sem contato recente com o associado", cor: "var(--amarelo)" },
+    ];
+
+    const proximos = abertos
+      .filter((s) => s.prazoRetorno && !Dados.prazoVencido(s))
+      .sort((a, b) => String(a.prazoRetorno).localeCompare(String(b.prazoRetorno)))
+      .slice(0, 10);
+
+    const blocos = grupos.map((g) => {
+      const itens = abertos.filter((s) => Dados.temAlerta(s, g.chave));
+      return `<div class="cartao" style="border-left:4px solid ${g.cor}">
+        <div class="cartao-topo">
+          <div><h2>${Util.esc(g.titulo)}</h2><p>${Util.plural(itens.length, "caso", "casos")}</p></div>
+        </div>
+        ${tabelaHTML(itens, { vazio: "Nenhum caso nesta condição." })}
+      </div>`;
+    }).join("");
+
+    return `
+    <div class="cartao">
+      <div class="cartao-topo"><h2>Próximos prazos de retorno</h2><p>Casos em aberto com prazo definido</p></div>
+      ${proximos.length ? `<div class="tabela-rolagem"><table class="tabela">
+        <thead><tr><th>Prazo</th><th>Sinistro</th><th>Associado</th><th>Próxima ação</th><th>Responsável</th><th>Status</th></tr></thead>
+        <tbody>${proximos.map((s) => `<tr class="clicavel" data-abrir="${Util.esc(s.id)}">
+          <td><strong>${Util.esc(Util.fmtData(s.prazoRetorno))}</strong></td>
+          <td>${Util.esc(s.numero)}</td>
+          <td>${Util.esc(s.associado)}</td>
+          <td>${Util.esc(Util.ou(s.proximaAcao, "—"))}</td>
+          <td>${Util.esc(Util.ou(s.responsavel, "—"))}</td>
+          <td>${UI.etiquetaStatus(s.status)}</td>
+        </tr>`).join("")}</tbody></table></div>` : '<div class="vazio">Nenhum prazo futuro cadastrado.</div>'}
+    </div>
+    ${blocos}`;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Histórico geral                                                   */
+  /* ---------------------------------------------------------------- */
+  function historico(estado) {
+    const termo = Util.normalizar(estado.busca);
+    const acoes = Array.from(new Set(Dados.historicoGlobal().map((h) => h.acao))).sort();
+    const usuarios = Array.from(new Set(Dados.historicoGlobal().map((h) => h.usuario))).sort();
+
+    const linhas = Dados.historicoGlobal().filter((h) => {
+      if (estado.historicoAcao && h.acao !== estado.historicoAcao) return false;
+      if (estado.historicoUsuario && h.usuario !== estado.historicoUsuario) return false;
+      if (!termo) return true;
+      return Util.normalizar([h.numero, h.associado, h.acao, h.detalhe, h.usuario].join(" ")).indexOf(termo) >= 0;
+    });
+
+    return `
+    <div class="filtros nao-imprime">
+      <label class="filtro"><span>Tipo de alteração</span>
+        <select data-hist="historicoAcao">${UI.opcoes(acoes, estado.historicoAcao, "Todas")}</select></label>
+      <label class="filtro"><span>Usuário</span>
+        <select data-hist="historicoUsuario">${UI.opcoes(usuarios, estado.historicoUsuario, "Todos")}</select></label>
+      <div class="filtros-marcas">
+        <button class="marca-filtro" data-exportar-historico>Exportar planilha</button>
+      </div>
+    </div>
+
+    <div class="cartao">
+      <div class="cartao-topo">
+        <div><h2>Histórico de todos os sinistros</h2><p>${Util.plural(linhas.length, "registro", "registros")}</p></div>
+      </div>
+      ${linhas.length ? `<div class="tabela-rolagem"><table class="tabela">
+        <thead><tr><th>Data e horário</th><th>Sinistro</th><th>Usuário</th><th>Alteração</th><th>Detalhe</th><th>De → Para</th></tr></thead>
+        <tbody>${linhas.slice(0, 400).map((h) => `<tr class="clicavel" data-abrir="${Util.esc(h.sinistroId)}">
+          <td>${Util.esc(Util.fmtDataHora(h.criadoEm))}</td>
+          <td><strong>${Util.esc(h.numero)}</strong><br /><small>${Util.esc(h.associado)}</small></td>
+          <td>${Util.esc(h.usuario)}</td>
+          <td>${Util.esc(h.acao)}</td>
+          <td>${Util.esc(h.detalhe)}</td>
+          <td>${h.de || h.para ? `${Util.esc(Util.ou(h.de, "—"))} → ${Util.esc(Util.ou(h.para, "—"))}` : "—"}</td>
+        </tr>`).join("")}</tbody></table></div>
+        ${linhas.length > 400 ? '<p class="detalhe" style="margin-top:10px;color:var(--cinza-texto)">Exibindo os 400 registros mais recentes. Use os filtros ou a busca para refinar.</p>' : ""}`
+        : '<div class="vazio">Nenhum registro encontrado.</div>'}
+    </div>`;
+  }
+
+  function ligarHistorico(raiz, estado, redesenhar) {
+    $$("[data-hist]", raiz).forEach((sel) => {
+      sel.addEventListener("change", () => { estado[sel.dataset.hist] = sel.value || null; redesenhar(); });
+    });
+    const exportar = $("[data-exportar-historico]", raiz);
+    if (exportar) exportar.addEventListener("click", () => {
+      const linhas = [["Data e horário", "Sinistro", "Associado", "Usuário", "Alteração", "Detalhe", "De", "Para"]];
+      Dados.historicoGlobal().forEach((h) => linhas.push([
+        Util.fmtDataHora(h.criadoEm), h.numero, h.associado, h.usuario, h.acao, h.detalhe, h.de, h.para,
+      ]));
+      Util.baixarCSV(`historico-sinistros-${Util.dataLocal()}.csv`, linhas);
+      UI.sucesso("Histórico exportado.");
+    });
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Usuários                                                          */
+  /* ---------------------------------------------------------------- */
+  function usuarios() {
+    if (!Dados.ehAdmin()) {
+      return `<div class="cartao"><div class="vazio">
+        Somente administradores podem gerenciar usuários.<br />
+        Como atendente, você pode cadastrar, acompanhar, movimentar e concluir sinistros.
+      </div></div>`;
+    }
+
+    const lista = Dados.listaUsuarios();
+    return `
+    <div class="cartao">
+      <div class="cartao-topo">
+        <div><h2>Usuários do sistema</h2><p>Administradores gerenciam tudo; atendentes não excluem registros nem usuários.</p></div>
+        <button class="btn btn-verde" data-novo-usuario>+ Novo usuário</button>
+      </div>
+      <div class="tabela-rolagem"><table class="tabela">
+        <thead><tr><th>Nome</th><th>Acesso</th><th>Perfil</th><th>Situação</th><th>Casos como atendente</th><th>Casos como responsável</th><th></th></tr></thead>
+        <tbody>${lista.map((u) => {
+          const comoAtendente = Dados.lista().filter((s) => s.atendente === u.nome).length;
+          const comoResponsavel = Dados.lista().filter((s) => s.responsavel === u.nome).length;
+          return `<tr>
+            <td><strong>${Util.esc(u.nome)}</strong></td>
+            <td>${Util.esc(u.usuario)}</td>
+            <td>${u.perfil === "admin" ? '<span class="etiqueta azul">Administrador</span>' : '<span class="etiqueta cinza">Atendente</span>'}</td>
+            <td>${u.ativo ? '<span class="etiqueta verde">Ativo</span>' : '<span class="etiqueta vermelha">Desativado</span>'}</td>
+            <td class="num">${comoAtendente}</td>
+            <td class="num">${comoResponsavel}</td>
+            <td style="white-space:nowrap">
+              <button class="btn btn-vazio btn-pequeno" data-editar-usuario="${Util.esc(u.id)}">Editar</button>
+              <button class="btn btn-perigo-vazio btn-pequeno" data-excluir-usuario="${Util.esc(u.id)}">Excluir</button>
+            </td>
+          </tr>`;
+        }).join("")}</tbody>
+      </table></div>
+    </div>
+
+    <div class="cartao">
+      <div class="cartao-topo"><h2>Permissões</h2></div>
+      <div class="grade-2">
+        <div>
+          <h3 style="font-size:14px;margin-bottom:6px">Administrador</h3>
+          <p style="font-size:13.5px;color:var(--cinza-texto)">Cadastra, visualiza, edita, movimenta, conclui, reabre e exclui sinistros. Gerencia usuários, relatórios e configurações.</p>
+        </div>
+        <div>
+          <h3 style="font-size:14px;margin-bottom:6px">Atendente</h3>
+          <p style="font-size:13.5px;color:var(--cinza-texto)">Cadastra, visualiza, atualiza, movimenta e conclui sinistros. Não exclui registros nem gerencia usuários.</p>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function formUsuario(u) {
+    const usuario = u || {};
+    return `<form id="form-usuario">
+      <fieldset class="secao">
+        <legend>Dados de acesso</legend>
+        <div class="campo-linha">
+          <label class="campo"><span>Nome completo <span class="obrig">*</span></span>
+            <input name="nome" value="${Util.esc(usuario.nome || "")}" required /></label>
+          <label class="campo"><span>Nome de acesso <span class="obrig">*</span></span>
+            <input name="usuario" value="${Util.esc(usuario.usuario || "")}" required /></label>
+          <label class="campo"><span>Senha ${usuario.id ? "(deixe vazio para manter)" : '<span class="obrig">*</span>'}</span>
+            <input name="senha" type="text" placeholder="${usuario.id ? "••••••" : "Defina uma senha"}" /></label>
+          <label class="campo"><span>Perfil</span>
+            <select name="perfil">${UI.opcoes(Dados.PERFIS, usuario.perfil || "atendente")}</select></label>
+        </div>
+        <div style="margin-top:10px">
+          <label class="campo-check"><input type="checkbox" name="ativo"${usuario.ativo !== false ? " checked" : ""} /> Usuário ativo</label>
+        </div>
+      </fieldset>
+    </form>`;
+  }
+
+  function ligarUsuarios(raiz, redesenhar) {
+    const abrirForm = (u) => {
+      UI.abrirGaveta({
+        titulo: u ? "Editar usuário" : "Novo usuário",
+        subtitulo: "Administradores excluem registros; atendentes não.",
+        corpo: formUsuario(u),
+        rodape: `<button class="btn btn-vazio" data-acao="cancelar">Cancelar</button>
+                 <div class="direita"><button class="btn btn-verde" data-acao="salvar">Salvar usuário</button></div>`,
+        depois: (corpo, rodape) => {
+          $('[data-acao="cancelar"]', rodape).addEventListener("click", UI.fecharGaveta);
+          $('[data-acao="salvar"]', rodape).addEventListener("click", () => {
+            const form = $("#form-usuario", corpo);
+            const dados = Formularios.lerFormulario(form);
+            if (u) dados.id = u.id;
+            try {
+              Dados.salvarUsuario(dados);
+              UI.sucesso("Usuário salvo.");
+              UI.fecharGaveta();
+              redesenhar();
+            } catch (e) { UI.erro(e.message); }
+          });
+        },
+      });
+    };
+
+    const novo = $("[data-novo-usuario]", raiz);
+    if (novo) novo.addEventListener("click", () => abrirForm(null));
+
+    $$("[data-editar-usuario]", raiz).forEach((btn) => {
+      btn.addEventListener("click", () => abrirForm(Dados.listaUsuarios().find((u) => u.id === btn.dataset.editarUsuario)));
+    });
+
+    $$("[data-excluir-usuario]", raiz).forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const u = Dados.listaUsuarios().find((x) => x.id === btn.dataset.excluirUsuario);
+        const ok = await UI.confirmar({
+          titulo: "Excluir usuário",
+          texto: `Excluir o acesso de ${u.nome}? Os sinistros em que aparece continuam registrados.`,
+          rotulo: "Excluir", perigo: true,
+        });
+        if (!ok) return;
+        try { Dados.excluirUsuario(u.id); UI.sucesso("Usuário excluído."); redesenhar(); }
+        catch (e) { UI.erro(e.message); }
+      });
+    });
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Configurações                                                     */
+  /* ---------------------------------------------------------------- */
+  function configuracoes() {
+    const c = Dados.config();
+    const admin = Dados.ehAdmin();
+
+    return `
+    <div class="cartao">
+      <div class="cartao-topo"><h2>Identificação</h2><p>Aparece nos relatórios impressos</p></div>
+      <div class="campo-linha">
+        <label class="campo"><span>Empresa</span><input data-config="empresa" value="${Util.esc(c.empresa)}" /></label>
+        <label class="campo"><span>Setor</span><input data-config="setor" value="${Util.esc(c.setor)}" /></label>
+      </div>
+    </div>
+
+    <div class="cartao">
+      <div class="cartao-topo"><h2>Alertas e prazos</h2><p>Quando o sistema deve avisar a equipe</p></div>
+      <div class="campo-linha">
+        <label class="campo"><span>Urgente sem atualização (horas)</span>
+          <input type="number" min="1" data-config="horasUrgenteSemAtualizacao" value="${Number(c.horasUrgenteSemAtualizacao)}" /></label>
+        <label class="campo"><span>Caso sem atualização (horas)</span>
+          <input type="number" min="1" data-config="horasSemAtualizacao" value="${Number(c.horasSemAtualizacao)}" /></label>
+        <label class="campo"><span>Caso parado (dias)</span>
+          <input type="number" min="1" data-config="diasParado" value="${Number(c.diasParado)}" /></label>
+        <label class="campo"><span>Sem contato com o associado (dias)</span>
+          <input type="number" min="1" data-config="diasSemContato" value="${Number(c.diasSemContato)}" /></label>
+        <label class="campo"><span>Tamanho máximo de anexo (MB)</span>
+          <input type="number" min="1" max="5" data-config="limiteAnexoMB" value="${Number(c.limiteAnexoMB)}" /></label>
+      </div>
+      <div style="margin-top:12px"><button class="btn btn-verde" data-salvar-config>Salvar configurações</button></div>
+    </div>
+
+    <div class="cartao">
+      <div class="cartao-topo"><h2>Backup dos dados</h2><p>Os sinistros ficam guardados neste navegador</p></div>
+      <p style="font-size:13.5px;color:var(--cinza-texto)">
+        Baixe uma cópia periodicamente. O arquivo pode ser importado em outro computador ou navegador.
+      </p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <button class="btn btn-vazio" data-exportar-backup>Baixar backup (JSON)</button>
+        <button class="btn btn-vazio" data-exportar-tudo>Exportar sinistros (planilha)</button>
+        <label class="btn btn-vazio" style="position:relative;overflow:hidden">
+          Importar backup
+          <input type="file" accept="application/json,.json" data-importar-backup
+                 style="position:absolute;inset:0;opacity:0;cursor:pointer" />
+        </label>
+        ${admin ? '<button class="btn btn-perigo-vazio" data-restaurar-demo>Recriar dados de demonstração</button>' : ""}
+      </div>
+    </div>`;
+  }
+
+  function ligarConfiguracoes(raiz, redesenhar) {
+    const salvar = $("[data-salvar-config]", raiz);
+    if (salvar) salvar.addEventListener("click", () => {
+      const nova = {};
+      $$("[data-config]", raiz).forEach((el) => {
+        const chave = el.dataset.config;
+        nova[chave] = el.type === "number" ? Math.max(1, Number(el.value) || 1) : el.value.trim();
+      });
+      Dados.salvarConfig(nova);
+      UI.sucesso("Configurações salvas.");
+      redesenhar();
+    });
+
+    const backup = $("[data-exportar-backup]", raiz);
+    if (backup) backup.addEventListener("click", () => {
+      Util.baixar(`backup-sattrack-plus-${Util.dataLocal()}.json`, Dados.exportarBackup(), "application/json");
+      UI.sucesso("Backup gerado.");
+    });
+
+    const planilha = $("[data-exportar-tudo]", raiz);
+    if (planilha) planilha.addEventListener("click", () => { Relatorios.exportarSinistros(Dados.lista()); });
+
+    const importar = $("[data-importar-backup]", raiz);
+    if (importar) importar.addEventListener("change", async () => {
+      const arquivo = importar.files && importar.files[0];
+      if (!arquivo) return;
+      const ok = await UI.confirmar({
+        titulo: "Importar backup",
+        texto: "Os sinistros atuais deste navegador serão substituídos pelos do arquivo. Deseja continuar?",
+        rotulo: "Importar", perigo: true,
+      });
+      if (!ok) { importar.value = ""; return; }
+      const leitor = new FileReader();
+      leitor.onload = () => {
+        try { Dados.importarBackup(leitor.result); UI.sucesso("Backup importado."); redesenhar(); }
+        catch (e) { UI.erro("Arquivo inválido: " + e.message); }
+      };
+      leitor.readAsText(arquivo);
+    });
+
+    const demo = $("[data-restaurar-demo]", raiz);
+    if (demo) demo.addEventListener("click", async () => {
+      const ok = await UI.confirmar({
+        titulo: "Recriar dados de demonstração",
+        texto: "Todos os sinistros atuais serão substituídos pelos cinco casos de exemplo. Essa ação não pode ser desfeita.",
+        rotulo: "Recriar", perigo: true,
+      });
+      if (!ok) return;
+      try { Dados.restaurarDemonstracao(); UI.sucesso("Base de demonstração recriada."); redesenhar(); }
+      catch (e) { UI.erro(e.message); }
+    });
+  }
+
+  return {
+    tabelaHTML, ligarTabela, filtrosHTML, ligarFiltros,
+    visaoGeral, prazos, historico, ligarHistorico,
+    usuarios, ligarUsuarios, configuracoes, ligarConfiguracoes,
+  };
+})();
+
+/* ===== js/relatorios.js ===== */
+/* ==================================================================
+   Relatórios — números do Setor Plus por período, com exportação
+   em planilha (CSV) e em PDF (impressão do navegador).
+   ================================================================== */
+const Relatorios = (() => {
+
+  const $ = UI.$;
+  const $$ = UI.$$;
+
+  const PERIODOS = [
+    { id: "hoje", nome: "Hoje" },
+    { id: "7", nome: "Últimos 7 dias" },
+    { id: "30", nome: "Últimos 30 dias" },
+    { id: "mes", nome: "Este mês" },
+    { id: "mespassado", nome: "Mês passado" },
+    { id: "ano", nome: "Este ano" },
+    { id: "tudo", nome: "Todo o período" },
+    { id: "personalizado", nome: "Personalizado" },
+  ];
+
+  /** Converte o período escolhido em duas datas (aaaa-mm-dd). */
+  function intervalo(estado) {
+    const hoje = new Date();
+    const dia = (d) => Util.dataLocal(d);
+    const menos = (n) => dia(new Date(Date.now() - n * 86400000));
+
+    switch (estado.periodo) {
+      case "hoje": return { de: dia(hoje), ate: dia(hoje) };
+      case "7": return { de: menos(6), ate: dia(hoje) };
+      case "30": return { de: menos(29), ate: dia(hoje) };
+      case "mes": return { de: dia(new Date(hoje.getFullYear(), hoje.getMonth(), 1)), ate: dia(hoje) };
+      case "mespassado": {
+        const inicio = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
+        const fim = new Date(hoje.getFullYear(), hoje.getMonth(), 0);
+        return { de: dia(inicio), ate: dia(fim) };
+      }
+      case "ano": return { de: dia(new Date(hoje.getFullYear(), 0, 1)), ate: dia(hoje) };
+      case "personalizado": return { de: estado.relDe || "", ate: estado.relAte || "" };
+      default: return { de: "", ate: "" };
+    }
+  }
+
+  function selecionados(estado) {
+    const { de, ate } = intervalo(estado);
+    return Dados.lista().filter((s) => {
+      const abertura = Util.dataLocal(Util.paraData(s.criadoEm));
+      if (de && abertura < de) return false;
+      if (ate && abertura > ate) return false;
+      return true;
+    });
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Blocos                                                            */
+  /* ---------------------------------------------------------------- */
+  function agrupar(lista, obterChave) {
+    const mapa = new Map();
+    lista.forEach((s) => {
+      const chave = obterChave(s) || "Não informado";
+      mapa.set(chave, (mapa.get(chave) || 0) + 1);
+    });
+    return Array.from(mapa.entries())
+      .map(([nome, valor]) => ({ nome, valor }))
+      .sort((a, b) => b.valor - a.valor);
+  }
+
+  function tabelaAgrupada(titulo, subtitulo, linhas, total) {
+    const max = Math.max.apply(null, linhas.map((l) => l.valor).concat([1]));
+    return `<div class="cartao">
+      <div class="cartao-topo"><div><h2>${Util.esc(titulo)}</h2><p>${Util.esc(subtitulo || "")}</p></div></div>
+      ${linhas.length ? `<div class="tabela-rolagem"><table class="tabela">
+        <thead><tr><th>${Util.esc(titulo)}</th><th class="num">Sinistros</th><th class="num">Participação</th><th style="width:180px"></th></tr></thead>
+        <tbody>${linhas.map((l) => `<tr>
+          <td>${Util.esc(l.nome)}</td>
+          <td class="num">${l.valor}</td>
+          <td class="num">${total ? Math.round((l.valor / total) * 100) : 0}%</td>
+          <td>${UI.barra(l.valor, max)}</td>
+        </tr>`).join("")}</tbody>
+      </table></div>` : '<div class="vazio">Sem dados no período selecionado.</div>'}
+    </div>`;
+  }
+
+  /** Distribuição por mês de abertura. */
+  function porMes(lista) {
+    const mapa = new Map();
+    lista.forEach((s) => {
+      const d = Util.paraData(s.criadoEm);
+      if (!d) return;
+      const chave = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      mapa.set(chave, (mapa.get(chave) || 0) + 1);
+    });
+    return Array.from(mapa.entries())
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([chave, valor]) => {
+        const [ano, mes] = chave.split("-");
+        return { nome: `${mes}/${ano}`, valor };
+      });
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Página                                                            */
+  /* ---------------------------------------------------------------- */
+  function pagina(estado) {
+    const lista = selecionados(estado);
+    const { de, ate } = intervalo(estado);
+    const c = Dados.config();
+
+    const concluidos = lista.filter((s) => s.status === "concluido");
+    const pendentes = lista.filter((s) => s.status !== "concluido");
+    const urgentes = lista.filter((s) => s.status === "urgente" || s.prioridade === "urgente");
+    const comVitimas = lista.filter((s) => Number(s.vitimas) > 0);
+    const vencidos = lista.filter(Dados.prazoVencido);
+
+    const tempos = concluidos
+      .filter((s) => s.concluidoEm)
+      .map((s) => new Date(s.concluidoEm) - new Date(s.criadoEm))
+      .filter((ms) => ms >= 0);
+    const medio = tempos.length ? tempos.reduce((a, b) => a + b, 0) / tempos.length : 0;
+    const totalVitimas = lista.reduce((soma, s) => soma + Number(s.vitimas || 0), 0);
+    const totalVeiculos = lista.reduce((soma, s) => soma + Number(s.veiculosEnvolvidos || 0), 0);
+
+    return `
+    <div class="filtros nao-imprime">
+      <label class="filtro"><span>Período</span>
+        <select data-rel="periodo">${UI.opcoes(PERIODOS, estado.periodo || "30")}</select></label>
+      <label class="filtro"><span>De</span>
+        <input type="date" data-rel="relDe" value="${Util.esc(estado.relDe || de || "")}" /></label>
+      <label class="filtro"><span>Até</span>
+        <input type="date" data-rel="relAte" value="${Util.esc(estado.relAte || ate || "")}" /></label>
+      <div class="filtros-marcas">
+        <button class="marca-filtro" data-rel-csv>Exportar planilha (CSV)</button>
+        <button class="marca-filtro" data-rel-pdf>Gerar PDF</button>
+      </div>
+    </div>
+
+    <div class="cartao">
+      <div class="cartao-topo">
+        <div>
+          <h2>${Util.esc(c.empresa)} — ${Util.esc(c.setor)}</h2>
+          <p>Relatório de sinistros · ${de ? Util.fmtData(de) : "início"} a ${ate ? Util.fmtData(ate) : "hoje"} · gerado em ${Util.fmtDataHora(Util.agoraISO())}</p>
+        </div>
+      </div>
+      <div class="dados-grade">
+        ${UI.dado("Sinistros no período", lista.length)}
+        ${UI.dado("Casos concluídos", concluidos.length)}
+        ${UI.dado("Casos pendentes", pendentes.length)}
+        ${UI.dado("Casos urgentes", urgentes.length)}
+        ${UI.dado("Casos com vítimas", comVitimas.length)}
+        ${UI.dado("Total de vítimas", totalVitimas)}
+        ${UI.dado("Veículos envolvidos", totalVeiculos)}
+        ${UI.dado("Sinistros com prazo vencido", vencidos.length)}
+        ${UI.dado("Tempo médio de resolução", medio ? Util.duracao(medio) : "—")}
+      </div>
+    </div>
+
+    ${tabelaAgrupada("Sinistros por período (mês de abertura)", "Volume de casos abertos por mês", porMes(lista), lista.length)}
+    ${tabelaAgrupada("Sinistros por tipo", "Natureza das ocorrências", agrupar(lista, (s) => s.tipo), lista.length)}
+    ${tabelaAgrupada("Sinistros por atendente", "Quem registrou o atendimento", agrupar(lista, (s) => s.atendente), lista.length)}
+    ${tabelaAgrupada("Sinistros por responsável", "Quem conduz o caso", agrupar(lista, (s) => s.responsavel), lista.length)}
+    ${tabelaAgrupada("Sinistros por status", "Situação atual no quadro", agrupar(lista, (s) => Dados.nomeStatus(s.status)), lista.length)}
+    ${tabelaAgrupada("Sinistros por classificação", "Enquadramento do caso", agrupar(lista, (s) => s.classificacao), lista.length)}
+
+    <div class="cartao">
+      <div class="cartao-topo"><div><h2>Casos urgentes</h2><p>${Util.plural(urgentes.length, "caso", "casos")}</p></div></div>
+      ${Paginas.tabelaHTML(urgentes, { vazio: "Nenhum caso urgente no período." })}
+    </div>
+
+    <div class="cartao">
+      <div class="cartao-topo"><div><h2>Casos com vítimas</h2><p>${Util.plural(comVitimas.length, "caso", "casos")} · ${Util.plural(totalVitimas, "vítima", "vítimas")}</p></div></div>
+      ${Paginas.tabelaHTML(comVitimas, { vazio: "Nenhum caso com vítimas no período." })}
+    </div>
+
+    <div class="cartao">
+      <div class="cartao-topo"><div><h2>Sinistros com prazo vencido</h2><p>${Util.plural(vencidos.length, "caso", "casos")}</p></div></div>
+      ${Paginas.tabelaHTML(vencidos, { vazio: "Nenhum prazo vencido no período." })}
+    </div>
+
+    <div class="cartao">
+      <div class="cartao-topo"><div><h2>Casos pendentes</h2><p>${Util.plural(pendentes.length, "caso em aberto", "casos em aberto")}</p></div></div>
+      ${Paginas.tabelaHTML(pendentes, { vazio: "Nenhum caso pendente no período." })}
+    </div>
+
+    <div class="cartao">
+      <div class="cartao-topo"><div><h2>Casos concluídos</h2><p>${Util.plural(concluidos.length, "caso", "casos")} · tempo médio ${medio ? Util.duracao(medio) : "—"}</p></div></div>
+      ${Paginas.tabelaHTML(concluidos, { vazio: "Nenhum caso concluído no período.", colunaTempo: "Concluído" })}
+    </div>`;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Exportação                                                        */
+  /* ---------------------------------------------------------------- */
+  const CABECALHO = [
+    "Número", "Protocolo", "Status", "Prioridade", "Classificação",
+    "Associado", "WhatsApp", "CPF/documento", "Contrato",
+    "Data do incidente", "Hora do incidente", "Local", "Tipo", "Descrição",
+    "Vítimas", "Veículos envolvidos", "Boletim de ocorrência", "Número do BO",
+    "Guincho", "Atendimento médico",
+    "Placa", "Marca", "Modelo", "Ano", "Cor",
+    "Data do atendimento", "Hora do atendimento", "Atendente", "Responsável",
+    "Prestador", "Próxima ação", "Prazo de retorno", "Documentos pendentes",
+    "Aberto em", "Aberto há", "Última atualização", "Concluído em",
+    "Atualizações", "Contatos", "Anexos", "Observações internas",
+  ];
+
+  function linhaCSV(s) {
+    return [
+      s.numero, s.protocolo, Dados.nomeStatus(s.status), Dados.nomePrioridade(s.prioridade), s.classificacao,
+      s.associado, s.whatsapp, s.documento, s.contrato,
+      Util.fmtData(s.dataIncidente), Util.fmtHora(s.horaIncidente), s.local, s.tipo, s.descricao,
+      s.vitimas, s.veiculosEnvolvidos, s.temBO ? "Sim" : "Não", s.numeroBO,
+      s.guincho ? "Sim" : "Não", s.atendimentoMedico ? "Sim" : "Não",
+      s.placa, s.marca, s.modelo, s.ano, s.cor,
+      Util.fmtData(s.dataAtendimento), Util.fmtHora(s.horaAtendimento), s.atendente, s.responsavel,
+      s.prestador, s.proximaAcao, s.prazoRetorno ? Util.fmtData(s.prazoRetorno) : "", s.documentosPendentes ? "Sim" : "Não",
+      Util.fmtDataHora(s.criadoEm), Util.tempoDesde(s.criadoEm), Util.fmtDataHora(Dados.ultimaAtualizacao(s)),
+      s.concluidoEm ? Util.fmtDataHora(s.concluidoEm) : "",
+      (s.acompanhamentos || []).length, (s.contatos || []).length, (s.anexos || []).length,
+      String(s.observacoes || "").replace(/\s+/g, " "),
+    ];
+  }
+
+  function exportarSinistros(lista, nome) {
+    const linhas = [CABECALHO].concat(lista.map(linhaCSV));
+    Util.baixarCSV(nome || `sinistros-${Util.dataLocal()}.csv`, linhas);
+    UI.sucesso(`${Util.plural(lista.length, "sinistro exportado", "sinistros exportados")}.`);
+  }
+
+  function ligar(raiz, estado, redesenhar) {
+    $$("[data-rel]", raiz).forEach((el) => {
+      el.addEventListener("change", () => {
+        const chave = el.dataset.rel;
+        estado[chave] = el.value;
+        if (chave === "relDe" || chave === "relAte") estado.periodo = "personalizado";
+        redesenhar();
+      });
+    });
+
+    const csv = $("[data-rel-csv]", raiz);
+    if (csv) csv.addEventListener("click", () => {
+      const { de, ate } = intervalo(estado);
+      exportarSinistros(selecionados(estado), `relatorio-sinistros-${de || "inicio"}-a-${ate || Util.dataLocal()}.csv`);
+    });
+
+    const pdf = $("[data-rel-pdf]", raiz);
+    if (pdf) pdf.addEventListener("click", () => {
+      UI.aviso("Escolha “Salvar como PDF” na janela de impressão.");
+      setTimeout(() => window.print(), 350);
+    });
+  }
+
+  return { pagina, ligar, exportarSinistros, selecionados, intervalo, PERIODOS };
+})();
+
+/* ===== js/app.js ===== */
+/* ==================================================================
+   App — menu lateral, rotas, indicadores e busca.
+   ================================================================== */
+const App = (() => {
+
+  const $ = UI.$;
+  const $$ = UI.$$;
+
+  const estado = {
+    pagina: "visao-geral",
+    busca: "",
+    filtros: {},
+    filtrosAbertos: false,
+    periodo: "30",
+    relDe: "",
+    relAte: "",
+    historicoAcao: null,
+    historicoUsuario: null,
+  };
+
+  const MENU = [
+    { grupo: "Painel" },
+    { id: "visao-geral", nome: "Visão geral", icone: "▦", titulo: "Visão geral", sub: "Resumo dos sinistros do Setor Plus." },
+    { id: "workflow", nome: "Workflow de sinistros", icone: "☰", titulo: "Workflow de sinistros", sub: "Arraste os cards entre as etapas. Toda movimentação é salva." },
+    { id: "cadastrar", nome: "Cadastrar sinistro", icone: "＋", acao: true },
+
+    { grupo: "Etapas" },
+    { id: "urgentes", nome: "Casos urgentes", icone: "!", titulo: "Casos urgentes", sub: "Casos graves ou com atendimento imediato.", contador: () => Dados.lista().filter((s) => s.status === "urgente").length, alerta: true },
+    { id: "resolvendo", nome: "Em resolução", icone: "◐", titulo: "Em resolução", sub: "Casos acompanhados pela equipe responsável.", contador: () => Dados.lista().filter((s) => s.status === "resolvendo").length },
+    { id: "concluidos", nome: "Casos concluídos", icone: "✓", titulo: "Casos concluídos", sub: "Casos finalizados, resolvidos ou encerrados.", contador: () => Dados.lista().filter((s) => s.status === "concluido").length },
+
+    { grupo: "Controle" },
+    { id: "prazos", nome: "Prazos e pendências", icone: "⏱", titulo: "Prazos e pendências", sub: "Alertas de prazo, documentos e casos parados.", contador: () => Dados.indicadores().prazoVencido, alerta: true },
+    { id: "historico", nome: "Histórico", icone: "≡", titulo: "Histórico", sub: "Registro automático de tudo que acontece nos sinistros." },
+    { id: "relatorios", nome: "Relatórios", icone: "▤", titulo: "Relatórios", sub: "Números do setor por período, com exportação." },
+
+    { grupo: "Administração" },
+    { id: "usuarios", nome: "Usuários", icone: "◍", titulo: "Usuários", sub: "Perfis de acesso da equipe." },
+    { id: "config", nome: "Configurações", icone: "⚙", titulo: "Configurações", sub: "Alertas, identificação e backup dos dados." },
+  ];
+
+  /* ---------------------------------------------------------------- */
+  /* Menu                                                              */
+  /* ---------------------------------------------------------------- */
+  function desenharMenu() {
+    $("#menu").innerHTML = MENU.map((item) => {
+      if (item.grupo) return `<div class="menu-titulo">${Util.esc(item.grupo)}</div>`;
+      const n = item.contador ? item.contador() : 0;
+      const selo = item.contador && n > 0
+        ? `<span class="selo${item.alerta ? " selo-vermelho" : ""}">${n}</span>` : "";
+      return `<button class="menu-item${item.id === estado.pagina ? " ativo" : ""}" data-pagina="${item.id}">
+        <span class="menu-icone">${item.icone}</span>${Util.esc(item.nome)}${selo}</button>`;
+    }).join("");
+
+    $$("[data-pagina]", $("#menu")).forEach((btn) => {
+      btn.addEventListener("click", () => ir(btn.dataset.pagina));
+    });
+  }
+
+  function ir(pagina) {
+    if (pagina === "cadastrar") { Formularios.abrirCadastro(); fecharMenuMobile(); return; }
+    estado.pagina = pagina;
+    // Cada etapa entra com o filtro de status já aplicado.
+    if (pagina === "urgentes") estado.filtros = { status: "urgente" };
+    else if (pagina === "resolvendo") estado.filtros = { status: "resolvendo" };
+    else if (pagina === "concluidos") estado.filtros = { status: "concluido" };
+    else if (["visao-geral", "workflow"].indexOf(pagina) >= 0) estado.filtros = {};
+    fecharMenuMobile();
+    desenhar();
+    window.scrollTo({ top: 0 });
+  }
+
+  const fecharMenuMobile = () => {
+    $("#lateral").classList.remove("aberta");
+    $("#lateral-fundo").hidden = true;
+  };
+
+  /* ---------------------------------------------------------------- */
+  /* Indicadores                                                       */
+  /* ---------------------------------------------------------------- */
+  function desenharIndicadores() {
+    const i = Dados.indicadores();
+    const itens = [
+      { rotulo: "Sinistros abertos", valor: i.abertos, sub: `${i.total} no total`, cor: "" },
+      { rotulo: "Acabaram de entrar", valor: i.entrou, sub: "aguardando análise", cor: "" },
+      { rotulo: "Casos urgentes", valor: i.urgentes, sub: "atenção imediata", cor: "vermelho" },
+      { rotulo: "Em resolução", valor: i.resolvendo, sub: "em acompanhamento", cor: "amarelo" },
+      { rotulo: "Concluídos hoje", valor: i.concluidosHoje, sub: `${i.concluidos} no total`, cor: "verde" },
+      { rotulo: "Casos com vítimas", valor: i.comVitimas, sub: "em aberto", cor: "vermelho" },
+      { rotulo: "Prazo vencido", valor: i.prazoVencido, sub: "retorno atrasado", cor: "vermelho" },
+      { rotulo: "Sem atualização", valor: i.semAtualizacao, sub: "há muito tempo", cor: "amarelo" },
+      { rotulo: "Tempo médio", valor: i.tempoMedio, sub: "até a conclusão", cor: "" },
+    ];
+
+    $("#indicadores").innerHTML = itens.map((x) => `<div class="indicador ${x.cor}">
+      <span>${Util.esc(x.rotulo)}</span>
+      <strong>${Util.esc(x.valor)}</strong>
+      <small>${Util.esc(x.sub)}</small>
+    </div>`).join("");
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Conteúdo                                                          */
+  /* ---------------------------------------------------------------- */
+  function itemMenu(id) { return MENU.find((m) => m.id === id) || {}; }
+
+  function desenharConteudo() {
+    const alvo = $("#conteudo");
+    const p = estado.pagina;
+
+    const listaFiltrada = () => Dados.filtrar(estado.busca, estado.filtros).sort(Kanban.ordenar);
+
+    if (p === "visao-geral") {
+      alvo.innerHTML = Paginas.visaoGeral();
+      Paginas.ligarTabela(alvo);
+      $$("[data-ir]", alvo).forEach((b) => b.addEventListener("click", () => ir(b.dataset.ir)));
+
+    } else if (p === "workflow") {
+      const lista = Dados.filtrar(estado.busca, estado.filtros);
+      alvo.innerHTML = Paginas.filtrosHTML(estado.filtros, ["status"], estado.filtrosAbertos) + Kanban.quadroHTML(lista);
+      Paginas.ligarFiltros(alvo, aplicarFiltro);
+      Kanban.ligar(alvo);
+
+    } else if (p === "urgentes" || p === "resolvendo" || p === "concluidos") {
+      const lista = listaFiltrada();
+      const item = itemMenu(p);
+      alvo.innerHTML = Paginas.filtrosHTML(estado.filtros, [], estado.filtrosAbertos) + `
+        <div class="cartao">
+          <div class="cartao-topo">
+            <div><h2>${Util.esc(item.titulo)}</h2><p>${Util.plural(lista.length, "sinistro", "sinistros")}</p></div>
+            <button class="btn btn-vazio btn-pequeno" data-exportar>Exportar planilha</button>
+          </div>
+          ${Paginas.tabelaHTML(lista, { colunaTempo: p === "concluidos" ? "Concluído" : "Aberto há" })}
+        </div>`;
+      Paginas.ligarFiltros(alvo, aplicarFiltro);
+      Paginas.ligarTabela(alvo);
+      $("[data-exportar]", alvo).addEventListener("click", () => Relatorios.exportarSinistros(lista));
+
+    } else if (p === "prazos") {
+      alvo.innerHTML = Paginas.prazos();
+      Paginas.ligarTabela(alvo);
+
+    } else if (p === "historico") {
+      alvo.innerHTML = Paginas.historico(estado);
+      Paginas.ligarTabela(alvo);
+      Paginas.ligarHistorico(alvo, estado, desenhar);
+
+    } else if (p === "relatorios") {
+      alvo.innerHTML = Relatorios.pagina(estado);
+      Relatorios.ligar(alvo, estado, desenhar);
+      Paginas.ligarTabela(alvo);
+
+    } else if (p === "usuarios") {
+      alvo.innerHTML = Paginas.usuarios();
+      Paginas.ligarUsuarios(alvo, desenhar);
+
+    } else if (p === "config") {
+      alvo.innerHTML = Paginas.configuracoes();
+      Paginas.ligarConfiguracoes(alvo, desenhar);
+    }
+  }
+
+  function aplicarFiltro(chave, valor) {
+    if (chave === "__alternar__") {
+      estado.filtrosAbertos = !estado.filtrosAbertos;
+      desenhar();
+      return;
+    }
+    if (chave === "__limpar__") {
+      estado.filtros = {};
+      estado.busca = "";
+      $("#busca").value = "";
+    } else if (valor === null || valor === "" || valor === false) {
+      delete estado.filtros[chave];
+    } else {
+      estado.filtros[chave] = valor;
+    }
+    desenhar();
+  }
+
+  function desenhar() {
+    const usuario = Dados.usuarioAtual();
+    if (!usuario) return mostrarLogin();
+
+    const item = itemMenu(estado.pagina);
+    $("#titulo-pagina").textContent = item.titulo || "Painel";
+    $("#subtitulo-pagina").textContent = item.sub || "";
+    $("#limpar-busca").hidden = !estado.busca;
+
+    desenharMenu();
+    desenharIndicadores();
+    desenharConteudo();
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Sessão                                                            */
+  /* ---------------------------------------------------------------- */
+  function mostrarLogin() {
+    $("#app").hidden = true;
+    $("#tela-login").hidden = false;
+    const campo = $("#form-login").elements.usuario;
+    if (campo) campo.focus();
+  }
+
+  function mostrarApp() {
+    const usuario = Dados.usuarioAtual();
+    $("#tela-login").hidden = true;
+    $("#app").hidden = false;
+    $("#usuario-nome").textContent = usuario.nome;
+    $("#usuario-perfil").textContent = Dados.nomePerfil(usuario.perfil);
+    $("#usuario-avatar").textContent = Util.iniciais(usuario.nome);
+    desenhar();
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Início                                                            */
+  /* ---------------------------------------------------------------- */
+  function iniciar() {
+    Dados.carregar();
+    UI.iniciar();
+
+    // Login
+    $("#form-login").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const r = Dados.entrar(form.elements.usuario.value, form.elements.senha.value);
+      const erro = $("#login-erro");
+      if (!r.ok) {
+        erro.textContent = r.erro;
+        erro.hidden = false;
+        return;
+      }
+      erro.hidden = true;
+      form.reset();
+      estado.pagina = "workflow";
+      mostrarApp();
+      UI.sucesso(`Bem-vindo(a), ${r.usuario.nome.split(" ")[0]}.`);
+    });
+
+    $$("[data-preencher]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const form = $("#form-login");
+        const admin = btn.dataset.preencher === "admin";
+        form.elements.usuario.value = admin ? "admin" : "fernanda";
+        form.elements.senha.value = admin ? "admin123" : "1234";
+        form.elements.senha.focus();
+      });
+    });
+
+    $("#btn-sair").addEventListener("click", async () => {
+      const ok = await UI.confirmar({ titulo: "Sair do sistema", texto: "Deseja encerrar a sessão? Os sinistros continuam salvos.", rotulo: "Sair" });
+      if (!ok) return;
+      Dados.sair();
+      mostrarLogin();
+    });
+
+    // Topo
+    $("#btn-novo").addEventListener("click", () => Formularios.abrirCadastro());
+
+    let tempoBusca = null;
+    $("#busca").addEventListener("input", (e) => {
+      estado.busca = e.target.value;
+      clearTimeout(tempoBusca);
+      tempoBusca = setTimeout(() => {
+        // A busca só faz sentido nas telas de lista e no quadro.
+        if (["visao-geral", "usuarios", "config", "relatorios"].indexOf(estado.pagina) >= 0) estado.pagina = "workflow";
+        desenhar();
+      }, 180);
+    });
+
+    $("#limpar-busca").addEventListener("click", () => {
+      estado.busca = "";
+      $("#busca").value = "";
+      desenhar();
+    });
+
+    // Menu no celular
+    $("#abrir-menu").addEventListener("click", () => {
+      $("#lateral").classList.add("aberta");
+      $("#lateral-fundo").hidden = false;
+    });
+    $("#fechar-menu").addEventListener("click", fecharMenuMobile);
+    $("#lateral-fundo").addEventListener("click", fecharMenuMobile);
+
+    // Qualquer escrita nos dados redesenha o painel.
+    Dados.aoMudar(() => { if (Dados.usuarioAtual()) desenhar(); });
+
+    // Os tempos ("aberto há…") envelhecem sozinhos.
+    setInterval(() => {
+      if (Dados.usuarioAtual() && !UI.gavetaAberta() && $("#modal-fundo").hidden) desenhar();
+    }, 60000);
+
+    if (Dados.usuarioAtual()) { estado.pagina = "workflow"; mostrarApp(); }
+    else mostrarLogin();
+  }
+
+  return { iniciar, desenhar, ir, estado };
+})();
+
+document.addEventListener("DOMContentLoaded", App.iniciar);
+
+</script>
+</body>
+</html>
