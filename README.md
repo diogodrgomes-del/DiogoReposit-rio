@@ -199,3 +199,11 @@ as métricas vivem na Meta, e usuários e tokens ficam em variáveis de ambiente
 Um Postgres aqui só acrescentaria custo, latência e mais um lugar de onde vazar
 credencial. Ele passaria a fazer sentido se você quisesse cadastrar clientes por
 tela, em vez de por variável.
+
+---
+
+## Outros sistemas neste repositório
+
+| Pasta | Sistema |
+|---|---|
+| `sattrack-plus/` | **SatTrack Plus — Controle de Sinistros**: painel Kanban do Setor Plus da SatTrack Proteção Veicular, em HTML/CSS/JS puros, independente do painel Marktiva. Veja [`sattrack-plus/README.md`](sattrack-plus/README.md). |
