@@ -157,6 +157,27 @@ Marque “Gráficos de segundo plano” nas opções de impressão para as cores
 
 ---
 
+## Propostas comerciais
+
+Além do painel, o projeto hospeda as propostas que a Marktiva apresenta aos
+clientes. Cada uma é uma página estática única em
+`public/proposta/<cliente>/index.html` — HTML, CSS e JS no mesmo arquivo, sem
+dependência externa, para abrir de qualquer lugar e nunca quebrar na frente do
+cliente por causa de uma CDN fora do ar.
+
+| Cliente  | Link                  |
+| -------- | --------------------- |
+| Ecopanos | `/proposta/ecopanos`  |
+
+São as únicas rotas públicas fora do login (liberadas em `src/middleware.ts`):
+não tocam em token, banco nem dado de campanha. Ficam fora dos buscadores pela
+meta `robots` de cada página — quem tem o link, abre; quem não tem, não acha.
+
+Para gerar um PDF da proposta, basta imprimir a página: há um layout de
+impressão próprio, sem a barra de navegação e com as animações já resolvidas.
+
+---
+
 ## Se algo der errado
 
 **“Nenhuma conta de anúncios acessível por este token”** — o token é válido, mas

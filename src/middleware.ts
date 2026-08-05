@@ -15,6 +15,10 @@ export async function middleware(req: NextRequest) {
     // Diagnóstico de configuração: precisa responder sem sessão, porque é
     // usado justamente quando o login não funciona. Não expõe valor algum.
     pathname === "/api/saude" ||
+    // Propostas comerciais: páginas estáticas feitas para serem abertas pelo
+    // cliente, por link. Não tocam em token, banco nem em dado de campanha —
+    // são só HTML. Ficam fora do índice dos buscadores pela meta `robots`.
+    pathname.startsWith("/proposta/") ||
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico";
 

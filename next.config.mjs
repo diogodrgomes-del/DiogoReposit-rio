@@ -2,6 +2,13 @@
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // As propostas moram em `public/proposta/<cliente>/index.html`. O reescrito
+  // abaixo é só para o link ficar bonito de mandar: /proposta/ecopanos.
+  async rewrites() {
+    return [
+      { source: "/proposta/:cliente", destination: "/proposta/:cliente/index.html" },
+    ];
+  },
   async headers() {
     return [
       {
