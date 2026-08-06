@@ -161,9 +161,12 @@ Marque “Gráficos de segundo plano” nas opções de impressão para as cores
 
 Além do painel, o projeto hospeda as propostas que a Marktiva apresenta aos
 clientes. Cada uma é uma página estática única em
-`public/proposta/<cliente>/index.html` — HTML, CSS e JS no mesmo arquivo, sem
-dependência externa, para abrir de qualquer lugar e nunca quebrar na frente do
-cliente por causa de uma CDN fora do ar.
+`public/proposta/<cliente>/index.html`: HTML, CSS, JS e imagens no mesmo
+arquivo, sem dependência externa. Abre de qualquer lugar, sobe em qualquer
+hospedagem e nunca quebra na frente do cliente por causa de uma CDN fora do ar.
+
+A da Ecopanos usa a identidade do próprio cliente (logo, cores e fotos de
+produto), porque a proposta convence mais quando o cliente se reconhece nela.
 
 | Cliente  | Link                  |
 | -------- | --------------------- |
