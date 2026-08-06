@@ -4,5 +4,6 @@ export * from "./telefone";
 export * from "./eventos";
 export * as clientes from "./clientes";
 export * as credenciais from "./credenciais";
+export * as usuarios from "./usuarios";
 export { ErroDeValidacao } from "./clientes";
 export type { Cliente, DadosCliente, StatusCliente, SaudeCliente } from "./clientes";

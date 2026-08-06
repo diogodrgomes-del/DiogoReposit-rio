@@ -28,7 +28,7 @@ const PROIBIDO_COMO_ADMIN = {
 };
 
 export default tseslint.config(
-  { ignores: ["**/node_modules/**", "**/.next/**", "**/dist/**", "apps/web/**"] },
+  { ignores: ["**/node_modules/**", "**/.next/**", "**/dist/**"] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
@@ -46,9 +46,22 @@ export default tseslint.config(
     },
   },
 
-  // Fronteira 1 — pacotes e worker em geral.
   {
-    files: ["packages/**/*.ts", "apps/worker/**/*.ts"],
+    // Scripts Node avulsos: o TypeScript resolve os globais pelos tipos, mas o
+    // .mjs não passa por ele.
+    files: ["**/*.mjs", "**/*.js"],
+    languageOptions: {
+      globals: { console: "readonly", process: "readonly", Buffer: "readonly" },
+    },
+  },
+
+  // Fronteira 1 — pacotes e aplicações.
+  //
+  // apps/web entrou aqui quando passou a importar @mark/*: é justamente onde
+  // uma chamada a comoAdmin seria mais perigosa, porque é o código que atende
+  // requisição de navegador.
+  {
+    files: ["packages/**/*.ts", "packages/**/*.tsx", "apps/**/*.ts", "apps/**/*.tsx"],
     ignores: ["packages/core/**", "packages/db/src/cli/**", "packages/db/testes/**"],
     rules: {
       "no-restricted-imports": [

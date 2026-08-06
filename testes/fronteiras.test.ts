@@ -89,6 +89,24 @@ describe("fronteira do comoAdmin", () => {
     expect(contem(msgs, "comoAdmin ignora a RLS")).toBe(true);
   });
 
+  it("recusa no web — onde seria mais perigoso", async () => {
+    // apps/web atende requisição de navegador: uma chamada a comoAdmin aqui
+    // serviria dado de qualquer organização a qualquer visitante.
+    const msgs = await erros(
+      `import { comoAdmin } from "@mark/db";\nexport const x = comoAdmin;\n`,
+      "apps/web/src/lib/exemplo.ts",
+    );
+    expect(contem(msgs, "comoAdmin ignora a RLS")).toBe(true);
+  });
+
+  it("recusa numa Server Action", async () => {
+    const msgs = await erros(
+      `"use server";\nimport { comoAdmin } from "@mark/db";\nexport async function f() { return comoAdmin; }\n`,
+      "apps/web/src/modulos/exemplo/acoes.ts",
+    );
+    expect(contem(msgs, "comoAdmin ignora a RLS")).toBe(true);
+  });
+
   it("aceita comContexto no lugar", async () => {
     const msgs = await erros(
       `import { comContexto } from "@mark/db";\nexport const x = comContexto;\n`,
