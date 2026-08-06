@@ -1,8 +1,8 @@
 import { createInterface } from "node:readline/promises";
 import { stdin, stdout } from "node:process";
 import { derivar } from "@mark/auth";
-import { fechar } from "../cliente.js";
-import { semear } from "../semear.js";
+import { fechar } from "../cliente";
+import { semear } from "../semear";
 
 /**
  * `npm run db:semear`

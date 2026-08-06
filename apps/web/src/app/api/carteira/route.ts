@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { lerAcesso } from "@/lib/sessao";
 import { clientesComToken } from "@/lib/clientes";
 import { carregarCarteira } from "@/lib/meta";
 import { resolverJanela } from "@/lib/periodo";
@@ -10,6 +11,12 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 export async function GET(req: Request) {
+  // O middleware confere só a presença do cookie de sessão do MARK SISTEM; a
+  // validação real, com consulta ao banco e checagem de revogação, é aqui.
+  if (!(await lerAcesso())) {
+    return NextResponse.json({ erro: "Sessão expirada." }, { status: 401 });
+  }
+
   const janela = resolverJanela(new URL(req.url).searchParams);
   if (!janela.ok) {
     return NextResponse.json({ erro: janela.erro }, { status: 400 });

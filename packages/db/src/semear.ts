@@ -1,8 +1,8 @@
 import { sql } from "drizzle-orm";
 import { PAPEIS_PADRAO, concedivel } from "@mark/core";
-import { comoAdmin } from "./cliente.js";
-import { novoId } from "./id.js";
-import { membros, organizacoes, papeis, papelPermissoes, usuarios } from "./esquema/nucleo.js";
+import { comoAdmin } from "./cliente";
+import { novoId } from "./id";
+import { membros, organizacoes, papeis, papelPermissoes, usuarios } from "./esquema/nucleo";
 
 /**
  * Seed idempotente: cria a organização, os papéis padrão e o proprietário.

@@ -7,9 +7,9 @@ import {
   novoId,
   type Transacao,
 } from "@mark/db";
-import { exigir, filtroDeClientes, pode, type Contexto } from "./contexto.js";
-import { linhaDoTempo, registrar, diferenca, type EventoLido } from "./eventos.js";
-import { normalizarTelefone } from "./telefone.js";
+import { exigir, filtroDeClientes, pode, type Contexto } from "./contexto";
+import { linhaDoTempo, registrar, diferenca, type EventoLido } from "./eventos";
+import { normalizarTelefone } from "./telefone";
 
 /**
  * Regras de negócio de clientes.

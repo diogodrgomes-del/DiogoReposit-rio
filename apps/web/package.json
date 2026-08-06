@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@mark/auth": "*",
+    "@mark/cofre": "*",
     "@mark/core": "*",
     "@mark/db": "*",
     "@neondatabase/serverless": "^1.1.0",

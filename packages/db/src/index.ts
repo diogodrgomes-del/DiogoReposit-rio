@@ -1,5 +1,5 @@
-export * from "./cliente.js";
-export * from "./esquema/index.js";
-export * from "./id.js";
-export { migrar } from "./migrar.js";
-export { semear, type DadosSeed } from "./semear.js";
+export * from "./cliente";
+export * from "./esquema/index";
+export * from "./id";
+export { migrar, migracoesAplicadas } from "./migrar";
+export { semear, type DadosSeed } from "./semear";

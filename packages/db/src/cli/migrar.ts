@@ -1,5 +1,5 @@
-import { fechar } from "../cliente.js";
-import { migrar } from "../migrar.js";
+import { fechar } from "../cliente";
+import { migrar } from "../migrar";
 
 migrar()
   .then(fechar)

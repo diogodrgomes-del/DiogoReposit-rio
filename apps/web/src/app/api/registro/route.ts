@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { lerSessao, COOKIE } from "@/lib/auth";
 import { listarClientes, tokenDe } from "@/lib/clientes";
 import {
   alteraEntrega,
@@ -13,7 +12,7 @@ import {
   criarAnotacao,
   listarAnotacoes,
 } from "@/lib/registro";
-import { cookies } from "next/headers";
+import { lerAcesso } from "@/lib/sessao";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -23,9 +22,16 @@ const LIMITE_TEXTO = 2000;
 /** Dias comparados antes e depois de cada anotação. */
 const JANELA_DIAS = 3;
 
+/**
+ * Quem assina a anotação.
+ *
+ * No modo legado é o nome de usuário do `DASH_USERS`; no modo banco, o id do
+ * usuário. As anotações antigas continuam com o autor que tinham — a coluna é
+ * texto livre, e reescrevê-las inventaria uma autoria que não foi registrada.
+ */
 async function usuarioAtual(): Promise<string | null> {
-  const c = await cookies();
-  return lerSessao(c.get(COOKIE)?.value);
+  const acesso = await lerAcesso();
+  return acesso?.usuario ?? null;
 }
 
 function clienteValido(id: string | null): string | null {

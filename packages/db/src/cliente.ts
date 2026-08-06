@@ -3,7 +3,7 @@ import { drizzle as drizzleNeon } from "drizzle-orm/neon-serverless";
 import { drizzle as drizzlePg } from "drizzle-orm/node-postgres";
 import { sql } from "drizzle-orm";
 import { Pool as PoolPg } from "pg";
-import * as esquema from "./esquema/index.js";
+import * as esquema from "./esquema/index";
 
 /**
  * Conexão com o Postgres e o contexto de RLS.
@@ -106,6 +106,26 @@ export async function comContexto<T>(
 export async function autenticando<T>(fn: (tx: Transacao) => Promise<T>): Promise<T> {
   return (db() as BancoPg).transaction(async (tx) => {
     await tx.execute(sql`SELECT set_config('app.autenticando', 'sim', true)`);
+    return fn(tx);
+  });
+}
+
+/**
+ * Contexto parcial: identidade sem organização.
+ *
+ * Existe para o passo do login em que já se sabe quem é o usuário mas ainda não
+ * a que organização ele pertence — a resposta está em `membros`, cuja política
+ * aceita `usuario_id = app_usuario()` justamente para isto. Sem organização
+ * definida, nenhuma outra tabela devolve linha.
+ */
+export async function comUsuario<T>(
+  usuarioId: string,
+  fn: (tx: Transacao) => Promise<T>,
+): Promise<T> {
+  if (!UUID.test(usuarioId)) throw new Error("usuarioId deve ser uuid.");
+
+  return (db() as BancoPg).transaction(async (tx) => {
+    await tx.execute(sql`SELECT set_config('app.usuario_id', ${usuarioId}, true)`);
     return fn(tx);
   });
 }

@@ -1,2 +1,2 @@
-export * from "./nucleo.js";
-export * from "./clientes.js";
+export * from "./nucleo";
+export * from "./clientes";

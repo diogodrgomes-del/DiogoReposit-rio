@@ -1,8 +1,8 @@
-export * from "./contexto.js";
-export * from "./permissoes.js";
-export * from "./telefone.js";
-export * from "./eventos.js";
-export * as clientes from "./clientes.js";
-export * as credenciais from "./credenciais.js";
-export { ErroDeValidacao } from "./clientes.js";
-export type { Cliente, DadosCliente, StatusCliente, SaudeCliente } from "./clientes.js";
+export * from "./contexto";
+export * from "./permissoes";
+export * from "./telefone";
+export * from "./eventos";
+export * as clientes from "./clientes";
+export * as credenciais from "./credenciais";
+export { ErroDeValidacao } from "./clientes";
+export type { Cliente, DadosCliente, StatusCliente, SaudeCliente } from "./clientes";

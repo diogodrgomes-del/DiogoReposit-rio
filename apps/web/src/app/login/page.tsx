@@ -51,7 +51,13 @@ function Formulario() {
         )}
 
         <label className="campo">
-          <span>Usuário</span>
+          {/*
+            Um campo só para os dois modos: quem tem conta no MARK SISTEM entra
+            pelo e-mail, quem ainda está no painel entra pelo usuário. O
+            servidor decide pelo formato — pedir ao usuário que escolha o modo
+            seria expor uma migração que não é problema dele.
+          */}
+          <span>E-mail ou usuário</span>
           <input
             type="text"
             value={usuario}

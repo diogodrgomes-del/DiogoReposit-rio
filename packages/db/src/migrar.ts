@@ -2,7 +2,7 @@ import { readdir, readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { sql } from "drizzle-orm";
-import { comoAdmin, db } from "./cliente.js";
+import { comoAdmin, db } from "./cliente";
 
 /**
  * Migrador.
@@ -57,4 +57,23 @@ export async function migrar(): Promise<string[]> {
 
   if (novas.length === 0) console.log("banco já está atualizado");
   return novas;
+}
+
+/**
+ * Quantas migrações já foram aplicadas, ou `null` se o banco não responde.
+ *
+ * Existe para o diagnóstico distinguir três estados que, na tela de login,
+ * parecem o mesmo: sem banco, banco vazio e banco pronto. Nunca lança — a
+ * falha é a resposta.
+ */
+export async function migracoesAplicadas(): Promise<number | null> {
+  try {
+    const r = await db().execute<{ n: number }>(sql`SELECT count(*)::int AS n FROM _migracoes`);
+    const linhas = Array.isArray(r) ? r : (r as { rows: { n: number }[] }).rows;
+    return linhas[0]?.n ?? 0;
+  } catch (e) {
+    // Tabela ausente é o caso normal de banco novo, ainda sem migrar.
+    if (e instanceof Error && /_migracoes/.test(e.message)) return 0;
+    return null;
+  }
 }

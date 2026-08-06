@@ -3,30 +3,32 @@
 Plataforma operacional da Agência Marktiva. Começou como painel de campanhas do
 Meta Ads e está virando o sistema que administra a empresa inteira.
 
-**Onde está:** fase 0 concluída — monorepo, banco com Row Level Security,
-permissões e autenticação. O painel de campanhas continua funcionando como
+**Onde está:** fase 1 em andamento — banco, permissões, cofre de credenciais e
+login pelo banco já funcionam. O painel de campanhas continua funcionando como
 sempre, agora em `apps/web`.
 
 - [`docs/mark-sistem/00-arquitetura.md`](docs/mark-sistem/00-arquitetura.md) — arquitetura, infraestrutura, segurança
 - [`docs/mark-sistem/01-modelagem.md`](docs/mark-sistem/01-modelagem.md) — banco de dados e permissões
 - [`docs/mark-sistem/02-roadmap.md`](docs/mark-sistem/02-roadmap.md) — riscos, fases, MVP
-- [`docs/mark-sistem/03-fase-0.md`](docs/mark-sistem/03-fase-0.md) — **o que fazer agora**
+- [`docs/mark-sistem/03-fase-0.md`](docs/mark-sistem/03-fase-0.md) — fundação
+- [`docs/mark-sistem/04-fase-1.md`](docs/mark-sistem/04-fase-1.md) — **o que fazer agora**
 
 > ⚠️ **Quem faz deploy na Vercel:** o painel saiu da raiz e foi para `apps/web`.
 > Ajuste **Settings → General → Root Directory → `apps/web`** ou o próximo deploy
 > falha. Detalhes em [`03-fase-0.md`](docs/mark-sistem/03-fase-0.md).
 
 ```
-apps/web/       painel (Next.js 15)          packages/core/   permissões
+apps/web/       painel (Next.js 16)          packages/core/   regras e permissões
 apps/worker/    processo persistente         packages/db/     esquema, RLS, seed
                                              packages/auth/   senha e sessão
+                                             packages/cofre/  cifra de segredos
 ```
 
 ```bash
 npm install
 npm run dev        # painel
 npm run db:migrar  # banco
-npm run teste      # 58 testes
+npm run teste      # 125 testes
 ```
 
 ---
@@ -46,7 +48,7 @@ o que decide para onde vai a verba. Cliques e impressões aparecem como apoio.
 
 - **Duas visões**: carteira (todos os clientes lado a lado, do custo por conversa
   mais baixo ao mais alto) e cliente (o painel completo de um deles).
-- **Login por usuário e senha**, com sessão assinada em cookie `HttpOnly` de 12 h.
+- **Login por e-mail (MARK SISTEM) ou usuário (legado)**, em cookie `HttpOnly` de 12 h.
 - **Períodos**: hoje, ontem, 7 / 14 / 28 / 30 / 90 dias, este mês, mês passado,
   este ano, máximo e intervalo personalizado.
 - **Seletor de cliente e de conta**: cada cliente tem token próprio, e o painel
@@ -147,8 +149,8 @@ A rota `/api/clientes` devolve só `id` e `nome` de cada cliente — nunca o tok
 Por isso nenhuma variável usa o prefixo `NEXT_PUBLIC_` — esse prefixo publicaria o
 valor no pacote que vai para o navegador.
 
-O middleware bloqueia toda rota que não seja `/login`: sem sessão válida, a API de
-métricas nem chega a ser executada.
+O middleware barra toda rota que não seja `/login`, e cada rota confere a sessão
+outra vez por conta própria — passar no middleware nunca é o que autoriza.
 
 ---
 

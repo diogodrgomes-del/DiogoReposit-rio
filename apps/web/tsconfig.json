@@ -34,6 +34,9 @@
       ],
       "@mark/auth": [
         "../../packages/auth/src/index.ts"
+      ],
+      "@mark/auth/cookie": [
+        "../../packages/auth/src/cookie.ts"
       ]
     }
   },

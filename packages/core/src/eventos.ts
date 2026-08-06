@@ -1,6 +1,6 @@
 import { desc, eq, and } from "drizzle-orm";
 import { eventos, novoId, type Transacao } from "@mark/db";
-import type { Contexto } from "./contexto.js";
+import type { Contexto } from "./contexto";
 
 /**
  * Linha do tempo automática.

@@ -7,7 +7,7 @@ import {
   novoId,
   type Transacao,
 } from "@mark/db";
-import { exigir, type Contexto } from "./contexto.js";
+import { exigir, type Contexto } from "./contexto";
 
 /**
  * Cofre de credenciais.

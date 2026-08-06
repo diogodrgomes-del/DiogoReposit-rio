@@ -15,7 +15,7 @@ import {
   uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
-import { organizacoes, usuarios } from "./nucleo.js";
+import { organizacoes, usuarios } from "./nucleo";
 
 /** `bytea` — os envelopes do cofre. Drizzle não traz o tipo pronto. */
 const bytea = customType<{ data: Buffer; driverData: Buffer }>({

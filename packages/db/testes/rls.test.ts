@@ -1,8 +1,8 @@
 import { sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { comContexto, comoAdmin, db, fechar, novoId } from "../src/index.js";
-import { membros, organizacoes, papeis, papelPermissoes, sessoes, usuarios } from "../src/esquema/nucleo.js";
-import { migrar } from "../src/migrar.js";
+import { comContexto, comoAdmin, db, fechar, novoId } from "../src/index";
+import { membros, organizacoes, papeis, papelPermissoes, sessoes, usuarios } from "../src/esquema/nucleo";
+import { migrar } from "../src/migrar";
 
 /**
  * Testes de Row Level Security.

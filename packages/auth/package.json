@@ -3,7 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "exports": { ".": "./src/index.ts" },
+  "exports": {
+    "0": {
+      "/cookie": "./src/cookie.ts"
+    },
+    ".": "./src/index.ts"
+  },
   "dependencies": {
     "@mark/core": "*",
     "@mark/db": "*",

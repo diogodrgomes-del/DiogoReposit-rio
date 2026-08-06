@@ -1,6 +1,6 @@
 import { pbkdf2Sync, randomBytes } from "node:crypto";
 import { describe, expect, it } from "vitest";
-import { derivar, verificar } from "./senha.js";
+import { derivar, verificar } from "./senha";
 
 /**
  * Gera um hash no formato exato do painel de campanhas, com o mesmo algoritmo

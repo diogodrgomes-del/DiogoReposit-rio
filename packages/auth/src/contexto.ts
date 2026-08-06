@@ -7,7 +7,7 @@ import {
   organizacoes,
   papelPermissoes,
 } from "@mark/db";
-import type { DadosSessao } from "./sessao.js";
+import type { DadosSessao } from "./sessao";
 
 /**
  * Monta o `Contexto` a partir da sessão.

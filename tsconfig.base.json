@@ -20,7 +20,8 @@
       "@mark/core": ["./packages/core/src/index.ts"],
       "@mark/db": ["./packages/db/src/index.ts"],
       "@mark/auth": ["./packages/auth/src/index.ts"],
-      "@mark/cofre": ["./packages/cofre/src/index.ts"]
+      "@mark/cofre": ["./packages/cofre/src/index.ts"],
+      "@mark/auth/cookie": ["./packages/auth/src/cookie.ts"]
     }
   }
 }

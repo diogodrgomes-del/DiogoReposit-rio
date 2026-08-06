@@ -1,9 +1,9 @@
 import { eq, sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { comContexto, comoAdmin, fechar, novoId } from "../src/index.js";
-import { clientes, contatos, credenciais, credencialAcessos } from "../src/esquema/clientes.js";
-import { membros, organizacoes, papeis, usuarios } from "../src/esquema/nucleo.js";
-import { migrar } from "../src/migrar.js";
+import { comContexto, comoAdmin, fechar, novoId } from "../src/index";
+import { clientes, contatos, credenciais, credencialAcessos } from "../src/esquema/clientes";
+import { membros, organizacoes, papeis, usuarios } from "../src/esquema/nucleo";
+import { migrar } from "../src/migrar";
 
 /**
  * RLS das migrações 0003 e 0004, mais a imutabilidade da auditoria de senhas.

@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
 import { clientes as regraClientes, credenciais as regraCredenciais } from "@mark/core";
 import { cofreConfigurado } from "@mark/cofre";
-import { comoAdmin, fechar } from "../cliente.js";
-import { organizacoes } from "../esquema/nucleo.js";
+import { comoAdmin, fechar } from "../cliente";
+import { organizacoes } from "../esquema/nucleo";
 
 /**
  * `npm run db:importar-meta`

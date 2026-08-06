@@ -6,8 +6,8 @@ import {
   filtroDeClientes,
   pode,
   type Contexto,
-} from "./contexto.js";
-import { concedivel, ocultarAoNegar, permissaoExiste } from "./permissoes.js";
+} from "./contexto";
+import { concedivel, ocultarAoNegar, permissaoExiste } from "./permissoes";
 
 function ctx(over: Partial<Contexto> = {}): Contexto {
   return {

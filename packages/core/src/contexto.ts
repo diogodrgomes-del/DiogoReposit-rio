@@ -1,4 +1,4 @@
-import { ocultarAoNegar } from "./permissoes.js";
+import { ocultarAoNegar } from "./permissoes";
 
 /**
  * Quem está pedindo, e o que pode.

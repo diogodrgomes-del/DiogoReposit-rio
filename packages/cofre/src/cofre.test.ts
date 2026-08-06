@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { ErroDoCofre, cifrar, cofreConfigurado, decifrar, mascarar, rotacionar } from "./index.js";
+import { ErroDoCofre, cifrar, cofreConfigurado, decifrar, mascarar, rotacionar } from "./index";
 
 const chave = (): string => randomBytes(32).toString("base64url");
 const original = { ...process.env };

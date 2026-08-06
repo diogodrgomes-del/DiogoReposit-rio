@@ -1,5 +1,6 @@
 import { and, eq, isNull, lt, or, sql } from "drizzle-orm";
 import { autenticando, comContexto, novoId, sessoes } from "@mark/db";
+import { OCIOSIDADE_H, VIDA_MAXIMA_D } from "./cookie";
 
 /**
  * Sessões em banco.
@@ -15,15 +16,10 @@ import { autenticando, comContexto, novoId, sessoes } from "@mark/db";
  * válido, do mesmo jeito que um vazamento de `usuarios` não devolve senha.
  */
 
-/** Inatividade tolerada. Passou disso sem usar, a sessão morre. */
-const OCIOSIDADE_H = 12;
-/** Teto absoluto: nem sessão em uso contínuo passa daqui sem novo login. */
-const VIDA_MAXIMA_D = 30;
 /** Só renova a validade depois disso, para não escrever a cada requisição. */
 const RENOVAR_APOS_MIN = 60;
 
-export const COOKIE = "mark_sessao";
-export const MAX_IDADE_COOKIE = OCIOSIDADE_H * 60 * 60;
+export { COOKIE, MAX_IDADE_COOKIE } from "./cookie";
 
 function agora(): Date {
   return new Date();

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatarTelefone, linkWhatsApp, normalizarTelefone } from "./telefone.js";
+import { formatarTelefone, linkWhatsApp, normalizarTelefone } from "./telefone";
 
 /**
  * Esta função decide se uma mensagem de WhatsApp encontra o contato certo. Cada
