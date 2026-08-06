@@ -103,18 +103,6 @@ export const clientes = pgTable(
   ],
 );
 
-export const STATUS_CLIENTE = [
-  "ativo",
-  "onboarding",
-  "pausado",
-  "inadimplente",
-  "em_risco",
-  "cancelado",
-  "encerrado",
-] as const;
-
-export const SAUDE_CLIENTE = ["verde", "amarelo", "vermelho"] as const;
-
 export const clienteContatos = pgTable(
   "cliente_contatos",
   {

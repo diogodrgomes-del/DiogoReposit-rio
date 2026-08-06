@@ -1,4 +1,4 @@
-import type { SaudeCliente, StatusCliente } from "@mark/core";
+import type { SaudeCliente, StatusCliente } from "@mark/core/navegador";
 
 /**
  * Vocabulário visual de cliente, num lugar só.

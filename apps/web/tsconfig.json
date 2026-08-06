@@ -29,6 +29,9 @@
       "@mark/core": [
         "../../packages/core/src/index.ts"
       ],
+      "@mark/core/navegador": [
+        "../../packages/core/src/navegador.ts"
+      ],
       "@mark/db": [
         "../../packages/db/src/index.ts"
       ],

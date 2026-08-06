@@ -35,10 +35,10 @@ npm run db:importar-meta      # clientes e tokens saem do .env e vão cifrados
 npm run db:descobrir-contas   # registra as contas de anúncio de cada token
 ```
 
-Depois disso, suba o worker (`npm run worker`) ou publique-o no Fly.io: é ele
-que sincroniza o Meta Ads a cada 30 minutos.
+Suba o worker (`npm run worker`) ou publique-o no Fly.io: é ele que sincroniza o
+Meta Ads a cada 30 minutos.
 
-Depois disso você entra com **e-mail e senha**, não mais com usuário do
+A partir daí você entra com **e-mail e senha**, não mais com usuário do
 `DASH_USERS`. O campo de login aceita os dois — o servidor decide pelo formato.
 
 Confira em `/api/saude`: o campo `modoDeLogin` diz o que está valendo, e
@@ -69,7 +69,7 @@ Confira em `/api/saude`: o campo `modoDeLogin` diz o que está valendo, e
 | `@mark/integracoes` — cliente da Meta compartilhado | pronto |
 | Sync do Meta Ads no worker | pronto |
 
-**125 testes**, 25 deles contra Postgres real no CI.
+**127 testes**, 25 deles contra Postgres real no CI.
 
 ## O que falta na fase 1
 
@@ -172,11 +172,13 @@ pacote inteiro.
 ## Comandos novos
 
 ```bash
-npm run db:importar-meta   # META_TOKENS -> clientes + credenciais cifradas
+npm run db:importar-meta      # META_TOKENS -> clientes + credenciais cifradas
+npm run db:descobrir-contas   # pergunta à Meta quais contas cada token alcança
 ```
 
-Idempotente: rodar de novo não duplica cliente e **atualiza** o token de quem já
-existe — que é exatamente o que se quer quando um token expira.
+Os dois são idempotentes. Reimportar **atualiza** o token de quem já existe —
+que é exatamente o que se quer quando um token expira. E redescobrir pega contas
+atribuídas no Business Manager desde a última vez, como o painel já fazia.
 
 
 ---

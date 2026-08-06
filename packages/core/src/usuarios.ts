@@ -38,7 +38,8 @@ export async function perfil(ctx: Contexto): Promise<Perfil | null> {
   });
 }
 
-export type Colega = { id: string; nome: string };
+export type { Colega } from "./tipos";
+import type { Colega } from "./tipos";
 
 /**
  * Quem pode ser responsável por um cliente ou uma demanda.

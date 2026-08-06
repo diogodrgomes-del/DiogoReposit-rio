@@ -18,6 +18,7 @@
     "noEmit": true,
     "paths": {
       "@mark/core": ["./packages/core/src/index.ts"],
+      "@mark/core/navegador": ["./packages/core/src/navegador.ts"],
       "@mark/db": ["./packages/db/src/index.ts"],
       "@mark/auth": ["./packages/auth/src/index.ts"],
       "@mark/cofre": ["./packages/cofre/src/index.ts"],

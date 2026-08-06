@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "exports": {
+    "0": {
+      "/navegador": "./src/navegador.ts"
+    },
     ".": "./src/index.ts"
   },
   "dependencies": {

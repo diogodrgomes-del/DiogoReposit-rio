@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
-import type { Cliente } from "@mark/core";
+import type { Cliente } from "@mark/core/navegador";
 import type { EstadoForm } from "./acoes";
 import { ROTULO_SAUDE, ROTULO_STATUS } from "./comuns";
 

@@ -1,12 +1,7 @@
 import { and, asc, desc, eq, ilike, inArray, isNull, lt, or, sql } from "drizzle-orm";
-import {
-  SAUDE_CLIENTE,
-  STATUS_CLIENTE,
-  clientes,
-  comContexto,
-  novoId,
-  type Transacao,
-} from "@mark/db";
+import { clientes, comContexto, novoId, type Transacao } from "@mark/db";
+import { SAUDE_CLIENTE, STATUS_CLIENTE } from "./tipos";
+import type { Cliente, SaudeCliente, StatusCliente } from "./tipos";
 import { exigir, filtroDeClientes, pode, type Contexto } from "./contexto";
 import { linhaDoTempo, registrar, diferenca, type EventoLido } from "./eventos";
 import { normalizarTelefone } from "./telefone";
@@ -19,28 +14,7 @@ import { normalizarTelefone } from "./telefone";
  * permissão: não existe outro caminho até a tabela.
  */
 
-export type StatusCliente = (typeof STATUS_CLIENTE)[number];
-export type SaudeCliente = (typeof SAUDE_CLIENTE)[number];
-
-export type Cliente = {
-  id: string;
-  nome: string;
-  nomeFantasia: string | null;
-  cnpj: string | null;
-  segmento: string | null;
-  telefoneE164: string | null;
-  email: string | null;
-  cidade: string | null;
-  estado: string | null;
-  instagram: string | null;
-  site: string | null;
-  responsavelId: string | null;
-  status: StatusCliente;
-  saude: SaudeCliente;
-  observacoes: string | null;
-  criadoEm: Date;
-  atualizadoEm: Date;
-};
+export type { Cliente, StatusCliente, SaudeCliente };
 
 /** Campos que o usuário edita. Todos opcionais menos `nome`. */
 export type DadosCliente = Partial<Omit<Cliente, "id" | "criadoEm" | "atualizadoEm">> & {

@@ -60,6 +60,13 @@ export default async function LayoutSistema({ children }: { children: React.Reac
     },
   ];
 
+  if (pode(ctx, "vendas.lead.ver")) {
+    grupos.push({
+      titulo: "Comercial",
+      itens: [{ href: "/vendas", rotulo: "Pipeline", icone: "funil" }],
+    });
+  }
+
   if (pode(ctx, "clientes.cliente.ver")) {
     const itens: GrupoMenu["itens"] = [{ href: "/clientes", rotulo: "Clientes", icone: "predio" }];
     if (pode(ctx, "clientes.cliente.excluir")) {

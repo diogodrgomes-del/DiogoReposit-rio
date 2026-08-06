@@ -12,6 +12,7 @@ sempre, agora em `apps/web`.
 - [`docs/mark-sistem/02-roadmap.md`](docs/mark-sistem/02-roadmap.md) — riscos, fases, MVP
 - [`docs/mark-sistem/03-fase-0.md`](docs/mark-sistem/03-fase-0.md) — fundação
 - [`docs/mark-sistem/04-fase-1.md`](docs/mark-sistem/04-fase-1.md) — **o que fazer agora**
+- [`docs/mark-sistem/05-fase-2.md`](docs/mark-sistem/05-fase-2.md) — CRM de vendas
 
 > ⚠️ **Quem faz deploy na Vercel:** o painel saiu da raiz e foi para `apps/web`.
 > Ajuste **Settings → General → Root Directory → `apps/web`** ou o próximo deploy
@@ -28,7 +29,7 @@ apps/worker/    processo persistente         packages/db/     esquema, RLS, seed
 npm install
 npm run dev        # painel
 npm run db:migrar  # banco
-npm run teste      # 125 testes
+npm run teste      # 147 testes
 ```
 
 ---
