@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Kellin Obana — Vou ajudar você a realizar o seu sonho!</title>
+<meta name="description" content="Assista ao vídeo e fale comigo no WhatsApp para realizar o seu sonho.">
+<meta name="theme-color" content="#0b0506">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Vou ajudar você a realizar o seu sonho!">
+<meta property="og:description" content="Assista ao vídeo e fale comigo no WhatsApp.">
+<meta property="og:image" content="capa.jpg">
+
+<style>
+/* ============================================================
+   CONFIGURAÇÃO VISUAL — vermelho, preto e dourado
+   ============================================================ */
+@property --giro { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+
+:root{
+  --preto:      #0b0506;
+  --preto-2:    #150a0b;
+  --vermelho:   #d0241a;
+  --vermelho-2: #8c1009;
+  --vermelho-3: #4a0705;
+  --ouro:       #e3bf72;
+  --ouro-claro: #fbeec4;
+  --ouro-forte: #c99b3f;
+  --ouro-fraco: rgba(227,191,114,.28);
+  --branco:     #fdf7f2;
+
+  --zap:        #25d366;
+  --zap-2:      #128c4a;
+
+  --fonte: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+           "Helvetica Neue", Arial, sans-serif;
+
+  --pad: clamp(12px, 3.2vw, 22px);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Nada rola, nada arrasta: a página é uma tela só. */
+html, body{
+  margin:0; padding:0;
+  height:100%;
+  width:100%;
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  overscroll-behavior:none;
+  touch-action:manipulation;
+  background:var(--preto);
+}
+
+body{
+  font-family:var(--fonte);
+  color:var(--branco);
+  -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+  -webkit-user-select:none;
+}
+
+img, video { -webkit-user-drag:none; user-drag:none; }
+
+/* ======================== fundo animado ======================== */
+
+.fundo{
+  position:fixed; inset:0; z-index:0; overflow:hidden;
+  background:
+    radial-gradient(120% 80% at 50% -10%, #2a0a0a 0%, transparent 60%),
+    radial-gradient(100% 70% at 50% 110%, #1a0708 0%, transparent 62%),
+    linear-gradient(180deg, var(--preto-2) 0%, var(--preto) 55%, #060303 100%);
+}
+
+/* Dois brilhos vermelhos que respiram devagar atrás de tudo. */
+.brilho{
+  position:absolute; border-radius:50%; filter:blur(70px); opacity:.5;
+  will-change:transform, opacity;
+}
+.brilho.a{
+  width:78vmin; height:78vmin; left:-22vmin; top:-18vmin;
+  background:radial-gradient(circle, var(--vermelho) 0%, var(--vermelho-2) 45%, transparent 70%);
+  animation:flutua-a 15s ease-in-out infinite;
+}
+.brilho.b{
+  width:70vmin; height:70vmin; right:-24vmin; bottom:-20vmin;
+  background:radial-gradient(circle, var(--vermelho-2) 0%, var(--vermelho-3) 50%, transparent 72%);
+  animation:flutua-b 19s ease-in-out infinite;
+}
+.brilho.c{
+  width:46vmin; height:46vmin; left:50%; top:44%; margin:-23vmin 0 0 -23vmin;
+  background:radial-gradient(circle, rgba(227,191,114,.30) 0%, transparent 68%);
+  filter:blur(60px);
+  animation:pulsa-ouro 7s ease-in-out infinite;
+}
+
+@keyframes flutua-a{
+  0%,100%{ transform:translate3d(0,0,0) scale(1); opacity:.45; }
+  50%    { transform:translate3d(6vmin,5vmin,0) scale(1.13); opacity:.62; }
+}
+@keyframes flutua-b{
+  0%,100%{ transform:translate3d(0,0,0) scale(1.06); opacity:.42; }
+  50%    { transform:translate3d(-7vmin,-4vmin,0) scale(1); opacity:.6; }
+}
+@keyframes pulsa-ouro{
+  0%,100%{ transform:scale(.9);  opacity:.35; }
+  50%    { transform:scale(1.12); opacity:.6; }
+}
+
+/* Textura fina por cima, para o preto não ficar chapado. */
+.grao{
+  position:absolute; inset:-50%;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='r'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/></filter><rect width='120' height='120' filter='url(%23r)' opacity='.5'/></svg>");
+  opacity:.045; mix-blend-mode:overlay; pointer-events:none;
+}
+
+/* Vinheta: puxa o olho para o centro da tela. */
+.vinheta{
+  position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(115% 85% at 50% 45%, transparent 42%, rgba(0,0,0,.62) 100%);
+}
+
+/* ======================== estrutura da tela ======================== */
+
+.tela{
+  position:relative; z-index:1;
+  height:100dvh; height:100svh;
+  min-height:100%;
+  display:flex; flex-direction:column; align-items:center;
+  gap:clamp(8px, 1.6vh, 16px);
+  padding:
+    calc(var(--pad) + env(safe-area-inset-top))
+    var(--pad)
+    calc(var(--pad) + env(safe-area-inset-bottom));
+}
+
+/* ======================== marca ======================== */
+
+.marca{
+  flex:none;
+  display:flex; align-items:center; gap:10px;
+  padding:5px 14px 5px 5px;
+  border:1px solid var(--ouro-fraco);
+  border-radius:100px;
+  background:rgba(255,255,255,.035);
+  backdrop-filter:blur(6px);
+  animation:entra .8s .05s both cubic-bezier(.2,.8,.3,1);
+}
+
+.marca .foto{
+  width:34px; height:34px; border-radius:50%; object-fit:cover;
+  border:1.5px solid var(--ouro);
+  box-shadow:0 0 0 2px rgba(0,0,0,.5), 0 0 14px rgba(227,191,114,.35);
+  flex:none;
+}
+/* Sem foto no servidor, o monograma segura o lugar. */
+.marca .mono{
+  width:34px; height:34px; border-radius:50%; flex:none;
+  display:grid; place-items:center;
+  font-size:13px; font-weight:800; letter-spacing:.02em; color:var(--preto);
+  background:linear-gradient(140deg, var(--ouro-claro), var(--ouro) 45%, var(--ouro-forte));
+  border:1.5px solid var(--ouro);
+}
+.marca-txt{ display:flex; flex-direction:column; line-height:1.1; }
+.marca-nome{
+  font-size:clamp(12.5px, 3.2vw, 14.5px); font-weight:700; letter-spacing:.02em;
+  color:var(--ouro-claro);
+}
+.marca-sub{
+  font-size:clamp(9.5px, 2.5vw, 11px); letter-spacing:.14em; text-transform:uppercase;
+  color:rgba(253,247,242,.62); font-weight:600;
+}
+.marca .logo{ height:20px; width:auto; margin-left:4px; opacity:.95; }
+
+/* ======================== título ======================== */
+
+.titulo{
+  flex:none;
+  margin:0; text-align:center; text-wrap:balance;
+  font-size:clamp(19px, 5.4vw, 34px);
+  line-height:1.14;
+  font-weight:800;
+  letter-spacing:-.015em;
+  max-width:22ch;
+  animation:entra .9s .18s both cubic-bezier(.2,.8,.3,1);
+  text-shadow:0 2px 22px rgba(0,0,0,.55);
+}
+
+/* O brilho dourado corre pelo texto de tempos em tempos. */
+.titulo .luz{
+  background:linear-gradient(
+    100deg,
+    var(--ouro) 0%, var(--ouro-claro) 18%, #fffdf5 26%,
+    var(--ouro-claro) 34%, var(--ouro) 52%, var(--ouro-forte) 100%);
+  background-size:280% 100%;
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent; color:transparent;
+  animation:varrer 5.5s ease-in-out infinite;
+  /* Bloco de propósito: a promessa dourada fica sempre na própria linha. */
+  display:block;
+}
+
+@keyframes varrer{
+  0%, 62%, 100% { background-position:120% 0; }
+  30%           { background-position:-40% 0; }
+}
+
+/* ======================== vídeo ======================== */
+
+.palco{
+  flex:1 1 auto;
+  min-height:0;
+  width:100%;
+  display:grid; place-items:center;
+  animation:entra 1s .3s both cubic-bezier(.2,.8,.3,1);
+}
+
+.moldura{
+  position:relative;
+  height:100%;
+  max-width:100%;
+  aspect-ratio:9 / 16;
+  border-radius:clamp(14px, 3.2vw, 22px);
+  overflow:hidden;
+  background:#000;
+  box-shadow:
+    0 0 0 1px rgba(227,191,114,.55),
+    0 18px 60px rgba(0,0,0,.65),
+    0 0 60px rgba(208,36,26,.22);
+  isolation:isolate;
+}
+
+/* Fio dourado girando na borda — o detalhe caro da página. */
+.moldura::before{
+  content:"";
+  position:absolute; inset:-40%; z-index:0;
+  background:conic-gradient(from var(--giro),
+    transparent 0 58%,
+    var(--ouro-forte) 68%,
+    var(--ouro-claro) 76%,
+    var(--ouro) 82%,
+    transparent 92%);
+  animation:girar 5s linear infinite;
+  opacity:.9;
+}
+.moldura::after{
+  content:"";
+  position:absolute; inset:1.5px; z-index:1;
+  border-radius:inherit;
+  background:#000;
+  pointer-events:none;
+}
+@keyframes girar{ to{ --giro:360deg; } }
+
+.moldura video{
+  position:absolute; inset:1.5px; z-index:2;
+  width:calc(100% - 3px); height:calc(100% - 3px);
+  border-radius:inherit;
+  object-fit:cover;
+  background:#000;
+  display:block;
+}
+
+/* Capa: enquanto não tocar, ninguém vê o conteúdo nem pula nada. */
+.capa{
+  position:absolute; inset:1.5px; z-index:4;
+  border:0; border-radius:inherit; padding:0;
+  display:grid; place-items:center; gap:0;
+  cursor:pointer;
+  color:var(--branco);
+  background:
+    radial-gradient(70% 55% at 50% 45%, rgba(208,36,26,.30), transparent 70%),
+    rgba(6,3,3,.62);
+  backdrop-filter:blur(3px);
+  transition:opacity .45s ease, visibility .45s;
+}
+.capa.some{ opacity:0; visibility:hidden; pointer-events:none; }
+
+.capa-miolo{ display:grid; place-items:center; gap:14px; padding:16px; }
+
+.play{
+  position:relative;
+  width:clamp(66px, 17vw, 88px); height:clamp(66px, 17vw, 88px);
+  border-radius:50%;
+  display:grid; place-items:center;
+  background:linear-gradient(145deg, var(--ouro-claro), var(--ouro) 40%, var(--ouro-forte));
+  box-shadow:0 10px 34px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.25) inset;
+}
+.play svg{ width:38%; height:38%; margin-left:12%; fill:var(--preto); }
+
+/* Anéis saindo do play, chamando o toque. */
+.play::before, .play::after{
+  content:""; position:absolute; inset:0; border-radius:50%;
+  border:2px solid var(--ouro);
+  animation:anel 2.6s ease-out infinite;
+}
+.play::after{ animation-delay:1.3s; }
+@keyframes anel{
+  0%  { transform:scale(1);   opacity:.75; }
+  100%{ transform:scale(1.9); opacity:0; }
+}
+
+.capa-txt{
+  font-size:clamp(13px, 3.4vw, 15.5px); font-weight:700; letter-spacing:.03em;
+  text-shadow:0 2px 12px rgba(0,0,0,.8);
+}
+.capa-txt small{
+  display:block; margin-top:5px;
+  font-size:.78em; font-weight:500; letter-spacing:.1em; text-transform:uppercase;
+  color:rgba(253,247,242,.66);
+}
+
+/* Som ligado/desligado — único controle que a pessoa tem. */
+.som{
+  position:absolute; z-index:5; right:10px; top:10px;
+  width:38px; height:38px; border-radius:50%;
+  display:none; place-items:center;
+  border:1px solid var(--ouro-fraco);
+  background:rgba(6,3,3,.55);
+  backdrop-filter:blur(6px);
+  color:var(--ouro-claro);
+  cursor:pointer;
+  transition:transform .15s ease, border-color .15s ease;
+}
+.som.ativo{ display:grid; }
+.som:hover{ transform:scale(1.08); border-color:var(--ouro); }
+.som svg{ width:19px; height:19px; fill:currentColor; }
+
+/* Recado se o arquivo do vídeo ainda não estiver na pasta. */
+.falha{
+  position:absolute; inset:1.5px; z-index:3;
+  display:none; place-items:center; text-align:center;
+  padding:24px; border-radius:inherit;
+  background:#000;
+  font-size:13px; line-height:1.6; color:rgba(253,247,242,.7);
+}
+.falha.ativo{ display:grid; }
+.falha code{
+  display:inline-block; margin-top:8px; padding:3px 8px; border-radius:6px;
+  background:rgba(227,191,114,.12); color:var(--ouro-claro); font-size:12px;
+}
+
+/* ======================== botão do WhatsApp ======================== */
+
+.acao{
+  flex:none; width:100%;
+  max-width:min(430px, 100%);
+  display:grid; gap:8px; justify-items:center;
+  animation:entra 1s .42s both cubic-bezier(.2,.8,.3,1);
+}
+
+.zap{
+  position:relative;
+  width:100%;
+  display:grid; place-items:center;
+  min-height:clamp(54px, 8.4vh, 64px);
+  padding:12px 18px;
+  border-radius:100px;
+  overflow:hidden;
+  text-decoration:none;
+  font-weight:800;
+  font-size:clamp(14.5px, 4vw, 17.5px);
+  letter-spacing:.01em;
+  cursor:not-allowed;
+  isolation:isolate;
+  /* estado travado */
+  color:rgba(253,247,242,.55);
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(227,191,114,.3);
+  transition:color .35s ease, border-color .35s ease, box-shadow .35s ease,
+             background .35s ease, transform .2s ease;
+}
+
+/* A barrinha que carrega por dentro do botão. */
+.zap-carga{
+  position:absolute; left:0; top:0; bottom:0; z-index:-1;
+  width:0%;
+  background:linear-gradient(90deg,
+    rgba(208,36,26,.55) 0%,
+    rgba(208,36,26,.85) 60%,
+    var(--ouro-forte) 100%);
+  box-shadow:0 0 22px rgba(227,191,114,.45);
+  transition:width .12s linear;
+}
+/* Reflexo correndo por cima da carga: dá a sensação de "carregando". */
+.zap-carga::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(100deg, transparent 20%, rgba(255,255,255,.32) 50%, transparent 80%);
+  background-size:220% 100%;
+  animation:carregando 1.5s linear infinite;
+}
+@keyframes carregando{
+  0%  { background-position:140% 0; }
+  100%{ background-position:-60% 0; }
+}
+
+.zap-conteudo{
+  position:relative; z-index:2;
+  display:flex; align-items:center; gap:10px;
+  white-space:nowrap;
+}
+.zap-conteudo svg{ width:1.35em; height:1.35em; fill:currentColor; flex:none; }
+
+/* Estado liberado */
+.zap.livre{
+  cursor:pointer;
+  color:#06240f;
+  border-color:transparent;
+  background:linear-gradient(135deg, #3ff08a 0%, var(--zap) 42%, var(--zap-2) 100%);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.22) inset,
+    0 10px 30px rgba(37,211,102,.32),
+    0 0 0 0 rgba(37,211,102,.5);
+  animation:surge .55s cubic-bezier(.2,1.5,.4,1) both, respira 2.4s 1s ease-in-out infinite;
+}
+.zap.livre .zap-carga{ display:none; }
+.zap.livre:hover{ transform:translateY(-2px) scale(1.015); }
+.zap.livre:active{ transform:translateY(0) scale(.985); }
+
+/* Brilho varrendo o botão liberado. */
+.zap.livre::after{
+  content:""; position:absolute; inset:0; z-index:1;
+  background:linear-gradient(100deg, transparent 32%, rgba(255,255,255,.55) 50%, transparent 68%);
+  background-size:250% 100%;
+  animation:varre-botao 3.4s 1.1s ease-in-out infinite;
+}
+@keyframes varre-botao{
+  0%, 70%, 100%{ background-position:150% 0; }
+  22%          { background-position:-50% 0; }
+}
+@keyframes surge{
+  0%  { transform:scale(.94); }
+  60% { transform:scale(1.045); }
+  100%{ transform:scale(1); }
+}
+@keyframes respira{
+  0%,100%{ box-shadow:0 0 0 1px rgba(255,255,255,.22) inset, 0 10px 30px rgba(37,211,102,.32), 0 0 0 0 rgba(37,211,102,.45); }
+  50%    { box-shadow:0 0 0 1px rgba(255,255,255,.22) inset, 0 10px 34px rgba(37,211,102,.42), 0 0 0 12px rgba(37,211,102,0); }
+}
+
+.dica{
+  margin:0; text-align:center;
+  font-size:clamp(10.5px, 2.9vw, 12.5px);
+  letter-spacing:.06em;
+  color:rgba(253,247,242,.5);
+  min-height:1.3em;
+  transition:color .3s ease;
+}
+.dica.pronta{ color:var(--ouro-claro); letter-spacing:.09em; text-transform:uppercase; font-weight:700; }
+.dica b{ color:var(--ouro-claro); font-variant-numeric:tabular-nums; }
+
+/* ======================== entradas ======================== */
+
+@keyframes entra{
+  from{ opacity:0; transform:translate3d(0, 18px, 0); filter:blur(6px); }
+  to  { opacity:1; transform:none; filter:none; }
+}
+
+/* Telas baixas e deitadas: enxuga tudo que não é o vídeo. */
+@media (max-height: 560px){
+  .marca{ display:none; }
+  .titulo{ font-size:clamp(15px, 3.6vh, 22px); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+  }
+  .zap-carga{ transition:width .12s linear !important; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="fundo" aria-hidden="true">
+  <div class="brilho a"></div>
+  <div class="brilho b"></div>
+  <div class="brilho c"></div>
+  <div class="grao"></div>
+  <div class="vinheta"></div>
+</div>
+
+<main class="tela">
+
+  <div class="marca">
+    <div class="mono" id="mono">KO</div>
+    <img class="foto" id="foto" src="kellin.jpg" alt="Kellin Obana" hidden>
+    <div class="marca-txt">
+      <span class="marca-nome">Kellin Obana</span>
+      <span class="marca-sub">Consórcio Ademicon</span>
+    </div>
+    <img class="logo" id="logo" src="ademicon.png" alt="Ademicon" hidden>
+  </div>
+
+  <h1 class="titulo">Vou ajudar você a <span class="luz">realizar o seu sonho!</span></h1>
+
+  <div class="palco">
+    <div class="moldura">
+      <video id="video"
+             playsinline
+             webkit-playsinline
+             muted
+             preload="auto"
+             poster="capa.jpg"
+             disablepictureinpicture
+             controlslist="nodownload noplaybackrate noremoteplayback">
+        <source src="video.mp4" type="video/mp4">
+      </video>
+
+      <div class="falha" id="falha">
+        <span>
+          O vídeo ainda não foi publicado nesta pasta.
+          <br>Envie o arquivo 9:16 como
+          <code>video.mp4</code>
+        </span>
+      </div>
+
+      <button class="som" id="som" type="button" aria-label="Desligar o som">
+        <svg viewBox="0 0 24 24" id="icone-som"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1c3 .9 5 3.5 5 6.7s-2 5.8-5 6.7v2.1c4.1-1 7-4.5 7-8.8s-2.9-7.8-7-8.8z"/></svg>
+      </button>
+
+      <button class="capa" id="capa" type="button" aria-label="Assistir ao vídeo com som">
+        <span class="capa-miolo">
+          <span class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+          <span class="capa-txt">
+            Toque para assistir
+            <small>com som</small>
+          </span>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <div class="acao">
+    <a class="zap" id="zap" role="button" aria-disabled="true" tabindex="0">
+      <span class="zap-carga" id="carga"></span>
+      <span class="zap-conteudo" id="zap-texto">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23 2.2 0 4.27.86 5.83 2.41a8.19 8.19 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.14.16-.29.18-.54.06-.25-.13-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.47c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.16 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.08.15-1.18-.06-.11-.22-.17-.47-.29z"/></svg>
+        <span id="zap-rotulo">Aguarde o vídeo…</span>
+      </span>
+    </a>
+    <p class="dica" id="dica" aria-live="polite">Toque no vídeo para começar</p>
+  </div>
+
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ==========================================================
+     CONFIGURAÇÃO — mexa só aqui
+     ========================================================== */
+  var CONFIG = {
+    // Número no formato internacional, só dígitos: 55 + DDD + número.
+    whatsapp: "5544999999999",
+
+    // Mensagem que já vem escrita para o cliente.
+    mensagem: "Oi Kellin! Vi o seu vídeo e quero realizar o meu sonho. Pode me explicar como funciona?",
+
+    // Quanto tempo o botão fica travado, em segundos.
+    segundos: 15,
+
+    // Texto do botão depois de liberado.
+    rotuloLivre: "FALAR COM A KELLIN"
+  };
+
+  var video  = document.getElementById("video");
+  var capa   = document.getElementById("capa");
+  var som    = document.getElementById("som");
+  var falha  = document.getElementById("falha");
+  var zap    = document.getElementById("zap");
+  var carga  = document.getElementById("carga");
+  var rotulo = document.getElementById("zap-rotulo");
+  var dica   = document.getElementById("dica");
+
+  var TOTAL   = CONFIG.segundos * 1000;
+  var passado = 0;      // quanto do carregamento já correu, em ms
+  var marca   = 0;      // instante do último quadro
+  var rodando = false;  // o vídeo começou de verdade?
+  var livre   = false;  // botão já liberado?
+
+  /* ---------- imagens opcionais: entram só se existirem ---------- */
+  ["foto", "logo"].forEach(function (id) {
+    var img = document.getElementById(id);
+    img.addEventListener("load", function () {
+      img.hidden = false;
+      if (id === "foto") document.getElementById("mono").style.display = "none";
+    });
+    img.addEventListener("error", function () { img.remove(); });
+    // Dispara o load agora que os ouvintes existem.
+    img.src = img.getAttribute("src");
+  });
+
+  /* ---------- ninguém pula o vídeo ---------- */
+  var maximo = 0;
+  video.addEventListener("timeupdate", function () {
+    if (video.currentTime > maximo) maximo = video.currentTime;
+  });
+  video.addEventListener("seeking", function () {
+    // Só volta atrás é permitido; avançar joga de volta para onde parou.
+    if (video.currentTime > maximo + 0.4) video.currentTime = maximo;
+  });
+  video.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+
+  // Teclado não controla o vídeo: espaço e setas ficam sem efeito.
+  document.addEventListener("keydown", function (e) {
+    var teclas = [" ", "Spacebar", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "k", "K", "l", "L", "j", "J"];
+    if (teclas.indexOf(e.key) !== -1 && e.target !== zap) e.preventDefault();
+  });
+
+  video.addEventListener("error", mostrarFalha);
+  video.addEventListener("stalled", function () { /* rede lenta: só espera */ });
+  var fonte = video.querySelector("source");
+  if (fonte) fonte.addEventListener("error", mostrarFalha);
+
+  function mostrarFalha() {
+    falha.classList.add("ativo");
+    capa.classList.add("some");
+  }
+
+  /* ---------- prévia muda, em laço, atrás da capa ---------- */
+  video.loop = true;
+  video.addEventListener("loadeddata", function () {
+    var p = video.play();
+    if (p && p.catch) p.catch(function () { /* o navegador barrou: a capa resolve */ });
+  });
+
+  /* ---------- o toque que começa tudo ---------- */
+  capa.addEventListener("click", function () {
+    capa.classList.add("some");
+    som.classList.add("ativo");
+    video.loop = false;
+    video.muted = false;
+    video.volume = 1;
+    maximo = 0;
+    try { video.currentTime = 0; } catch (e) { /* alguns navegadores só depois de carregar */ }
+
+    var p = video.play();
+    if (p && p.catch) {
+      p.catch(function () {
+        // Se o som foi barrado, o vídeo segue mudo — mas o tempo corre igual.
+        video.muted = true;
+        atualizarIconeSom();
+        video.play().catch(function () {});
+      });
+    }
+    comecar();
+  });
+
+  /* ---------- som ---------- */
+  som.addEventListener("click", function () {
+    video.muted = !video.muted;
+    atualizarIconeSom();
+  });
+
+  function atualizarIconeSom() {
+    var icone = document.getElementById("icone-som");
+    icone.innerHTML = video.muted
+      ? '<path d="M3 9v6h4l5 5V4L7 9H3zm18.5-1.1L20.1 6.5 17.6 9l-2.5-2.5-1.4 1.4L16.2 10.4l-2.5 2.5 1.4 1.4 2.5-2.5 2.5 2.5 1.4-1.4-2.5-2.5 2.5-2.5z"/>'
+      : '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1c3 .9 5 3.5 5 6.7s-2 5.8-5 6.7v2.1c4.1-1 7-4.5 7-8.8s-2.9-7.8-7-8.8z"/>';
+    som.setAttribute("aria-label", video.muted ? "Ligar o som" : "Desligar o som");
+  }
+
+  /* ---------- carregamento do botão ---------- */
+  function comecar() {
+    if (rodando) return;
+    rodando = true;
+    marca = performance.now();
+    requestAnimationFrame(quadro);
+  }
+
+  function quadro(agora) {
+    if (livre) return;
+
+    var dt = agora - marca;
+    marca = agora;
+
+    // O tempo só anda com o vídeo tocando: pausou, o carregamento espera.
+    if (!video.paused && !video.ended) {
+      passado += Math.min(dt, 250); // aba em segundo plano não adianta o relógio
+    }
+
+    pintar(Math.min(passado / TOTAL, 1));
+
+    if (passado >= TOTAL) liberar();
+    else requestAnimationFrame(quadro);
+  }
+
+  function pintar(fracao) {
+    carga.style.width = (fracao * 100).toFixed(2) + "%";
+    var faltam = Math.max(0, Math.ceil((TOTAL - passado) / 1000));
+    rotulo.textContent = "Liberando seu contato…";
+    dica.innerHTML = "Seu acesso ao WhatsApp abre em <b>" + faltam + "s</b>";
+  }
+
+  function liberar() {
+    if (livre) return;
+    livre = true;
+
+    carga.style.width = "100%";
+    zap.classList.add("livre");
+    zap.setAttribute("aria-disabled", "false");
+    zap.setAttribute("target", "_blank");
+    zap.setAttribute("rel", "noopener");
+    zap.href = "https://wa.me/" + CONFIG.whatsapp +
+               "?text=" + encodeURIComponent(CONFIG.mensagem);
+    rotulo.textContent = CONFIG.rotuloLivre;
+    dica.textContent = "Atendimento direto com a Kellin";
+    dica.classList.add("pronta");
+
+    if (navigator.vibrate) { try { navigator.vibrate(18); } catch (e) {} }
+  }
+
+  // Vídeo mais curto que a contagem: acabou de assistir, libera na hora.
+  // (Só vale depois do toque — a prévia roda em laço e nunca termina.)
+  video.addEventListener("ended", function () {
+    if (!rodando) return;
+    som.classList.remove("ativo");
+    liberar();
+  });
+
+  // Enquanto travado, o clique não leva a lugar nenhum.
+  zap.addEventListener("click", function (e) {
+    if (!livre) { e.preventDefault(); sacudir(); }
+  });
+  zap.addEventListener("keydown", function (e) {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    if (!livre) { e.preventDefault(); sacudir(); return; }
+    e.preventDefault();
+    zap.click();
+  });
+
+  function sacudir() {
+    zap.animate(
+      [{ transform: "translateX(0)" }, { transform: "translateX(-5px)" },
+       { transform: "translateX(5px)" }, { transform: "translateX(0)" }],
+      { duration: 260, easing: "ease-in-out" }
+    );
+  }
+
+  /* ---------- a página não rola, não arrasta, não dá zoom ---------- */
+  document.addEventListener("touchmove", function (e) {
+    if (e.touches.length > 1) e.preventDefault();  // pinça
+  }, { passive: false });
+
+  document.addEventListener("gesturestart", function (e) { e.preventDefault(); });
+  document.addEventListener("dragstart", function (e) { e.preventDefault(); });
+  window.addEventListener("scroll", function () { window.scrollTo(0, 0); });
+
+  // Duplo toque não dá zoom no iOS.
+  var ultimoToque = 0;
+  document.addEventListener("touchend", function (e) {
+    var agora = Date.now();
+    if (agora - ultimoToque < 320) e.preventDefault();
+    ultimoToque = agora;
+  }, { passive: false });
+
+  pintar(0);
+  rotulo.textContent = "Aguarde o vídeo…";
+  dica.textContent = "Toque no vídeo para começar";
+})();
+</script>
+
+</body>
+</html>

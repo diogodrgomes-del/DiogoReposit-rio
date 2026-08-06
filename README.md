@@ -157,6 +157,19 @@ Marque “Gráficos de segundo plano” nas opções de impressão para as cores
 
 ---
 
+## Página de vendas da Kellin Obana
+
+Fora do painel, em `public/kellin/`, mora uma página de vendas independente:
+vídeo vertical 9:16, título dourado por cima e o botão do WhatsApp por baixo,
+que fica travado carregando por 15 segundos enquanto a pessoa assiste. É um
+`index.html` só, sem build e sem dependência do resto do projeto — no ar em
+`/kellin/index.html`, e a rota é pública (o `middleware.ts` a libera do login).
+
+Antes de divulgar: coloque o `video.mp4` na pasta e troque o número em
+`var CONFIG`. O passo a passo está em `public/kellin/LEIA-ME.md`.
+
+---
+
 ## Se algo der errado
 
 **“Nenhuma conta de anúncios acessível por este token”** — o token é válido, mas

@@ -15,6 +15,9 @@ export async function middleware(req: NextRequest) {
     // Diagnóstico de configuração: precisa responder sem sessão, porque é
     // usado justamente quando o login não funciona. Não expõe valor algum.
     pathname === "/api/saude" ||
+    // Página de vendas da Kellin: é pública por natureza, feita para ser
+    // enviada a quem ainda não é cliente. Não lê nada do painel.
+    pathname.startsWith("/kellin") ||
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico";
 
