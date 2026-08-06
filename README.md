@@ -1,5 +1,10 @@
 # Marktiva — Painel de Campanhas
 
+> **MARK SISTEM** — a arquitetura da plataforma que vai absorver este painel como
+> módulo de Gestão de Tráfego está em [`docs/mark-sistem/`](docs/mark-sistem/).
+> Ainda é só projeto: nenhuma linha de código de produção foi escrita, e este
+> painel continua funcionando como está.
+
 Painel web das campanhas do Meta Ads para uma carteira de clientes, com login,
 filtros de período iguais aos do Gerenciador de Anúncios, atualização automática
 e exportação em PDF.
