@@ -29,10 +29,14 @@ a partir do banco: é essa a diferença entre um cofre e uma gaveta.
 ### 2. Rodar a migração e importar a carteira
 
 ```bash
-npm run db:migrar          # 5 migrações
-npm run db:semear          # organização, papéis, você como proprietário
-npm run db:importar-meta   # clientes e tokens saem do .env e vão cifrados
+npm run db:migrar             # 6 migrações
+npm run db:semear             # organização, papéis, você como proprietário
+npm run db:importar-meta      # clientes e tokens saem do .env e vão cifrados
+npm run db:descobrir-contas   # registra as contas de anúncio de cada token
 ```
+
+Depois disso, suba o worker (`npm run worker`) ou publique-o no Fly.io: é ele
+que sincroniza o Meta Ads a cada 30 minutos.
 
 Depois disso você entra com **e-mail e senha**, não mais com usuário do
 `DASH_USERS`. O campo de login aceita os dois — o servidor decide pelo formato.
@@ -58,15 +62,23 @@ Confira em `/api/saude`: o campo `modoDeLogin` diz o que está valendo, e
 | Login pelo banco + legado convivendo | pronto |
 | Sessão revogável no logout | pronta |
 | Rotas do painel se defendendo sozinhas | pronto |
+| Casca do sistema — barra lateral, tema, permissões | pronta |
+| Telas de clientes — lista, ficha, formulário, lixeira | prontas |
+| Tela de equipe | pronta (leitura) |
+| Migração 0006 — contas de anúncio e métricas diárias | pronta |
+| `@mark/integracoes` — cliente da Meta compartilhado | pronto |
+| Sync do Meta Ads no worker | pronto |
 
 **125 testes**, 25 deles contra Postgres real no CI.
 
 ## O que falta na fase 1
 
-1. Casca da aplicação — barra lateral, tema, ⌘K, notificações
-2. Telas de clientes e contatos (o `core` está pronto; falta a interface)
-3. Sync do Meta Ads pelo worker, e o painel lendo do banco em vez da Graph API
-4. Tela de usuários e papéis
+1. O painel de campanhas passar a **ler** do banco (a escrita já acontece) e
+   migrar para dentro da casca
+2. Busca global com ⌘K e central de notificações
+3. Convite de usuário por e-mail, para a tela de equipe deixar de ser só leitura
+4. Métricas por campanha e por dia — hoje o sync grava o total diário por conta,
+   que é o que a visão da carteira consome
 5. Aposentar `DASH_USERS` e `META_TOKENS`
 
 ---
@@ -165,3 +177,45 @@ npm run db:importar-meta   # META_TOKENS -> clientes + credenciais cifradas
 
 Idempotente: rodar de novo não duplica cliente e **atualiza** o token de quem já
 existe — que é exatamente o que se quer quando um token expira.
+
+
+---
+
+## A decisão que muda o desempenho
+
+**A tela lê o banco, não a Graph API.**
+
+O painel atual consulta a Meta a cada requisição. Para um cliente por vez está
+certo — o dado vive lá e copiar não ajudaria. Para a carteira inteira, não: são
+vinte chamadas sequenciais a uma API de terceiro com limite de taxa, oito a
+quinze segundos de espera, e uma queda da Meta derruba a tela.
+
+Com o worker sincronizando, a consulta vira um `SELECT` indexado, funciona com a
+Meta fora do ar, e o histórico passa a ser nosso — a Meta só devolve 37 meses.
+
+Três detalhes que a implementação obrigou a decidir:
+
+- **A janela é de 7 dias, não "só o que falta".** A Meta revisa números
+  retroativamente por causa da janela de atribuição de 7 dias das conversas
+  iniciadas. "Já sincronizei esse dia" não significa que ele não mudou.
+- **Uma transação por conta.** Token vencido de um cliente não pode desfazer o
+  que já foi gravado dos outros — o erro fica registrado na conta e na execução,
+  e a carteira segue.
+- **`PRIMARY KEY` não serviu.** A linha mais importante da tabela de métricas é o
+  total do dia, que tem `campanha_externa_id` nulo — e chave primária implica
+  `NOT NULL` em Postgres. Virou índice único com `NULLS NOT DISTINCT`, senão
+  cada sincronização inseriria um total novo em vez de atualizar o existente.
+
+O cliente da Meta saiu de `apps/web` para `@mark/integracoes`, porque o worker
+precisa dele tanto quanto a web. Enquanto morava dentro do app, sincronizar em
+segundo plano exigiria duplicar o cliente inteiro.
+
+## Uma regra de lint que provou o próprio valor
+
+O worker precisava listar as organizações antes de ter contexto de organização —
+o passo que antecede a RLS. O caminho óbvio seria `comoAdmin`, que ignora a RLS
+por completo. O lint recusou.
+
+A saída foi melhor: `listarOrganizacoesAtivas()` em `@mark/db`, uma função com
+nome, escopo e propósito. Auditável, ao contrário de uma válvula genérica solta
+no worker. A regra não atrapalhou — obrigou o desenho certo.

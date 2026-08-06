@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { Alteracao } from "@/lib/meta";
+import type { Alteracao } from "@mark/integracoes/meta-ads";
 import type { Anotacao } from "@/lib/registro";
-import type { Impacto } from "@/lib/meta";
+import type { Impacto } from "@mark/integracoes/meta-ads";
 import ImpactoAnotacao from "./ImpactoAnotacao";
 
 type Props = { clienteId: string; nomeCliente: string };

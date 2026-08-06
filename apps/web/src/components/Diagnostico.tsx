@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { Campanha } from "@/lib/meta";
+import type { Campanha } from "@mark/integracoes/meta-ads";
 import { ROTULO_ACAO, diagnosticar, type Acao } from "@/lib/diagnostico";
 
 const CLASSE: Record<Acao, string> = {

@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { lerAcesso } from "@/lib/sessao";
 import { tokenDe } from "@/lib/clientes";
-import { ErroMeta, carregarFilhos, type Nivel } from "@/lib/meta";
-import { resolverJanela } from "@/lib/periodo";
+import { ErroMeta, carregarFilhos, type Nivel } from "@mark/integracoes/meta-ads";
+import { resolverJanela } from "@mark/integracoes/meta-ads";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

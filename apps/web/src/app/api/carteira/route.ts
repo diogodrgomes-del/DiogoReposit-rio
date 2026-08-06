@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { lerAcesso } from "@/lib/sessao";
 import { clientesComToken } from "@/lib/clientes";
-import { carregarCarteira } from "@/lib/meta";
-import { resolverJanela } from "@/lib/periodo";
+import { carregarCarteira } from "@mark/integracoes/meta-ads";
+import { resolverJanela } from "@mark/integracoes/meta-ads";
 import { aliquotaDe } from "@/lib/impostos";
 
 export const runtime = "nodejs";

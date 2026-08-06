@@ -10,7 +10,8 @@
   "scripts": {
     "migrar": "tsx src/cli/migrar.ts",
     "semear": "tsx src/cli/semear.ts",
-    "importar-meta": "tsx src/cli/importar-meta.ts"
+    "importar-meta": "tsx src/cli/importar-meta.ts",
+    "descobrir-contas": "tsx src/cli/descobrir-contas.ts"
   },
   "dependencies": {
     "@mark/cofre": "*",

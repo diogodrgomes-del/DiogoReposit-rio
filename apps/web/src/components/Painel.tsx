@@ -3,14 +3,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Cliente } from "@/lib/clientes";
-import type { Painel as DadosPainel, ResumoCliente } from "@/lib/meta";
+import type { Painel as DadosPainel, ResumoCliente } from "@mark/integracoes/meta-ads";
 import {
   PERIODOS,
   PERIODO_PADRAO,
   hojeISO,
   intervaloAproximado,
   somarDias,
-} from "@/lib/presets";
+} from "@mark/integracoes/meta-ads";
 import {
   brl,
   dataLonga,

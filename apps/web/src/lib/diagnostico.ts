@@ -1,4 +1,4 @@
-import type { Campanha } from "./meta";
+import type { Campanha } from "@mark/integracoes/meta-ads";
 
 export type Acao = "pausar" | "escalar" | "revisar" | "renovar" | "reativar";
 

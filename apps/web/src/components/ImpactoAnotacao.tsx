@@ -1,6 +1,6 @@
 "use client";
 
-import type { Impacto } from "@/lib/meta";
+import type { Impacto } from "@mark/integracoes/meta-ads";
 import { brl, inteiro } from "@/lib/format";
 
 /** Variação percentual, protegida contra divisão por zero. */

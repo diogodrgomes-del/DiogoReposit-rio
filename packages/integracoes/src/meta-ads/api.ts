@@ -84,10 +84,14 @@ async function buscar<T>(
   let proxima: string | null = url.toString();
 
   while (proxima) {
-    const r: Response = await fetch(proxima, { cache: "no-store" });
-    const corpo = await r.json().catch(() => ({}));
+    const r: Response = await fetch(proxima);
+    const corpo = (await r.json().catch(() => ({}))) as {
+      error?: { message?: string; code?: number };
+      data?: unknown[];
+      paging?: { next?: string };
+    };
 
-    if (corpo?.error) {
+    if (corpo.error) {
       const e = corpo.error;
       throw new ErroMeta(limpar(`Meta: ${e.message ?? "erro desconhecido"}`, token), e.code);
     }
@@ -183,8 +187,12 @@ function preencherLacunas(
   if (gran !== "1" || serie.length < 2) return serie;
 
   const dia = 86_400_000;
-  const primeiro = Date.parse(`${serie[0].data}T00:00:00Z`);
-  const ultimo = Date.parse(`${serie[serie.length - 1].data}T00:00:00Z`);
+  const inicio = serie[0];
+  const fim = serie[serie.length - 1];
+  if (!inicio || !fim) return serie;
+
+  const primeiro = Date.parse(`${inicio.data}T00:00:00Z`);
+  const ultimo = Date.parse(`${fim.data}T00:00:00Z`);
   if (Number.isNaN(primeiro) || Number.isNaN(ultimo)) return serie;
 
   // Um intervalo absurdo so pode vir de data malformada: devolve como veio.
@@ -356,7 +364,9 @@ async function comLimite<T, R>(
     async () => {
       while (proximo < itens.length) {
         const i = proximo++;
-        saida[i] = await tarefa(itens[i]);
+        const item = itens[i];
+        if (item === undefined) break;
+        saida[i] = await tarefa(item);
       }
     }
   );
@@ -528,11 +538,10 @@ export async function carregarOrcamento(
 
   const [detalhe, atividades] = await Promise.all([
     fetch(
-      `${API}/${conta.id}?fields=amount_spent,spend_cap&access_token=${encodeURIComponent(token)}`,
-      { cache: "no-store" }
+      `${API}/${conta.id}?fields=amount_spent,spend_cap&access_token=${encodeURIComponent(token)}`
     )
-      .then((r) => r.json())
-      .catch(() => ({})),
+      .then((r) => r.json() as Promise<{ amount_spent?: string; spend_cap?: string }>)
+      .catch(() => ({}) as { amount_spent?: string; spend_cap?: string }),
     buscar<{ event_type?: string; event_time?: string; extra_data?: string }>(
       `${conta.id}/activities`,
       token,
@@ -778,8 +787,12 @@ export async function carregarImpactos(
 
   const hoje = new Date().toISOString().slice(0, 10);
   const ordenadas = [...validas].sort();
-  const inicio = desloca(ordenadas[0], -janelaDias);
-  const fimBruto = desloca(ordenadas[ordenadas.length - 1], janelaDias);
+  const primeira = ordenadas[0];
+  const ultima = ordenadas[ordenadas.length - 1];
+  if (!primeira || !ultima) return [];
+
+  const inicio = desloca(primeira, -janelaDias);
+  const fimBruto = desloca(ultima, janelaDias);
   const fim = fimBruto > hoje ? hoje : fimBruto;
   if (inicio > fim) return [];
 

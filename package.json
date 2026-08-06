@@ -17,7 +17,8 @@
     "db:migrar": "npm run migrar --workspace=@mark/db",
     "db:semear": "npm run semear --workspace=@mark/db",
     "worker": "npm run dev --workspace=@mark/worker",
-    "db:importar-meta": "npm run importar-meta --workspace=@mark/db"
+    "db:importar-meta": "npm run importar-meta --workspace=@mark/db",
+    "db:descobrir-contas": "npm run descobrir-contas --workspace=@mark/db"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

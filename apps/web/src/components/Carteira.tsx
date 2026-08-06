@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import type { ResumoCliente } from "@/lib/meta";
+import type { ResumoCliente } from "@mark/integracoes/meta-ads";
 import { brl, decimal, inteiro, pct } from "@/lib/format";
 
 type Props = {

@@ -12,7 +12,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import type { PontoSerie } from "@/lib/meta";
+import type { PontoSerie } from "@mark/integracoes/meta-ads";
 import { brl, dataCurta, inteiro } from "@/lib/format";
 
 type Props = { serie: PontoSerie[] };

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { dataLonga } from "@/lib/format";
-import { hojeISO } from "@/lib/presets";
+import { hojeISO } from "@mark/integracoes/meta-ads";
 
 const MESES = [
   "jan", "fev", "mar", "abr", "mai", "jun",

@@ -10,6 +10,7 @@
   "dependencies": {
     "@mark/core": "*",
     "@mark/db": "*",
+    "@mark/integracoes": "*",
     "drizzle-orm": "^0.45.2"
   }
 }

@@ -5,7 +5,7 @@ import {
   carregarAlteracoes,
   carregarImpactos,
   listarContas,
-} from "@/lib/meta";
+} from "@mark/integracoes/meta-ads";
 import {
   apagarAnotacao,
   bancoConfigurado,

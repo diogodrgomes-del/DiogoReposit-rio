@@ -2,6 +2,7 @@ import { createServer } from "node:http";
 import { sql } from "drizzle-orm";
 import { db, fechar } from "@mark/db";
 import { sessao } from "@mark/auth";
+import { sincronizarMetaAds } from "./sync/meta-ads";
 
 /**
  * Worker do MARK SISTEM.
@@ -11,12 +12,14 @@ import { sessao } from "@mark/auth";
  * Descobrir isso na fase 5, com o sistema em produção, custaria replanejar
  * infraestrutura; por isso ele sobe já na fase 0, ainda com pouca coisa.
  *
- * Hoje faz duas: responde ao health check da plataforma e limpa sessões
- * vencidas. As filas entram na fase 3, junto com as notificações.
+ * Hoje: health check, limpeza de sessões vencidas e a sincronização do Meta
+ * Ads — o job que tira a Graph API do caminho da tela. As filas entram na
+ * fase 3, junto com as notificações.
  */
 
 const PORTA = Number(process.env.PORT ?? 8080);
 const LIMPEZA_MIN = 60;
+const SYNC_MIN = Number(process.env.SYNC_INTERVALO_MIN ?? 30);
 
 type Tarefa = { nome: string; intervaloMin: number; executar: () => Promise<string> };
 
@@ -27,6 +30,17 @@ const TAREFAS: Tarefa[] = [
     executar: async () => {
       const n = await sessao.limpar();
       return `${n} sessões removidas`;
+    },
+  },
+  {
+    // É este job que tira a Graph API do caminho da tela. Sem ele o painel da
+    // carteira faria vinte chamadas sequenciais a uma API de terceiro a cada
+    // abertura, e cairia junto com a Meta.
+    nome: "sync-meta-ads",
+    intervaloMin: SYNC_MIN,
+    executar: async () => {
+      const r = await sincronizarMetaAds();
+      return `${r.contas} contas, ${r.linhas} dias gravados, ${r.falhas} falhas`;
     },
   },
 ];

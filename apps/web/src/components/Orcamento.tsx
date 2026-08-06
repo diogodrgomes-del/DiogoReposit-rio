@@ -1,6 +1,6 @@
 "use client";
 
-import type { Orcamento as Dados } from "@/lib/meta";
+import type { Orcamento as Dados } from "@mark/integracoes/meta-ads";
 import { brl, dataLonga, inteiro } from "@/lib/format";
 
 type Props = {

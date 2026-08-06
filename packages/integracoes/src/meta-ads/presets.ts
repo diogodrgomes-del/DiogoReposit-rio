@@ -51,7 +51,12 @@ export function somarDias(iso: string, dias: number): string {
 export function intervaloAproximado(id: string): { since: string; until: string } | null {
   const hoje = hojeISO();
   const ontem = somarDias(hoje, -1);
-  const [ano, mes] = hoje.split("-").map(Number);
+  // `hoje` vem de toISOString().slice(0, 10), então tem sempre ano-mês-dia. O
+  // compilador não sabe disso; o fallback torna a garantia explícita em vez de
+  // depender de uma asserção.
+  const partes = hoje.split("-").map(Number);
+  const ano = partes[0] ?? new Date().getUTCFullYear();
+  const mes = partes[1] ?? 1;
 
   switch (id) {
     case "today":

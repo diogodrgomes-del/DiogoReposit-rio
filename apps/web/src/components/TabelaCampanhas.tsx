@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import type { Campanha, Metricas, NoDetalhe } from "@/lib/meta";
+import type { Campanha, Metricas, NoDetalhe } from "@mark/integracoes/meta-ads";
 import {
   brl,
   decimal,

@@ -37,6 +37,12 @@
       ],
       "@mark/auth/cookie": [
         "../../packages/auth/src/cookie.ts"
+      ],
+      "@mark/integracoes": [
+        "../../packages/integracoes/src/index.ts"
+      ],
+      "@mark/integracoes/meta-ads": [
+        "../../packages/integracoes/src/meta-ads/index.ts"
       ]
     }
   },

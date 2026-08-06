@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { lerAcesso } from "@/lib/sessao";
 import { listarClientes, tokenDe } from "@/lib/clientes";
-import { ErroMeta, carregarPainel } from "@/lib/meta";
-import { resolverJanela } from "@/lib/periodo";
+import { ErroMeta, carregarPainel } from "@mark/integracoes/meta-ads";
+import { resolverJanela } from "@mark/integracoes/meta-ads";
 import { aliquotaDe } from "@/lib/impostos";
 
 export const runtime = "nodejs";

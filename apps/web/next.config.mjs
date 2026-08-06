@@ -5,7 +5,7 @@ const nextConfig = {
   // Os pacotes do monorepo publicam TypeScript direto, sem passo de build.
   // Sem isto o Next os trataria como dependência já compilada e engasgaria no
   // primeiro `import type`.
-  transpilePackages: ["@mark/core", "@mark/db", "@mark/auth"],
+  transpilePackages: ["@mark/core", "@mark/db", "@mark/auth", "@mark/cofre", "@mark/integracoes"],
   async headers() {
     return [
       {
