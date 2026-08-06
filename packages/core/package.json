@@ -3,5 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "exports": { ".": "./src/index.ts" }
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@mark/cofre": "*",
+    "@mark/db": "*",
+    "drizzle-orm": "^0.45.2"
+  }
 }

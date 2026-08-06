@@ -7,6 +7,7 @@ export default defineConfig({
       "@mark/core": fileURLToPath(new URL("./packages/core/src/index.ts", import.meta.url)),
       "@mark/db": fileURLToPath(new URL("./packages/db/src/index.ts", import.meta.url)),
       "@mark/auth": fileURLToPath(new URL("./packages/auth/src/index.ts", import.meta.url)),
+      "@mark/cofre": fileURLToPath(new URL("./packages/cofre/src/index.ts", import.meta.url)),
     },
   },
   test: {

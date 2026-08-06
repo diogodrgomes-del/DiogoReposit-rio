@@ -15,7 +15,7 @@
     "@mark/db": "*",
     "@neondatabase/serverless": "^1.1.0",
     "jose": "^5.9.6",
-    "next": "^15.5.22",
+    "next": "^16.3.0",
     "pg": "^8.22.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
@@ -26,6 +26,7 @@
     "@types/pg": "^8.20.0",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
+    "eslint-config-next": "^16.3.0",
     "typescript": "^5.7.3"
   }
 }

@@ -21,20 +21,14 @@ async function erros(codigo: string, caminho: string): Promise<string[]> {
 const contem = (msgs: string[], trecho: string) => msgs.some((m) => m.includes(trecho));
 
 describe("fronteira do @mark/core", () => {
-  it("recusa importar banco", async () => {
-    const msgs = await erros(
-      `import { db } from "@mark/db";\nexport const x = db;\n`,
-      "packages/core/src/exemplo.ts",
-    );
-    expect(contem(msgs, "regra de negócio pura")).toBe(true);
-  });
+  const NEGA = "não conhece apresentação nem sessão";
 
   it("recusa importar React", async () => {
     const msgs = await erros(
       `import { useState } from "react";\nexport const x = useState;\n`,
       "packages/core/src/exemplo.ts",
     );
-    expect(contem(msgs, "regra de negócio pura")).toBe(true);
+    expect(contem(msgs, NEGA)).toBe(true);
   });
 
   it("recusa importar Next", async () => {
@@ -42,7 +36,31 @@ describe("fronteira do @mark/core", () => {
       `import { cookies } from "next/headers";\nexport const x = cookies;\n`,
       "packages/core/src/exemplo.ts",
     );
-    expect(contem(msgs, "regra de negócio pura")).toBe(true);
+    expect(contem(msgs, NEGA)).toBe(true);
+  });
+
+  it("recusa importar @mark/auth — quem monta o Contexto é ele, não o core", async () => {
+    const msgs = await erros(
+      `import { sessao } from "@mark/auth";\nexport const x = sessao;\n`,
+      "packages/core/src/exemplo.ts",
+    );
+    expect(contem(msgs, NEGA)).toBe(true);
+  });
+
+  it("aceita o banco — o core é TypeScript sobre Drizzle", async () => {
+    const msgs = await erros(
+      `import { comContexto } from "@mark/db";\nexport const x = comContexto;\n`,
+      "packages/core/src/exemplo.ts",
+    );
+    expect(contem(msgs, "no-restricted-imports")).toBe(false);
+  });
+
+  it("recusa comoAdmin mesmo no core", async () => {
+    const msgs = await erros(
+      `import { comoAdmin } from "@mark/db";\nexport const x = comoAdmin;\n`,
+      "packages/core/src/exemplo.ts",
+    );
+    expect(contem(msgs, "comoAdmin ignora a RLS")).toBe(true);
   });
 
   it("aceita import interno", async () => {

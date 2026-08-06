@@ -58,19 +58,27 @@ export default tseslint.config(
     },
   },
 
-  // Fronteira 2 — o núcleo de regra de negócio, mais estrita que as demais.
+  // Fronteira 2 — o núcleo de regra de negócio.
+  //
+  // Pode falar com o banco: é TypeScript sobre Drizzle, e é aí que a
+  // autorização mora. O que não pode é conhecer camada de apresentação nem
+  // sessão — é isso que permite a mesma regra rodar na web, no worker, num
+  // script e numa API futura sem reescrever autorização.
+  //
+  // @mark/auth fica de fora também por ser circular: auth importa core.
   {
     files: ["packages/core/**/*.ts"],
     rules: {
       "no-restricted-imports": [
         "error",
         {
+          paths: [PROIBIDO_COMO_ADMIN],
           patterns: [
             PROIBIDO_APLICACAO,
             {
-              group: ["react", "react-*", "next", "next/*", "@mark/db", "@mark/auth"],
+              group: ["react", "react-*", "next", "next/*", "@mark/auth"],
               message:
-                "@mark/core é regra de negócio pura. Sem React, sem Next, sem banco — é o que permite reusá-la no worker, num script e numa API futura sem reescrever autorização.",
+                "@mark/core não conhece apresentação nem sessão. Recebe Contexto por parâmetro; quem monta o Contexto é @mark/auth.",
             },
           ],
         },
