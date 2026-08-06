@@ -476,6 +476,7 @@ export async function obter(ctx: Contexto, id: string) {
         proximaAcao: leads.proximaAcao,
         proximoContatoEm: leads.proximoContatoEm,
         motivoPerda: leads.motivoPerda,
+        clienteId: leads.clienteId,
         fechadoEm: leads.fechadoEm,
         perdidoEm: leads.perdidoEm,
         observacoes: leads.observacoes,

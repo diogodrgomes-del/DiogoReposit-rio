@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { pode, usuarios } from "@mark/core";
 import { BarraLateral, type GrupoMenu } from "@/componentes/sistema/BarraLateral";
+import { Busca } from "@/componentes/sistema/Busca";
 import { MenuUsuario } from "@/componentes/sistema/MenuUsuario";
 import { lerAcesso } from "@/lib/sessao";
 import "../sistema.css";
@@ -56,7 +57,10 @@ export default async function LayoutSistema({ children }: { children: React.Reac
 
   const grupos: GrupoMenu[] = [
     {
-      itens: [{ href: "/", rotulo: "Campanhas", icone: "grafico" }],
+      itens: [
+        { href: "/painel", rotulo: "Painel", icone: "painel" },
+        { href: "/", rotulo: "Campanhas", icone: "grafico" },
+      ],
     },
   ];
 
@@ -87,6 +91,7 @@ export default async function LayoutSistema({ children }: { children: React.Reac
       <BarraLateral grupos={grupos} />
       <header className="sistema__topo">
         <p className="sistema__titulo">{perfil.organizacao}</p>
+        <Busca />
         <MenuUsuario nome={perfil.nome} papel={perfil.papel} />
       </header>
       <main className="sistema__conteudo">{children}</main>

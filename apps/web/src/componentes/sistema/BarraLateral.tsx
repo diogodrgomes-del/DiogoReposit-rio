@@ -46,6 +46,14 @@ const ICONES = {
       <path d="M16 5.5a3.2 3.2 0 0 1 0 5M17.5 20a5.5 5.5 0 0 0-2-4.3" strokeLinecap="round" />
     </svg>
   ),
+  painel: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <rect x="3" y="3" width="7.5" height="8" rx="1.5" />
+      <rect x="13.5" y="3" width="7.5" height="5" rx="1.5" />
+      <rect x="3" y="14" width="7.5" height="7" rx="1.5" />
+      <rect x="13.5" y="11" width="7.5" height="10" rx="1.5" />
+    </svg>
+  ),
   funil: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
       <path d="M3.5 5h17l-6.5 7.5V20l-4-2.5v-5L3.5 5Z" strokeLinecap="round" strokeLinejoin="round" />

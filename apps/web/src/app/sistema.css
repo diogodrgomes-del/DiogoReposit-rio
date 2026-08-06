@@ -762,3 +762,143 @@ a.indicador {
 a.indicador:hover {
   border-color: var(--acento);
 }
+
+/* ---------- busca global ---------- */
+
+.busca__gatilho {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--raio);
+  background: var(--card-2);
+  color: var(--ink-3);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  min-width: 200px;
+}
+
+.busca__gatilho:hover {
+  border-color: var(--ink-3);
+  color: var(--ink-2);
+}
+
+.busca__gatilho svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+}
+
+.busca__gatilho span {
+  flex: 1;
+  text-align: left;
+}
+
+.busca__gatilho kbd {
+  font: inherit;
+  font-size: 11px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  background: var(--card);
+}
+
+.busca__fundo {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 25, 23, 0.35);
+  backdrop-filter: blur(2px);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  /* Não centralizado na vertical: a caixa aparece perto do topo, onde o olho
+     já está depois de apertar ⌘K, e a lista cresce para baixo sem pular. */
+  padding-top: 12vh;
+}
+
+.busca__caixa {
+  width: min(560px, calc(100vw - 32px));
+  max-height: 60vh;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--raio-card);
+  box-shadow: var(--elev-2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.busca__campo {
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  padding: 14px 16px;
+  outline: none;
+  width: 100%;
+}
+
+.busca__lista {
+  overflow-y: auto;
+  padding: 6px;
+}
+
+.busca__aviso {
+  color: var(--ink-3);
+  font-size: 13px;
+  padding: 16px;
+  margin: 0;
+  text-align: center;
+}
+
+.busca__aviso--erro {
+  color: var(--crit);
+}
+
+.busca__item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 9px 10px;
+  border: none;
+  border-radius: var(--raio);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.busca__item--ativo {
+  background: var(--acento-suave);
+}
+
+.busca__tipo {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  flex: none;
+}
+
+.busca__titulo {
+  font-weight: 550;
+}
+
+.busca__sub {
+  color: var(--ink-3);
+  font-size: 12px;
+  margin-left: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

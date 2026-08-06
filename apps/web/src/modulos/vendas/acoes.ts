@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { ErroDeAutorizacao, ErroDeValidacao, leads } from "@mark/core";
+import { ErroDeAutorizacao, ErroDeValidacao, leads, onboarding } from "@mark/core";
 import { exigirContexto } from "@/lib/sessao";
 
 export type EstadoForm = { erro?: string; campo?: string };
@@ -92,4 +92,25 @@ export async function registrarMotivoPerda(formulario: FormData): Promise<void> 
   await leads.registrarPerda(ctx, id, texto(formulario, "motivo"));
   revalidatePath("/vendas");
   redirect(`/vendas/${id}`);
+}
+
+/**
+ * Transforma o lead em cliente.
+ *
+ * Redireciona para a ficha do cliente recém-criado: a próxima coisa que a
+ * pessoa vai querer é preencher os dados que faltam, e deixá-la no lead a
+ * obrigaria a procurar o cliente que ela acabou de criar.
+ */
+export async function converterEmCliente(formulario: FormData): Promise<void> {
+  const id = formulario.get("id");
+  if (typeof id !== "string" || !id) return;
+
+  const ctx = await exigirContexto();
+  const r = await onboarding.transformarEmCliente(ctx, id, {
+    nomeCliente: texto(formulario, "nomeCliente") ?? undefined,
+  });
+
+  revalidatePath("/vendas");
+  revalidatePath("/clientes");
+  redirect(`/clientes/${r.clienteId}${r.jaExistia ? "" : "?novo=1"}`);
 }

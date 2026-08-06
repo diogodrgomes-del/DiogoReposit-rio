@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { formatarTelefone, leads as regra, linkWhatsApp, usuarios } from "@mark/core";
-import { excluirLead, registrarMotivoPerda } from "@/modulos/vendas/acoes";
+import { converterEmCliente, excluirLead, registrarMotivoPerda } from "@/modulos/vendas/acoes";
 import { data } from "@/modulos/clientes/comuns";
 import { exigirContexto } from "@/lib/sessao";
 
@@ -144,6 +144,51 @@ export default async function PaginaLead({ params }: { params: Promise<{ id: str
         </div>
 
         <div style={{ display: "grid", gap: 16, alignContent: "start" }}>
+          {/* Conversão só aparece enquanto o lead está vivo e sem cliente.
+              Depois de convertido, a ficha do cliente é que manda. */}
+          {!perdido && !lead.clienteId && permissoes.editar && (
+            <div className="cartao">
+              <div className="cartao__cabeca">
+                <strong>Fechou?</strong>
+              </div>
+              <div className="cartao__corpo">
+                <p className="pagina__sub" style={{ marginBottom: 12 }}>
+                  Vira cliente sem copiar nada: o contato continua o mesmo, então a conversa de
+                  WhatsApp e todo o histórico seguem junto.
+                </p>
+                <form action={converterEmCliente} style={{ display: "grid", gap: 10 }}>
+                  <input type="hidden" name="id" value={lead.id} />
+                  <label className="campo-sis">
+                    <span>
+                      Nome do cliente<span className="opcional"> · opcional</span>
+                    </span>
+                    <input
+                      name="nomeCliente"
+                      defaultValue={lead.empresa ?? lead.nome}
+                      placeholder="Nome da empresa"
+                    />
+                  </label>
+                  <button type="submit" className="btn btn--acento">
+                    Transformar em cliente
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {lead.clienteId && (
+            <div className="cartao">
+              <div className="cartao__cabeca">
+                <strong>Virou cliente</strong>
+              </div>
+              <div className="cartao__corpo">
+                <Link className="btn" href={`/clientes/${lead.clienteId}`}>
+                  Abrir ficha do cliente
+                </Link>
+              </div>
+            </div>
+          )}
+
           {/* Motivo de perda só aparece quando o card já está na coluna de
               perda. Pedir antes seria perguntar sobre algo que não aconteceu. */}
           {perdido && permissoes.editar && (
