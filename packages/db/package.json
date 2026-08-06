@@ -1,0 +1,24 @@
+{
+  "name": "@mark/db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./esquema": "./src/esquema/index.ts"
+  },
+  "scripts": {
+    "migrar": "tsx src/cli/migrar.ts",
+    "semear": "tsx src/cli/semear.ts"
+  },
+  "dependencies": {
+    "@mark/core": "*",
+    "@neondatabase/serverless": "^1.1.0",
+    "drizzle-orm": "^0.45.2",
+    "pg": "^8.22.0",
+    "uuid": "^11.0.5"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.20.0"
+  }
+}

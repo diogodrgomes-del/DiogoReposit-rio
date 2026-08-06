@@ -1,28 +1,35 @@
 {
-  "name": "marktiva-dashboard",
-  "version": "1.0.0",
+  "name": "mark-sistem",
+  "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "senha": "node scripts/gerar-senha.mjs"
-  },
-  "dependencies": {
-    "@neondatabase/serverless": "^1.1.0",
-    "jose": "^5.9.6",
-    "next": "^15.5.22",
-    "pg": "^8.22.0",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
-    "recharts": "^3.10.1"
+    "dev": "npm run dev --workspace=@mark/web",
+    "build": "npm run build --workspace=@mark/web",
+    "lint": "eslint .",
+    "tipos": "tsc --build --verbose",
+    "teste": "vitest run",
+    "teste:observar": "vitest",
+    "db:gerar": "npm run gerar --workspace=@mark/db",
+    "db:migrar": "npm run migrar --workspace=@mark/db",
+    "db:semear": "npm run semear --workspace=@mark/db",
+    "worker": "npm run dev --workspace=@mark/worker"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
     "@types/node": "^22.10.5",
-    "@types/pg": "^8.20.0",
-    "@types/react": "^19.0.7",
-    "@types/react-dom": "^19.0.3",
-    "typescript": "^5.7.3"
+    "@typescript-eslint/eslint-plugin": "^8.20.0",
+    "@typescript-eslint/parser": "^8.20.0",
+    "eslint": "^9.18.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.66.0",
+    "vitest": "^3.0.5"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

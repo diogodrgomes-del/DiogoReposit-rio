@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    name: Lint, tipos e testes
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      # Papel criado no passo abaixo — dono do banco, mas NÃO superusuário.
+      DATABASE_URL: postgresql://mark:mark@localhost:5432/mark
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # O papel `postgres` da imagem é superusuário, e superusuário ignora RLS.
+      # Rodar os testes com ele faria todas as políticas passarem sem provar
+      # nada — exatamente o falso positivo que estes testes existem para evitar.
+      # Este papel imita o da Neon: dono do banco, sem SUPERUSER e sem BYPASSRLS.
+      - name: Criar papel de aplicação sem privilégio de contornar RLS
+        run: |
+          psql "postgresql://postgres:postgres@localhost:5432/postgres" \
+            -c "CREATE ROLE mark LOGIN PASSWORD 'mark';" \
+            -c "CREATE DATABASE mark OWNER mark;"
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Tipos
+        run: npm run tipos
+
+      - name: Testes (inclui RLS contra Postgres real)
+        run: npm run teste
+
+      - name: Build do painel
+        run: npm run build
+
+  auditoria:
+    name: Vulnerabilidades
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Reprova em vulnerabilidade crítica. `high` fica como aviso enquanto o
+      # Next 15 arrasta postcss e sharp — ver docs/mark-sistem/03-fase-0.md.
+      - run: npm audit --audit-level=critical

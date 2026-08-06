@@ -1,9 +1,37 @@
-# Marktiva — Painel de Campanhas
+# MARK SISTEM
 
-> **MARK SISTEM** — a arquitetura da plataforma que vai absorver este painel como
-> módulo de Gestão de Tráfego está em [`docs/mark-sistem/`](docs/mark-sistem/).
-> Ainda é só projeto: nenhuma linha de código de produção foi escrita, e este
-> painel continua funcionando como está.
+Plataforma operacional da Agência Marktiva. Começou como painel de campanhas do
+Meta Ads e está virando o sistema que administra a empresa inteira.
+
+**Onde está:** fase 0 concluída — monorepo, banco com Row Level Security,
+permissões e autenticação. O painel de campanhas continua funcionando como
+sempre, agora em `apps/web`.
+
+- [`docs/mark-sistem/00-arquitetura.md`](docs/mark-sistem/00-arquitetura.md) — arquitetura, infraestrutura, segurança
+- [`docs/mark-sistem/01-modelagem.md`](docs/mark-sistem/01-modelagem.md) — banco de dados e permissões
+- [`docs/mark-sistem/02-roadmap.md`](docs/mark-sistem/02-roadmap.md) — riscos, fases, MVP
+- [`docs/mark-sistem/03-fase-0.md`](docs/mark-sistem/03-fase-0.md) — **o que fazer agora**
+
+> ⚠️ **Quem faz deploy na Vercel:** o painel saiu da raiz e foi para `apps/web`.
+> Ajuste **Settings → General → Root Directory → `apps/web`** ou o próximo deploy
+> falha. Detalhes em [`03-fase-0.md`](docs/mark-sistem/03-fase-0.md).
+
+```
+apps/web/       painel (Next.js 15)          packages/core/   permissões
+apps/worker/    processo persistente         packages/db/     esquema, RLS, seed
+                                             packages/auth/   senha e sessão
+```
+
+```bash
+npm install
+npm run dev        # painel
+npm run db:migrar  # banco
+npm run teste      # 58 testes
+```
+
+---
+
+## Painel de Campanhas
 
 Painel web das campanhas do Meta Ads para uma carteira de clientes, com login,
 filtros de período iguais aos do Gerenciador de Anúncios, atualização automática
@@ -101,8 +129,8 @@ Clique em Deploy. Cada `git push` na branch dispara um deploy novo.
 
 ```bash
 npm install
-cp .env.example .env.local   # preencha as três variáveis
-npm run dev                  # http://localhost:3000
+cp apps/web/.env.example apps/web/.env.local   # preencha as três variáveis
+npm run dev                                    # http://localhost:3000
 ```
 
 ---
@@ -197,10 +225,16 @@ Todos leem o token de `META_ACCESS_TOKEN` (um cliente por vez) e nunca o imprime
 
 ## Stack
 
-Next.js 15 (App Router) · React 19 · TypeScript · Recharts · jose
+**Painel** — Next.js 15 (App Router) · React 19 · TypeScript · Recharts · jose
 
-Sem banco de dados. O painel lê a Graph API a cada requisição e não guarda nada:
-as métricas vivem na Meta, e usuários e tokens ficam em variáveis de ambiente.
-Um Postgres aqui só acrescentaria custo, latência e mais um lugar de onde vazar
-credencial. Ele passaria a fazer sentido se você quisesse cadastrar clientes por
-tela, em vez de por variável.
+**Sistema** — Drizzle · PostgreSQL com RLS · Argon2id · Vitest · ESLint
+
+O painel ainda lê a Graph API a cada requisição, sem guardar nada, e para um
+cliente por vez isso está certo. Não escala para a carteira inteira: são vinte
+chamadas sequenciais a uma API de terceiro com limite de taxa, e uma queda da
+Meta derruba a tela.
+
+Na fase 1 o worker passa a sincronizar as métricas para o banco e o painel passa
+a ler de lá — mais rápido, funciona com a Meta fora do ar, e o histórico deixa
+de depender dos 37 meses que a Meta guarda. Os tokens saem das variáveis de
+ambiente e vão cifrados para `credenciais`.

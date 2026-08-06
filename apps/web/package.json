@@ -1,0 +1,31 @@
+{
+  "name": "@mark/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "senha": "node scripts/gerar-senha.mjs"
+  },
+  "dependencies": {
+    "@mark/auth": "*",
+    "@mark/core": "*",
+    "@mark/db": "*",
+    "@neondatabase/serverless": "^1.1.0",
+    "jose": "^5.9.6",
+    "next": "^15.5.22",
+    "pg": "^8.22.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "recharts": "^3.10.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/pg": "^8.20.0",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "typescript": "^5.7.3"
+  }
+}
