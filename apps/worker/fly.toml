@@ -1,0 +1,40 @@
+# Fly.io — worker do MARK SISTEM.
+#
+#   fly launch --no-deploy --copy-config --config apps/worker/fly.toml
+#   fly secrets set DATABASE_URL="..." COFRE_KEKS="..."
+#   fly deploy --config apps/worker/fly.toml --dockerfile apps/worker/Dockerfile
+#
+# COFRE_KEKS é obrigatória: sem ela o worker não decifra os tokens da Meta e o
+# sync falha em toda conta.
+
+app = "mark-sistem-worker"
+primary_region = "gru"   # São Paulo: perto do banco e de quem usa
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "8080"
+  SYNC_INTERVALO_MIN = "30"
+  # Janela refeita a cada volta. A Meta revisa números retroativamente por
+  # causa da janela de atribuição de 7 dias das conversas iniciadas.
+  SYNC_JANELA_DIAS = "7"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  # Nunca parar: uma máquina suspensa não roda cron, e o sync é cron.
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "20s"
+    method = "GET"
+    path = "/saude"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"

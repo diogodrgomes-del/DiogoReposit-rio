@@ -3,9 +3,12 @@
 Plataforma operacional da Agência Marktiva. Começou como painel de campanhas do
 Meta Ads e está virando o sistema que administra a empresa inteira.
 
-**Onde está:** fase 1 em andamento — banco, permissões, cofre de credenciais e
-login pelo banco já funcionam. O painel de campanhas continua funcionando como
-sempre, agora em `apps/web`.
+> 📄 **Comece por [`ENTREGA.md`](ENTREGA.md)** — o que fazer para subir, o que
+> existe, e as decisões que valem discussão.
+
+**Onde está:** painel geral, CRM de vendas, clientes, tráfego, cofre e busca
+global funcionando. Financeiro, WhatsApp e operacional ainda não existem —
+estão desenhados em `docs/mark-sistem/`.
 
 - [`docs/mark-sistem/00-arquitetura.md`](docs/mark-sistem/00-arquitetura.md) — arquitetura, infraestrutura, segurança
 - [`docs/mark-sistem/01-modelagem.md`](docs/mark-sistem/01-modelagem.md) — banco de dados e permissões
@@ -19,10 +22,11 @@ sempre, agora em `apps/web`.
 > falha. Detalhes em [`03-fase-0.md`](docs/mark-sistem/03-fase-0.md).
 
 ```
-apps/web/       painel (Next.js 16)          packages/core/   regras e permissões
-apps/worker/    processo persistente         packages/db/     esquema, RLS, seed
-                                             packages/auth/   senha e sessão
-                                             packages/cofre/  cifra de segredos
+apps/web/       painel + sistema (Next 16)   packages/core/         regras e permissões
+apps/worker/    sync, limpeza, cron          packages/db/           esquema, RLS, seed
+                                             packages/auth/         senha e sessão
+                                             packages/cofre/        cifra de segredos
+                                             packages/integracoes/  Meta Ads
 ```
 
 ```bash
@@ -72,9 +76,11 @@ git push -u origin <sua-branch>
 
 ### 2. Importar na Vercel
 
-Em [vercel.com/new](https://vercel.com/new), importe o repositório. A Vercel
-detecta Next.js sozinha — **não precisa configurar Root Directory nem build
-command**.
+Em [vercel.com/new](https://vercel.com/new), importe o repositório.
+
+Em **Settings → General**, defina **Root Directory** como `apps/web`. Isto é
+obrigatório desde que o projeto virou monorepo — sem isso a Vercel procura o
+Next.js na raiz e o build falha.
 
 ### 3. Cadastrar as variáveis de ambiente
 
@@ -83,9 +89,20 @@ Development nas três:
 
 | Variável | O que é |
 |---|---|
-| `META_TOKENS` | Um cliente por linha: `Nome = TOKEN` |
-| `SESSION_SECRET` | Chave que assina a sessão (mínimo 32 caracteres) |
-| `DASH_USERS` | Usuários e senhas do painel |
+| `DATABASE_URL` | Postgres do sistema. Em **Storage → Create → Neon** ela entra sozinha |
+| `COFRE_KEKS` | Chave mestra que cifra tokens e senhas. **Guarde cópia offline** |
+| `META_TOKENS` | Um cliente por linha: `Nome = TOKEN`. Sai de cena após a importação |
+| `SESSION_SECRET` | Assina a sessão do modo legado (mínimo 32 caracteres) |
+| `DASH_USERS` | Usuários do painel antigo. Sai de cena quando todos migrarem |
+
+Gerar a chave do cofre:
+
+```bash
+node -e "console.log('1:' + require('crypto').randomBytes(32).toString('base64url'))"
+```
+
+Perder essa chave torna todas as senhas guardadas irrecuperáveis. Ver
+[`ENTREGA.md`](ENTREGA.md).
 
 **Formato do `META_TOKENS`** — cole tudo num campo só; a Vercel aceita várias
 linhas:
