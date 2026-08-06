@@ -147,6 +147,14 @@ select {
   display: flex;
   align-items: baseline;
   gap: 9px;
+  /* Virou link de volta para a casca do sistema; herda a cor do texto para
+     não parecer um link solto no meio do cabeçalho. */
+  color: inherit;
+  text-decoration: none;
+}
+
+.marca:hover {
+  opacity: 0.75;
 }
 
 .marca span {

@@ -233,9 +233,14 @@ export default function Painel() {
     <div className="app">
       <header className="topo nao-imprime">
         <div className="topo-linha">
-          <div className="marca">
+          {/* Volta para a casca do sistema. O painel de campanhas ainda vive
+              fora dela — é uma tela densa, com filtros e layout de impressão
+              próprios, e enfiá-la na barra lateral no mesmo commit que criou a
+              navegação teria quebrado as duas coisas. Enquanto isso, este link
+              evita o beco sem saída. */}
+          <a className="marca" href="/painel" title="Voltar ao MARK SISTEM">
             Marktiva <span>Meta Ads</span>
-          </div>
+          </a>
 
           {clientes.length > 1 && (
             <div className="abas" role="tablist">
