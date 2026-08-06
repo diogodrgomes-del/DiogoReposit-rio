@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { formatarTelefone, leads as regra, linkWhatsApp, usuarios } from "@mark/core";
+import { atividades as regraAtividades, formatarTelefone, leads as regra, linkWhatsApp, usuarios } from "@mark/core";
 import { converterEmCliente, excluirLead, registrarMotivoPerda } from "@/modulos/vendas/acoes";
+import { Atividades } from "@/modulos/vendas/Atividades";
 import { data } from "@/modulos/clientes/comuns";
 import { exigirContexto } from "@/lib/sessao";
 
@@ -48,7 +49,10 @@ export default async function PaginaLead({ params }: { params: Promise<{ id: str
   if (!lead) notFound();
 
   const permissoes = regra.permissoesDe(ctx);
-  const colegas = await usuarios.colegas(ctx);
+  const [colegas, listaAtividades] = await Promise.all([
+    usuarios.colegas(ctx),
+    regraAtividades.doLead(ctx, id).catch(() => []),
+  ]);
   const responsavel = colegas.find((c) => c.id === lead.responsavelId);
   const zap = linkWhatsApp(lead.telefone);
   const perdido = Boolean(lead.perdidoEm);
@@ -125,6 +129,22 @@ export default async function PaginaLead({ params }: { params: Promise<{ id: str
               </div>
             </div>
           )}
+
+          <Atividades
+            leadId={lead.id}
+            podeEditar={permissoes.editar}
+            itens={listaAtividades.map((a) => ({
+              id: a.id,
+              tipo: a.tipo,
+              titulo: a.titulo,
+              responsavelNome: a.responsavelNome,
+              // Serializado: Date não atravessa a fronteira servidor/cliente
+              // sem virar string de qualquer jeito — melhor decidir o formato.
+              agendadaPara: a.agendadaPara?.toISOString() ?? null,
+              concluidaEm: a.concluidaEm?.toISOString() ?? null,
+              observacao: a.observacao,
+            }))}
+          />
 
           {permissoes.excluir && (
             <div className="cartao">

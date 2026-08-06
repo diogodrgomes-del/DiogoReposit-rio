@@ -12,6 +12,7 @@ export * as leads from "./leads";
 export * as painel from "./painel";
 export * as onboarding from "./onboarding";
 export * as busca from "./busca";
+export * as atividades from "./atividades";
 export type { Indicador, BlocoPainel, ItemAgenda } from "./painel";
 export { ErroDeValidacao } from "./clientes";
 export type { DadosCliente } from "./clientes";

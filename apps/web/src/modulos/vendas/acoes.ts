@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { ErroDeAutorizacao, ErroDeValidacao, leads, onboarding } from "@mark/core";
+import { ErroDeAutorizacao, ErroDeValidacao, atividades, leads, onboarding } from "@mark/core";
 import { exigirContexto } from "@/lib/sessao";
 
 export type EstadoForm = { erro?: string; campo?: string };
@@ -113,4 +113,44 @@ export async function converterEmCliente(formulario: FormData): Promise<void> {
   revalidatePath("/vendas");
   revalidatePath("/clientes");
   redirect(`/clientes/${r.clienteId}${r.jaExistia ? "" : "?novo=1"}`);
+}
+
+/**
+ * Registra uma atividade.
+ *
+ * Não redireciona: o formulário fica na própria ficha e a pessoa costuma
+ * registrar duas ou três seguidas. `revalidatePath` traz a lista atualizada
+ * sem tirá-la do lugar.
+ */
+export async function criarAtividade(formulario: FormData): Promise<void> {
+  const leadId = texto(formulario, "leadId");
+  if (!leadId) return;
+
+  const ctx = await exigirContexto();
+  const agendada = texto(formulario, "agendadaPara");
+
+  await atividades.criar(ctx, {
+    leadId,
+    tipo: texto(formulario, "tipo") ?? "tarefa",
+    titulo: texto(formulario, "titulo") ?? "",
+    // `datetime-local` chega sem fuso; o navegador já entrega no horário local
+    // de quem digitou, e o Date o converte para UTC na gravação.
+    agendadaPara: agendada ? new Date(agendada) : null,
+    observacao: texto(formulario, "observacao"),
+  });
+
+  revalidatePath(`/vendas/${leadId}`);
+  revalidatePath("/painel");
+}
+
+export async function concluirAtividade(formulario: FormData): Promise<void> {
+  const id = texto(formulario, "id");
+  const leadId = texto(formulario, "leadId");
+  if (!id) return;
+
+  const ctx = await exigirContexto();
+  await atividades.concluir(ctx, id);
+
+  if (leadId) revalidatePath(`/vendas/${leadId}`);
+  revalidatePath("/painel");
 }
