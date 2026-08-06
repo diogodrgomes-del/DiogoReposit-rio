@@ -12,13 +12,14 @@
 | Quadro Kanban com arrastar e soltar | pronto |
 | Cadastro rápido de lead | pronto |
 | Ficha do lead com motivo de perda | pronta |
+| Atividades — ligações, reuniões, follow-ups | prontas |
+| Onboarding — lead vira cliente | pronto |
 
 **147 testes**, 25 deles contra Postgres real no CI.
 
 ## Falta na fase 2
 
-Atividades e propostas têm tabela e índice, mas ainda não têm tela. Onboarding
-automático (lead → cliente) depende delas.
+Propostas têm tabela e índice, mas ainda não têm tela.
 
 ---
 

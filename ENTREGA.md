@@ -100,8 +100,9 @@ decide.
 | Módulo | Estado |
 |---|---|
 | **Painel Geral** | Indicadores clicáveis, lista do que precisa de atenção hoje |
-| **CRM de Vendas** | Quadro Kanban com arrastar, cadastro rápido, ficha, motivo de perda |
+| **CRM de Vendas** | Quadro Kanban com arrastar, cadastro rápido, ficha, atividades, motivo de perda |
 | **Onboarding** | Lead vira cliente sem perder histórico |
+| **Atividades** | Ligações e follow-ups; agendar define o próximo contato |
 | **Clientes** | Lista com busca e filtros, ficha, linha do tempo, lixeira |
 | **Gestão de Tráfego** | Sync do Meta Ads a cada 30 min, contas, série diária |
 | **Cofre** | Tokens e senhas cifrados, auditoria imutável de cada revelação |
@@ -120,8 +121,8 @@ Financeiro, WhatsApp, operacional (demandas), agenda, aprovações, estratégia,
 pesquisa, Wiki e mural. Todos estão desenhados em
 [`docs/mark-sistem/`](docs/mark-sistem/), com modelagem e ordem de construção.
 
-Duas coisas ficaram com tabela e índice prontos, mas sem tela: **atividades**
-(follow-ups) e **propostas**. São o próximo passo natural do comercial.
+**Propostas** ficaram com tabela e índice prontos, mas sem tela — é o que falta
+para o comercial estar completo.
 
 ---
 
@@ -275,8 +276,8 @@ O CI agora reprova em vulnerabilidade crítica.
 
 Na ordem que eu seguiria:
 
-1. **Atividades e propostas** (~1 semana) — tabela e índice já existem, falta a
-   tela. Fecha o ciclo comercial.
+1. **Propostas** (~3 dias) — tabela e índice já existem, falta a tela. Fecha o
+   ciclo comercial.
 2. **Operacional** (~3 semanas) — demandas, quadro, comentários, tempo,
    aprovações. É o módulo que a equipe abre todo dia, e o de maior impacto
    diário: tira o Trello e o ClickUp do ar.
