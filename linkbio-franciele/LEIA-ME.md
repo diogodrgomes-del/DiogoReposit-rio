@@ -45,32 +45,52 @@ página continua inteira.
 
 ## Pixel da Meta
 
-Vem instalado e **desligado**. Para ligar, coloque o ID no estúdio (campo
-"Pixel da Meta") ou edite direto no `index.html`:
-
-```js
-var PIXEL_META = '';        // ← só o número, 15 ou 16 dígitos
-```
-
-Com o ID preenchido, dispara:
+Já vem **ligado**, com o ID `2127826514818630`. Inclui o `<noscript>` do snippet
+oficial, que recupera o PageView de quem navega sem JavaScript.
 
 | ação | evento |
 |---|---|
 | abrir a página | `PageView` |
-| clicar no WhatsApp | `Contact` (padrão da Meta — dá para otimizar campanha por ele) |
+| **clicar no WhatsApp** | `Contact` |
 | clicar em Como chegar | `CliqueComoChegar` (personalizado) |
 | clicar no Instagram | `CliqueInstagram` (personalizado) |
 
-**Vazio = nenhum rastreio e nenhuma requisição externa.** Com o ID preenchido, a
-página passa a fazer uma chamada para `connect.facebook.net`. Não existe como
-medir clique sem isso — é o preço do rastreio, e vale saber que a promessa de
-"zero requisição externa" deixa de valer nesse momento.
+`Contact` é o evento **padrão** da Meta para início de conversa por telefone,
+chat ou mensagem — no Gerenciador ele aparece em português como **"Contato"**.
+Por ser padrão, dá para usar direto como objetivo de campanha. Se o seu
+Gerenciador esperar outro nome, mude num lugar só:
 
-Os três botões abrem em aba nova, então a página não é descarregada e o evento
-tem tempo de sair — não precisa de truque para segurar a navegação.
+```js
+var EVENTO_CONVERSA = 'Contact';
+```
 
-Vale colocar um aviso de cookies/privacidade no site: o pixel rastreia visitante
-e a LGPD espera que isso seja informado.
+Para desligar todo o rastreio: apague o ID em `var PIXEL_META = '...'` **e**
+remova o bloco `<noscript>` do `<head>`. Sem os dois, um deles continua
+chamando a Meta sozinho.
+
+Cada clique gera um `eventID` único. Isso só serve para a API de Conversões
+juntar o evento do navegador com o mesmo evento vindo do servidor sem contar
+duas vezes — sem ela, é inofensivo.
+
+### Sobre o token da API de Conversões
+
+**O token não está neste repositório, e não deve entrar.** Token de Conversions
+API dentro de HTML fica legível em "ver código-fonte", e com ele qualquer pessoa
+injeta eventos falsos no pixel e estraga a otimização das campanhas.
+
+O gancho está pronto e vazio:
+
+```js
+var CAPI_ENDPOINT = '';   // endereço do SEU servidor, nunca o token
+```
+
+Para ligar a API de Conversões é preciso um servidor (função serverless serve)
+que guarde o token como variável de ambiente e repasse o evento para a Meta.
+O pixel do navegador sozinho **já mede os cliques** — a API de Conversões é o
+upgrade que recupera o que iOS e bloqueadores derrubam.
+
+Vale um aviso de cookies/privacidade no site: o pixel rastreia visitante e a
+LGPD espera que isso seja informado.
 
 ## Decisões que valem saber
 

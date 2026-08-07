@@ -495,6 +495,12 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
   .funcao .fio{transform:none}
 }
 </style>
+<!-- Meta Pixel: alternativa sem JavaScript. O carregador principal fica
+     no fim do arquivo, na constante PIXEL_META. Se apagar o ID de la,
+     apague este bloco tambem — senao ele continua chamando a Meta. -->
+<noscript><img height="1" width="1" style="display:none" alt=""
+src="https://www.facebook.com/tr?id=2127826514818630&amp;ev=PageView&amp;noscript=1"></noscript>
+
 </head>
 
 <body>
@@ -619,7 +625,7 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
        (connect.facebook.net). E o custo do rastreio, nao tem como
        medir clique sem ela.
      ══════════════════════════════════════════════════════════════════ */
-  var PIXEL_META = '';
+  var PIXEL_META = '2127826514818630';
 
   /* carrega o pixel so quando o ID parece de verdade — assim um campo
      preenchido errado nao vira requisicao quebrada em toda visita */
@@ -641,20 +647,56 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
     fbq('track', 'PageView');
   }
 
+  /* ── nome do evento de iniciar conversa ─────────────────────────
+     "Contact" e o evento PADRAO da Meta para inicio de conversa por
+     telefone, chat ou mensagem. No Gerenciador ele aparece em portugues
+     como "Contato". Fica aqui em cima porque e o unico lugar a mudar
+     se o seu Gerenciador esperar outro nome. */
+  var EVENTO_CONVERSA = 'Contact';
+
+  /* Endereco do servidor da Conversions API. Vazio = so o pixel do
+     navegador. O TOKEN nunca entra aqui: ele fica no servidor. */
+  var CAPI_ENDPOINT = '';
+
+  /* id unico por clique: e o que permite a Meta juntar o evento do
+     navegador com o mesmo evento vindo do servidor, sem contar duas vezes */
+  function novoId() {
+    return 'ev-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+  }
+  function biscoito(nome) {
+    var m = document.cookie.match('(^|; )' + nome + '=([^;]*)');
+    return m ? decodeURIComponent(m[2]) : '';
+  }
+
   /* Os tres botoes abrem em aba nova, entao esta pagina nao e descarregada
      e o evento tem tempo de sair. Nao precisa de segurar a navegacao. */
-  function medir(id, disparo) {
+  function medir(id, evento, padrao) {
     var el = document.getElementById(id);
     if (!el) return;
     el.addEventListener('click', function () {
-      if (typeof fbq === 'function') disparo();
+      var idEvento = novoId();
+      if (typeof fbq === 'function') {
+        fbq(padrao ? 'track' : 'trackCustom', evento, {}, { eventID: idEvento });
+      }
+      if (!CAPI_ENDPOINT) return;
+      /* sendBeacon sobrevive a troca de aba; fetch e o plano B */
+      var corpo = JSON.stringify({
+        evento: evento, id: idEvento, url: location.href,
+        fbp: biscoito('_fbp'), fbc: biscoito('_fbc')
+      });
+      try {
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon(CAPI_ENDPOINT, new Blob([corpo], { type: 'application/json' }));
+        } else {
+          fetch(CAPI_ENDPOINT, { method: 'POST', body: corpo, keepalive: true,
+                                 headers: { 'Content-Type': 'application/json' } });
+        }
+      } catch (_) { /* medicao nunca pode atrapalhar o clique */ }
     });
   }
-  /* "Contact" e evento padrao da Meta: da para otimizar campanha por ele.
-     Os outros dois vao como personalizados, so para leitura. */
-  medir('btZap',   function () { fbq('track', 'Contact', { content_name: 'WhatsApp' }); });
-  medir('btMaps',  function () { fbq('trackCustom', 'CliqueComoChegar'); });
-  medir('btInsta', function () { fbq('trackCustom', 'CliqueInstagram'); });
+  medir('btZap',   EVENTO_CONVERSA,     true);
+  medir('btMaps',  'CliqueComoChegar',  false);
+  medir('btInsta', 'CliqueInstagram',   false);
 
   /* ══════════════════════════════════════════════════════════════════
      ▸ MEUS TRABALHOS — a lista fica aqui, e so aqui.
