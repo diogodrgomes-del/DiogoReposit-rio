@@ -682,8 +682,17 @@ function gerar() {
   h = porId(h, 'btMaps',  linkMaps());
   h = porId(h, 'btInsta', linkInsta());
 
-  // pixel
-  h = h.replace(/(\n  var PIXEL_META = ')[^']*/, '$1' + estado.pixel.replace(/\D/g,''));
+  // pixel — o ID vive em DOIS lugares: a constante e o <noscript>.
+  // Trocar so um deixaria o outro chamando o pixel antigo, ou rastreando
+  // depois de o campo ter sido limpo.
+  const idPixel = (estado.pixel || '').replace(/\D/g,'');
+  h = h.replace(/(\n  var PIXEL_META = ')[^']*/, '$1' + idPixel);
+  if (idPixel) {
+    h = h.replace(/(facebook\.com\/tr\?id=)\d+/, '$1' + idPixel);
+  } else {
+    // sem ID, o bloco inteiro sai junto com o comentario que o explica
+    h = h.replace(/<!-- Meta Pixel:[\s\S]*?<\/noscript>\n\n/, '');
+  }
 
   // textos
   const t = estado.textos;

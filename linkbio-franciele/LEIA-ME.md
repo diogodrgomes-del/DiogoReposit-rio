@@ -64,9 +64,12 @@ Gerenciador esperar outro nome, mude num lugar só:
 var EVENTO_CONVERSA = 'Contact';
 ```
 
-Para desligar todo o rastreio: apague o ID em `var PIXEL_META = '...'` **e**
-remova o bloco `<noscript>` do `<head>`. Sem os dois, um deles continua
-chamando a Meta sozinho.
+O ID mora em **dois lugares**: a constante `PIXEL_META` e o `<noscript>` do
+`<head>`. Pelo estúdio isso é automático — ele mantém os dois em sincronia e
+apaga o `<noscript>` inteiro quando o campo fica vazio.
+
+Editando na mão, troque **os dois**. Mexer só num deixa o outro chamando o
+pixel antigo, ou rastreando depois de você achar que desligou.
 
 Cada clique gera um `eventID` único. Isso só serve para a API de Conversões
 juntar o evento do navegador com o mesmo evento vindo do servidor sem contar
