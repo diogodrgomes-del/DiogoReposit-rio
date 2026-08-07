@@ -79,33 +79,39 @@ body::-webkit-scrollbar{display:none}
 /* o retrato dela. se o arquivo faltar, o navegador desce para os
    gradientes seguintes e a tela continua bonita */
 #retrato{
+  bottom:auto;
+  height:58dvh;
   background-image:
     var(--retrato),
-    radial-gradient(84% 50% at 50% 14%, rgba(217,184,110,.30), transparent 66%),
-    radial-gradient(132% 94% at 50% 106%, rgba(20,16,12,.94), transparent 56%),
-    linear-gradient(176deg,#8d8175 0%,#6b5c4e 42%,#33291f 100%);
+    radial-gradient(96% 84% at 50% 8%, rgba(217,184,110,.34), transparent 70%),
+    linear-gradient(176deg,#94887b 0%,#6b5c4e 58%,#3a3027 100%);
   background-size:cover;
-  background-position:50% 26%;
+  background-position:50% 18%;
   background-repeat:no-repeat;
-  transform:scale(1.06);
+  transform:scale(1.04);
   animation:respira 28s var(--curva) infinite alternate;
   will-change:transform;
+  /* a foto termina em degrade em vez de corte: e o que costura a faixa
+     de cima com a cor chapada de baixo, sem emenda visivel */
+  -webkit-mask-image:linear-gradient(180deg,
+     #000 0%, #000 44%, rgba(0,0,0,.5) 72%, transparent 100%);
+          mask-image:linear-gradient(180deg,
+     #000 0%, #000 44%, rgba(0,0,0,.5) 72%, transparent 100%);
 }
 
 /* veu quente — garante que o texto seja legivel sobre qualquer foto */
 #veu{
-  background:
-    linear-gradient(180deg,
-      rgba(28,22,17,.72) 0%,
-      rgba(45,36,28,.34) 24%,
-      rgba(36,29,23,.72) 58%,
-      rgba(20,16,12,.96) 100%),
-    linear-gradient(0deg, rgba(107,92,78,.26), rgba(107,92,78,.26));
+  background:linear-gradient(180deg,
+    rgba(26,21,16,.40)  0%,
+    rgba(32,26,20,.16) 26%,
+    rgba(30,24,19,.74) 46%,
+    var(--escuro)      60%,
+    var(--escuro)     100%);
 }
 
 /* halo — ecoa a luz de estudio dos retratos dela */
 #halo{
-  background:radial-gradient(44% 32% at 50% 18%, rgba(251,238,208,.20), transparent 72%);
+  background:radial-gradient(52% 26% at 50% 12%, rgba(251,238,208,.22), transparent 74%);
   animation:pulsa 9s ease-in-out infinite alternate;
 }
 
@@ -150,7 +156,7 @@ body::-webkit-scrollbar{display:none}
   /* TUDO escala a partir deste unico numero — o menor entre a altura
      e a largura da tela. E o que faz caber sem rolar em qualquer
      celular, do SE ao Max, sem media query para cada modelo. */
-  font-size:clamp(10px, min(1.98vh, 4.1vw), 17px);
+  font-size:clamp(10px, min(2.05vh, 4.3vw), 18px);
 }
 
 /* ── monograma ─────────────────────────────────────────────────── */
@@ -210,37 +216,16 @@ h1{
   color:var(--ouro-luz);white-space:nowrap;
 }
 .selo .gema{color:var(--ouro);flex:none}
+/* selo sem texto nao vira pilula vazia: some */
+.selo:empty,.selo.vazio{display:none}
 
 /* ── antes e depois ────────────────────────────────────────────── */
 .vitrine{width:100%;position:relative}
 
-/* Ela surgindo por cima do antes/depois. Usa a MESMA var(--retrato) do
-   fundo: assim a foto entra uma unica vez no arquivo, em vez de duas.
-   A mascara radial dissolve embaixo e nas laterais ao mesmo tempo —
-   uma camada so, que todo navegador entende igual. */
-.retrato-flutua{
-  position:absolute;
-  right:0; bottom:0;
-  width:44%; height:100%;
-  z-index:2; pointer-events:none;
-  background-image:var(--retrato);
-  background-size:cover;
-  background-position:54% 12%;
-  -webkit-mask-image:radial-gradient(104% 86% at 64% 34%,
-     #000 26%, rgba(0,0,0,.62) 54%, rgba(0,0,0,.2) 76%, transparent 92%);
-          mask-image:radial-gradient(104% 86% at 64% 34%,
-     #000 26%, rgba(0,0,0,.62) 54%, rgba(0,0,0,.2) 76%, transparent 92%);
-  animation:emerge 1.5s var(--curva) .75s both;
-}
-@keyframes emerge{
-  from{opacity:0;transform:translateY(18px) scale(1.04)}
-  to  {opacity:1;transform:none}
-}
-
 .ba{
   position:relative;
   width:100%;
-  height:clamp(126px, 23.5vh, 238px);
+  height:clamp(116px, 21vh, 214px);
   border-radius:.85em;
   overflow:hidden;
   border:1px solid rgba(217,184,110,.42);
@@ -338,126 +323,37 @@ h1{
 }
 
 /* ── meus trabalhos ────────────────────────────────────────────── */
-.trabalhos{width:100%}
-.tira{
-  width:100%;
-  display:flex;flex-direction:column;align-items:center;gap:.5em;
-  background:none;border:0;padding:0;
-  font:inherit;color:inherit;cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
-}
-.tira .titulo{
-  display:inline-flex;align-items:center;gap:.4em;
-  font-size:.62em;font-weight:300;
+.trabalhos{width:100%;display:flex;flex-direction:column;align-items:center;gap:.55em}
+.trabalhos .titulo{
+  font-size:.64em;font-weight:300;
   letter-spacing:.24em;text-transform:uppercase;
   color:var(--ouro-luz);
 }
-.tira .seta{transition:transform .35s var(--curva)}
-.miniaturas{display:flex;gap:.4em;width:100%}
-.miniaturas .mini{
-  flex:1;min-width:0;
-  aspect-ratio:1;
-  border-radius:.55em;
-  overflow:hidden;
-  border:1px solid rgba(217,184,110,.34);
-  background:linear-gradient(140deg,#6b5c4e,#3a2f26);
-  position:relative;
-}
-.miniaturas .mini img{width:100%;height:100%;object-fit:cover;display:block}
-.miniaturas .mini.vazio::after{
-  content:"";position:absolute;inset:0;
-  background:
-    radial-gradient(60% 60% at 50% 40%, rgba(217,184,110,.22), transparent 70%),
-    linear-gradient(140deg,#6b5c4e,#3a2f26);
-}
-@media (hover:hover){
-  .tira:hover .seta{transform:translateX(3px)}
-  .tira:hover .mini{border-color:rgba(217,184,110,.75)}
-}
-.miniaturas .mini{transition:border-color .35s var(--curva)}
-
-/* ── galeria em tela cheia ─────────────────────────────────────── */
-.galeria{
-  position:fixed;inset:0;
-  width:100%;max-width:none;height:100%;max-height:none;
-  margin:0;padding:0;border:0;background:transparent;color:var(--creme);
-  overflow:hidden;
-}
-.galeria::backdrop{
-  background:rgba(16,12,9,.86);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-}
-.galeria[open]{display:flex;flex-direction:column}
-.galeria .topo{
-  flex:none;
-  display:flex;align-items:center;justify-content:space-between;gap:1rem;
-  padding:calc(1.1rem + env(safe-area-inset-top)) 1.25rem 1rem;
-}
-.galeria .marca{
-  display:flex;align-items:baseline;gap:.5rem;
-}
-.galeria .marca b{
-  font-family:'Cormorant Garamond',Georgia,serif;
-  font-weight:300;font-size:1.45rem;line-height:1;
-  background:var(--folha);
-  -webkit-background-clip:text;background-clip:text;color:transparent;
-}
-.galeria .marca span{
-  font-size:.6rem;font-weight:200;
-  letter-spacing:.22em;text-transform:uppercase;color:var(--nude);
-}
-.fechar{
-  flex:none;
-  width:2.4rem;height:2.4rem;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  background:rgba(244,236,225,.09);
-  border:1px solid rgba(217,184,110,.4);
-  color:var(--creme);cursor:pointer;
-  transition:background-color .3s var(--curva),transform .3s var(--curva);
-}
-@media (hover:hover){.fechar:hover{background:rgba(244,236,225,.18);transform:rotate(90deg)}}
-.galeria .rolagem{
-  flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  padding:0 1.25rem calc(1.5rem + env(safe-area-inset-bottom));
-  scrollbar-width:none;
-}
-.galeria .rolagem::-webkit-scrollbar{display:none}
+/* uma fileira sempre. o numero de colunas vem do JS, conforme quantas
+   fotos existem — assim nunca sobra um item orfao numa segunda fileira,
+   que era o que estourava a altura em tela grande. */
 .grade{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(min(9.5rem,42%),1fr));
-  gap:.6rem;
-  list-style:none;
+  grid-template-columns:repeat(var(--colunas,5),minmax(0,1fr));
+  gap:.42em;width:100%;list-style:none;
 }
 .grade li{
   position:relative;
   aspect-ratio:3/4;
-  border-radius:.7rem;overflow:hidden;
-  border:1px solid rgba(217,184,110,.28);
+  border-radius:.55em;overflow:hidden;
+  border:1px solid rgba(217,184,110,.34);
   background:linear-gradient(140deg,#6b5c4e,#3a2f26);
-  opacity:0;animation:surge .8s var(--curva) both;
-  animation-delay:calc(var(--i,0) * 55ms);
+  opacity:0;animation:surge .9s var(--curva) both;
+  animation-delay:calc(500ms + var(--i,0) * 70ms);
 }
 .grade img{width:100%;height:100%;object-fit:cover;display:block}
-.grade figcaption{
-  position:absolute;left:0;right:0;bottom:0;
-  padding:1.6rem .7rem .55rem;
-  background:linear-gradient(0deg,rgba(16,12,9,.9),transparent);
-  font-size:.58rem;font-weight:300;
-  letter-spacing:.2em;text-transform:uppercase;
-  color:var(--ouro-luz);
-}
-.galeria .chamada{
-  display:block;margin-top:1rem;
-  padding:.95rem;border-radius:.9rem;
-  background:var(--folha);color:#2a2118;
-  text-align:center;
-  font-size:.78rem;font-weight:500;
-  letter-spacing:.14em;text-transform:uppercase;
-  box-shadow:0 .4rem 1.4rem rgba(14,10,7,.5);
-}
+/* alem do sexto nao entra: manteria a fileira unica as custas de
+   miniaturas estreitas demais para mostrar trabalho nenhum */
+.grade li:nth-child(n+7){display:none}
+@media (max-height:660px){ .grade li:nth-child(n+5){display:none} }
 
 /* ── acoes ─────────────────────────────────────────────────────── */
-.acoes{width:100%;display:flex;flex-direction:column;gap:.62em}
+.acoes{width:100%;display:flex;flex-direction:column;gap:.7em}
 a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
 
 .botao{
@@ -473,8 +369,7 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
 /* principal — WhatsApp, em ouro */
 .principal{
   overflow:hidden;
-  flex-direction:column;gap:.14em;
-  padding:.98em 1.2em;
+  padding:1.2em 1.2em;
   background:var(--folha);
   color:#2a2118;
   box-shadow:0 .5em 1.7em rgba(14,10,7,.5),inset 0 1px 0 rgba(255,255,255,.55);
@@ -482,8 +377,9 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
 }
 .principal .linha{display:flex;align-items:center;justify-content:center;gap:.6em}
 .principal .rotulo{
-  font-size:.88em;font-weight:500;
-  letter-spacing:.14em;text-transform:uppercase;
+  font-size:1em;font-weight:500;
+  letter-spacing:.12em;text-transform:uppercase;
+  white-space:nowrap;
 }
 .principal .apoio{
   font-size:.6em;font-weight:400;
@@ -500,11 +396,10 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
 }
 
 /* secundarios — Maps e Instagram */
-.par{display:flex;gap:.62em}
+.par{display:flex;gap:.7em}
 .secundario{
   flex:1;
-  flex-direction:column;gap:.12em;
-  padding:.72em .5em;
+  padding:1.05em .5em;
   border:1px solid rgba(217,184,110,.34);
   background:rgba(244,236,225,.07);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
@@ -512,8 +407,9 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
 }
 .secundario .linha{display:flex;align-items:center;justify-content:center;gap:.45em}
 .secundario .rotulo{
-  font-size:.68em;font-weight:300;
-  letter-spacing:.16em;text-transform:uppercase;
+  font-size:.78em;font-weight:400;
+  letter-spacing:.1em;text-transform:uppercase;
+  white-space:nowrap;
 }
 .secundario .apoio{
   font-size:.55em;font-weight:200;
@@ -574,10 +470,10 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
   .palco>.selo{grid-area:selo}
   .palco>.vitrine{grid-area:vitrine;width:100%}
   .palco>.trabalhos{grid-area:trabalhos;width:100%}
+  .grade li:nth-child(n+5){display:none}
   .palco>.acoes{grid-area:acoes}
   .palco>.rodape{grid-area:rodape}
   .ba{height:clamp(92px,29vh,170px)}
-  .retrato-flutua{width:36%}
 }
 
 /* telas em pe muito curtas (navegador do app comendo altura) */
@@ -595,7 +491,6 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition-duration:.01ms!important}
   .entra{opacity:1}
-  .retrato-flutua{opacity:1;transform:none}
   #retrato{transform:scale(1.04)}
   .funcao .fio{transform:none}
 }
@@ -634,7 +529,6 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
         <b>Antes &amp; Depois</b>
         <span>coloque antes.jpg e depois.jpg nesta pasta</span>
       </div>
-      <span class="retrato-flutua" aria-hidden="true"></span>
       <span class="tag esq">Antes</span>
       <span class="tag dir">Depois</span>
       <span class="divisor"><span class="pega" aria-hidden="true"><svg width="13" height="9" viewBox="0 0 22 12" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2 2.5 6 7 10M15 2l4.5 4-4.5 4"/></svg></span></span>
@@ -648,14 +542,8 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
   </figure>
 
   <section class="trabalhos entra" style="--d:460">
-    <button class="tira" id="abrirGaleria" aria-haspopup="dialog">
-      <span class="titulo">Meus trabalhos
-        <svg class="seta" width="9" height="9" viewBox="0 0 12 12" fill="none"
-             stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-             stroke-linejoin="round" aria-hidden="true"><path d="M4 2l4 4-4 4"/></svg>
-      </span>
-      <span class="miniaturas" id="miniaturas"></span>
-    </button>
+    <h2 class="titulo">Meus trabalhos</h2>
+    <ul class="grade" id="grade"></ul>
   </section>
 
   <nav class="acoes" aria-label="Contato">
@@ -665,16 +553,16 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
          so digitos.   Ex.: (43) 99123-4567  ->  5543991234567
          O texto depois de ?text= ja chega escrito na conversa dela. -->
     <a class="botao principal entra" style="--d:570"
-       href="https://wa.me/5543999999999?text=Oi%2C%20Franciele%21%20Vim%20pelo%20seu%20Instagram%20e%20gostaria%20de%20agendar%20um%20hor%C3%A1rio."
+       id="btZap"
+       href="https://wa.me/5543991047801?text=Oii%21%20Vim%20pelo%20Instagram%21"
        target="_blank" rel="noopener"
        aria-label="Agendar horário pelo WhatsApp">
       <span class="linha">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Zm0 18.02h-.01c-1.52 0-3.01-.41-4.31-1.18l-.31-.18-3.2.84.85-3.12-.2-.32a8.2 8.2 0 0 1-1.26-4.15c0-4.54 3.7-8.23 8.24-8.23 2.2 0 4.27.86 5.83 2.41a8.19 8.19 0 0 1 2.41 5.83c0 4.54-3.7 8.1-8.04 8.1Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.79.97-.14.16-.29.18-.54.06-.25-.13-1.05-.39-1.99-1.23-.74-.66-1.24-1.47-1.38-1.72-.15-.25-.02-.38.11-.5.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.16.04-.31-.02-.43-.06-.13-.56-1.35-.77-1.84-.2-.49-.41-.42-.56-.43l-.48-.01c-.16 0-.43.06-.66.31-.22.25-.86.85-.86 2.06s.89 2.39 1.01 2.56c.12.16 1.74 2.66 4.22 3.73.59.25 1.05.4 1.41.52.59.19 1.13.16 1.56.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.11-.22-.17-.47-.29Z"/>
         </svg>
         <span class="rotulo">Agendar no WhatsApp</span>
       </span>
-      <span class="apoio">Resposta rápida · Londrina/PR</span>
     </a>
 
     <div class="par">
@@ -683,31 +571,31 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
            Ja funciona pelo endereco. Se ela tiver ficha no Google Meu
            Negocio, troque pelo link curto de la (fica mais bonito).  -->
       <a class="botao secundario entra" style="--d:660"
-         href="https://www.google.com/maps/search/?api=1&amp;query=Avenida%20Castelo%20Branco%2C%20590%20-%20Londrina%2C%20PR"
+         id="btMaps"
+         href="https://share.google/dgnZltVE6saBeQVc1"
          target="_blank" rel="noopener"
          aria-label="Ver o endereço no Google Maps">
         <span class="linha">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/>
           </svg>
           <span class="rotulo">Como chegar</span>
         </span>
-        <span class="apoio">Av. Castelo Branco, 590</span>
       </a>
 
       <!-- ══ [EDITAR 3 de 3] INSTAGRAM ════════════════════════════════
            Confirme o @ e ajuste o final do endereco.                  -->
       <a class="botao secundario entra" style="--d:720"
-         href="https://instagram.com/francielebill"
+         id="btInsta"
+         href="https://www.instagram.com/francielebill/"
          target="_blank" rel="noopener"
          aria-label="Abrir o perfil no Instagram">
         <span class="linha">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16Zm0 5.18a4.66 4.66 0 1 0 0 9.32 4.66 4.66 0 0 0 0-9.32Zm0 7.69a3.03 3.03 0 1 1 0-6.06 3.03 3.03 0 0 1 0 6.06Zm5.93-7.87a1.09 1.09 0 1 1-2.18 0 1.09 1.09 0 0 1 2.18 0Z"/>
           </svg>
           <span class="rotulo">Instagram</span>
         </span>
-        <span class="apoio">13,4 mil seguidores</span>
       </a>
 
     </div>
@@ -717,26 +605,6 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
 
 </main>
 
-<dialog class="galeria" id="galeria" aria-label="Galeria de trabalhos">
-  <div class="topo">
-    <span class="marca">
-      <b>Meus trabalhos</b>
-      <span>Franciele Bill</span>
-    </span>
-    <button class="fechar" id="fecharGaleria" aria-label="Fechar galeria">
-      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor"
-           stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
-        <path d="M3 3l10 10M13 3L3 13"/>
-      </svg>
-    </button>
-  </div>
-  <div class="rolagem">
-    <ul class="grade" id="grade"></ul>
-    <a class="chamada" id="chamadaGaleria" href="#" target="_blank" rel="noopener">
-      Quero um resultado assim
-    </a>
-  </div>
-</dialog>
 
 <script>
 (function () {
@@ -755,6 +623,10 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
     { arquivo: 'trabalho-5.jpg', titulo: 'Micropigmentação' },
     { arquivo: 'trabalho-6.jpg', titulo: 'Design' }
   ];
+
+  /* selo que ficou so com o icone e ruido visual: esconde */
+  var selo = document.querySelector('.selo');
+  if (selo && !selo.textContent.trim()) selo.classList.add('vazio');
 
   var menos = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -814,62 +686,22 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
   setTimeout(abertura, 1500);
 
   /* ── meus trabalhos ───────────────────────────────────────────── */
-  var galeria   = document.getElementById('galeria');
-  var grade     = document.getElementById('grade');
-  var miniaturas= document.getElementById('miniaturas');
-  var abrir     = document.getElementById('abrirGaleria');
-  var fechar    = document.getElementById('fecharGaleria');
-  var chamada   = document.getElementById('chamadaGaleria');
+  var grade = document.getElementById('grade');
+  var MAX_NA_FILEIRA = 6;
+  var quantos = Math.min(TRABALHOS.length, MAX_NA_FILEIRA);
+  grade.style.setProperty('--colunas', quantos || 1);
 
-  /* a chamada da galeria reaproveita o mesmo WhatsApp do botao principal:
-     um link so para manter, nao dois */
-  chamada.href = document.querySelector('.principal').href;
-
-  function foto(arquivo, alt) {
-    var img = document.createElement('img');
-    img.src = arquivo;
-    img.alt = alt;
-    img.loading = 'lazy';
-    img.decoding = 'async';
-    img.addEventListener('error', function () {
-      img.remove();                       /* sem icone quebrado: fica o
-                                             ladrilho em degrade */
-      if (img.parentElement) img.parentElement.classList.add('vazio');
-    });
-    return img;
-  }
-
-  TRABALHOS.slice(0, 5).forEach(function (t) {
-    var cel = document.createElement('span');
-    cel.className = 'mini';
-    cel.appendChild(foto(t.arquivo, t.titulo));
-    miniaturas.appendChild(cel);
-  });
-
-  TRABALHOS.forEach(function (t, i) {
+  TRABALHOS.slice(0, MAX_NA_FILEIRA).forEach(function (t, i) {
     var li = document.createElement('li');
     li.style.setProperty('--i', i);
-    li.appendChild(foto(t.arquivo, 'Trabalho de ' + t.titulo + ' por Franciele Bill'));
-    var cap = document.createElement('figcaption');
-    cap.textContent = t.titulo;
-    li.appendChild(cap);
+    var img = document.createElement('img');
+    img.src = t.arquivo;
+    img.alt = t.titulo ? ('Trabalho de ' + t.titulo + ' por Franciele Bill') : 'Trabalho de Franciele Bill';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.addEventListener('error', function () { img.remove(); });
+    li.appendChild(img);
     grade.appendChild(li);
-  });
-
-  abrir.addEventListener('click', function () {
-    if (typeof galeria.showModal === 'function') { galeria.showModal(); }
-    else { galeria.setAttribute('open', ''); }
-    document.body.style.overflow = 'hidden';
-  });
-  function encerrar() {
-    galeria.close ? galeria.close() : galeria.removeAttribute('open');
-    document.body.style.overflow = '';
-  }
-  fechar.addEventListener('click', encerrar);
-  galeria.addEventListener('close', function () { document.body.style.overflow = ''; });
-  /* clique no fundo escuro fecha, clique no conteudo nao */
-  galeria.addEventListener('click', function (e) {
-    if (e.target === galeria) encerrar();
   });
 
   /* ── parallax discreto ────────────────────────────────────────── */
