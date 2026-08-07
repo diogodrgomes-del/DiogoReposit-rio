@@ -611,6 +611,52 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
   'use strict';
 
   /* ══════════════════════════════════════════════════════════════════
+     ▸ PIXEL DA META — cole aqui o ID (so numeros, 15 ou 16 digitos).
+       Deixe vazio e nada de rastreio acontece: nenhum script externo
+       e carregado e a pagina segue 100% offline.
+
+       Com o ID preenchido a pagina passa a fazer UMA chamada externa
+       (connect.facebook.net). E o custo do rastreio, nao tem como
+       medir clique sem ela.
+     ══════════════════════════════════════════════════════════════════ */
+  var PIXEL_META = '';
+
+  /* carrega o pixel so quando o ID parece de verdade — assim um campo
+     preenchido errado nao vira requisicao quebrada em toda visita */
+  if (/^\d{8,20}$/.test(PIXEL_META)) {
+    (function (j, d) {
+      if (j.fbq) return;
+      var n = j.fbq = function () {
+        n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+      };
+      if (!j._fbq) j._fbq = n;
+      n.push = n; n.loaded = true; n.version = '2.0'; n.queue = [];
+      var s = d.createElement('script');
+      s.async = true;
+      s.src = 'https://connect.facebook.net/en_US/fbevents.js';
+      var p = d.getElementsByTagName('script')[0];
+      p.parentNode.insertBefore(s, p);
+    })(window, document);
+    fbq('init', PIXEL_META);
+    fbq('track', 'PageView');
+  }
+
+  /* Os tres botoes abrem em aba nova, entao esta pagina nao e descarregada
+     e o evento tem tempo de sair. Nao precisa de segurar a navegacao. */
+  function medir(id, disparo) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('click', function () {
+      if (typeof fbq === 'function') disparo();
+    });
+  }
+  /* "Contact" e evento padrao da Meta: da para otimizar campanha por ele.
+     Os outros dois vao como personalizados, so para leitura. */
+  medir('btZap',   function () { fbq('track', 'Contact', { content_name: 'WhatsApp' }); });
+  medir('btMaps',  function () { fbq('trackCustom', 'CliqueComoChegar'); });
+  medir('btInsta', function () { fbq('trackCustom', 'CliqueInstagram'); });
+
+  /* ══════════════════════════════════════════════════════════════════
      ▸ MEUS TRABALHOS — a lista fica aqui, e so aqui.
        Ponha os arquivos na mesma pasta e ajuste os nomes abaixo.
        Pode ter 4, 6, 12... a galeria se ajusta sozinha.

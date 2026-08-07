@@ -43,6 +43,35 @@ página continua inteira.
 
 ---
 
+## Pixel da Meta
+
+Vem instalado e **desligado**. Para ligar, coloque o ID no estúdio (campo
+"Pixel da Meta") ou edite direto no `index.html`:
+
+```js
+var PIXEL_META = '';        // ← só o número, 15 ou 16 dígitos
+```
+
+Com o ID preenchido, dispara:
+
+| ação | evento |
+|---|---|
+| abrir a página | `PageView` |
+| clicar no WhatsApp | `Contact` (padrão da Meta — dá para otimizar campanha por ele) |
+| clicar em Como chegar | `CliqueComoChegar` (personalizado) |
+| clicar no Instagram | `CliqueInstagram` (personalizado) |
+
+**Vazio = nenhum rastreio e nenhuma requisição externa.** Com o ID preenchido, a
+página passa a fazer uma chamada para `connect.facebook.net`. Não existe como
+medir clique sem isso — é o preço do rastreio, e vale saber que a promessa de
+"zero requisição externa" deixa de valer nesse momento.
+
+Os três botões abrem em aba nova, então a página não é descarregada e o evento
+tem tempo de sair — não precisa de truque para segurar a navegação.
+
+Vale colocar um aviso de cookies/privacidade no site: o pixel rastreia visitante
+e a LGPD espera que isso seja informado.
+
 ## Decisões que valem saber
 
 **Antes e depois usam sempre o mesmo tratamento de arte.** O estúdio não deixa
