@@ -1,0 +1,3118 @@
+<title>MARK SISTEM — sistema funcionando</title>
+
+<style>
+  /* ============================================================
+     Tokens do sistema real (apps/web/src/app/sistema.css).
+     Neutro com viés verde herdado da paleta validada para
+     daltonismo; acento #2563EB do briefing.
+     ============================================================ */
+  :root {
+    color-scheme: light;
+    --ink: #101917; --ink-2: #4e5c58; --ink-3: #82908b;
+    --surface: #f5f7f5; --card: #ffffff; --card-2: #fafbfa;
+    --border: #dfe5e2; --border-2: #edf1ef;
+    --acento: #2563eb; --acento-forte: #1d4ed8; --acento-suave: #eff6ff; --acento-texto: #fff;
+    --good: #0f7b4f; --warn: #b26a00; --crit: #c0392b; --s1: #008b80;
+    --raio: 6px; --raio-card: 8px;
+    --elev-1: 0 1px 2px rgba(16,25,23,.06);
+    --elev-2: 0 10px 30px rgba(16,25,23,.14);
+    --sans: system-ui, -apple-system, "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --ink: #edf2f0; --ink-2: #a5b3ae; --ink-3: #71807a;
+      --surface: #121817; --card: #19201e; --card-2: #1d2523;
+      --border: #2a3431; --border-2: #222b29;
+      --acento: #4b83f0; --acento-forte: #6d9bf5; --acento-suave: #16233c;
+      --good: #35a96f; --warn: #d69324; --crit: #e06b5c; --s1: #12a094;
+      --elev-1: 0 1px 2px rgba(0,0,0,.35); --elev-2: 0 10px 30px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --ink: #edf2f0; --ink-2: #a5b3ae; --ink-3: #71807a;
+    --surface: #121817; --card: #19201e; --card-2: #1d2523;
+    --border: #2a3431; --border-2: #222b29;
+    --acento: #4b83f0; --acento-forte: #6d9bf5; --acento-suave: #16233c;
+    --good: #35a96f; --warn: #d69324; --crit: #e06b5c; --s1: #12a094;
+    --elev-1: 0 1px 2px rgba(0,0,0,.35); --elev-2: 0 10px 30px rgba(0,0,0,.5);
+  }
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --ink: #101917; --ink-2: #4e5c58; --ink-3: #82908b;
+    --surface: #f5f7f5; --card: #ffffff; --card-2: #fafbfa;
+    --border: #dfe5e2; --border-2: #edf1ef;
+    --acento: #2563eb; --acento-forte: #1d4ed8; --acento-suave: #eff6ff;
+    --good: #0f7b4f; --warn: #b26a00; --crit: #c0392b; --s1: #008b80;
+    --elev-1: 0 1px 2px rgba(16,25,23,.06); --elev-2: 0 10px 30px rgba(16,25,23,.14);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--surface); color: var(--ink); font-family: var(--sans); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+
+  .sistema { display: grid; grid-template-columns: 236px 1fr; grid-template-rows: 56px 1fr; grid-template-areas: "barra topo" "barra conteudo"; min-height: 100vh; }
+
+  .barra { grid-area: barra; background: var(--card); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
+  .marca { display: flex; align-items: center; gap: 10px; height: 56px; padding: 0 16px; border-bottom: 1px solid var(--border-2); font-weight: 650; letter-spacing: -.01em; color: var(--ink); text-decoration: none; }
+  .logo { width: 26px; height: 26px; border-radius: var(--raio); background: var(--acento); color: var(--acento-texto); display: grid; place-items: center; font-size: 13px; font-weight: 700; flex: none; }
+  .nav { padding: 12px 8px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; flex: 1; }
+  .nav__grupo { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); padding: 14px 12px 6px; }
+  .nav__item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--raio); color: var(--ink-2); text-decoration: none; transition: background 150ms ease-out, color 150ms ease-out; white-space: nowrap; cursor: pointer; }
+  .nav__item:hover { background: var(--border-2); color: var(--ink); }
+  .nav__item[aria-current="page"] { background: var(--acento-suave); color: var(--acento-forte); font-weight: 550; }
+  .nav__item svg { flex: none; width: 17px; height: 17px; }
+  .barra__pe { padding: 10px 14px; border-top: 1px solid var(--border-2); font-size: 11px; color: var(--ink-3); }
+  .barra__pe button { font: inherit; font-size: 11px; background: none; border: none; color: var(--acento); cursor: pointer; padding: 0; text-decoration: underline; }
+
+  .topo { grid-area: topo; background: var(--card); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 20px; position: sticky; top: 0; z-index: 20; min-width: 0; }
+  .topo__org { flex: none; }
+  .topo__org { font-weight: 600; margin: 0; font-size: 15px; }
+  .topo__dir { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--ink-2); }
+  .topo__dir strong { color: var(--ink); }
+
+  .conteudo { grid-area: conteudo; padding: 24px; max-width: 1400px; width: 100%; min-width: 0; }
+
+  @media (max-width: 1024px) { .sistema { grid-template-columns: 62px 1fr; } .nav__item span, .marca span:last-child { display: none; } .nav__grupo { font-size: 0; padding: 8px 0 2px; } }
+  @media (max-width: 720px) {
+    .sistema { grid-template-columns: 1fr; grid-template-areas: "topo" "conteudo"; }
+    .barra { display: none; }
+    .conteudo { padding: 14px; }
+    .topo { padding: 0 12px; gap: 10px; }
+    /* Nome e papel saem: quem está no celular sabe quem é. O que não pode
+       sumir é a busca, que é como se navega sem a barra lateral. */
+    .topo__dir span { display: none; }
+    .busca-gatilho { flex: 1; }
+    .duas-colunas { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- controles ---------- */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 34px; padding: 0 14px; border-radius: var(--raio); border: 1px solid var(--border); background: var(--card); color: var(--ink); font: inherit; font-weight: 500; cursor: pointer; text-decoration: none; transition: background 150ms ease-out, border-color 150ms ease-out; }
+  .btn:hover:not(:disabled) { background: var(--card-2); border-color: var(--ink-3); }
+  .btn:disabled { opacity: .55; cursor: not-allowed; }
+  .btn--acento { background: var(--acento); border-color: var(--acento); color: var(--acento-texto); }
+  .btn--acento:hover:not(:disabled) { background: var(--acento-forte); border-color: var(--acento-forte); }
+  .btn--risco { color: var(--crit); border-color: color-mix(in srgb, var(--crit) 35%, var(--border)); }
+  .btn--discreto { border-color: transparent; background: transparent; color: var(--ink-2); }
+  .btn--discreto:hover:not(:disabled) { background: var(--border-2); }
+  .btn--pequeno { height: 27px; padding: 0 10px; font-size: 12px; }
+
+  :is(a, button, input, select, textarea, [tabindex]):focus-visible { outline: 2px solid var(--acento); outline-offset: 2px; border-radius: var(--raio); }
+
+  .campo { display: flex; flex-direction: column; gap: 6px; }
+  .campo > span { font-size: 12px; font-weight: 550; color: var(--ink-2); }
+  .campo .opcional { font-weight: 400; color: var(--ink-3); }
+  .campo :is(input, select, textarea) { height: 36px; padding: 0 10px; border: 1px solid var(--border); border-radius: var(--raio); background: var(--card); color: var(--ink); font: inherit; width: 100%; }
+  .campo textarea { height: auto; min-height: 80px; padding: 8px 10px; resize: vertical; }
+  .campo :is(input, select, textarea):focus { border-color: var(--acento); }
+  .campo--erro :is(input, select, textarea) { border-color: var(--crit); }
+  .campo__erro { font-size: 12px; color: var(--crit); }
+
+  /* ---------- estrutura de página ---------- */
+  .pagina__cabeca { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+  .pagina__titulo { font-size: 22px; font-weight: 650; letter-spacing: -.02em; margin: 0 0 4px; text-wrap: balance; }
+  .pagina__sub { color: var(--ink-3); font-size: 13px; margin: 0; }
+  .secao-rotulo { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); margin: 0 0 10px; font-weight: 600; }
+
+  .cartao { background: var(--card); border: 1px solid var(--border); border-radius: var(--raio-card); box-shadow: var(--elev-1); }
+  .cartao__cabeca { padding: 14px 16px; border-bottom: 1px solid var(--border-2); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .cartao__corpo { padding: 16px; }
+  .grade-2 { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+
+  .indicadores { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .indicador { background: var(--card); border: 1px solid var(--border); border-radius: var(--raio-card); padding: 14px 16px; display: block; color: inherit; text-decoration: none; }
+  a.indicador { cursor: pointer; transition: border-color 150ms ease-out; }
+  a.indicador:hover { border-color: var(--acento); }
+  .indicador__rotulo { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); margin: 0 0 4px; }
+  .indicador__valor { font-size: 22px; font-weight: 650; letter-spacing: -.02em; margin: 0; font-variant-numeric: tabular-nums; }
+  .indicador__nota { margin: 4px 0 0; font-size: 12px; color: var(--ink-3); }
+
+  .selo { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 550; border: 1px solid var(--border); background: var(--card-2); color: var(--ink-2); white-space: nowrap; }
+  .selo::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
+  .selo--verde { color: var(--good); border-color: color-mix(in srgb, var(--good) 30%, transparent); background: color-mix(in srgb, var(--good) 10%, transparent); }
+  .selo--ambar { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 30%, transparent); background: color-mix(in srgb, var(--warn) 10%, transparent); }
+  .selo--vermelho { color: var(--crit); border-color: color-mix(in srgb, var(--crit) 30%, transparent); background: color-mix(in srgb, var(--crit) 10%, transparent); }
+
+  .rolagem { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); font-weight: 600; padding: 10px 16px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 12px 16px; border-bottom: 1px solid var(--border-2); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--card-2); }
+  td a { color: var(--ink); text-decoration: none; font-weight: 550; cursor: pointer; }
+  td a:hover { color: var(--acento); }
+  .num { font-variant-numeric: tabular-nums; }
+
+  .filtros { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 16px; }
+
+  .estado { text-align: center; padding: 44px 24px; color: var(--ink-3); }
+  .estado__titulo { font-size: 15px; font-weight: 600; color: var(--ink-2); margin: 0 0 6px; }
+  .estado__texto { margin: 0 auto 16px; max-width: 380px; font-size: 13px; }
+
+  .aviso-erro { background: color-mix(in srgb, var(--crit) 10%, transparent); border: 1px solid color-mix(in srgb, var(--crit) 30%, transparent); color: var(--crit); border-radius: var(--raio); padding: 10px 12px; font-size: 13px; margin: 0 0 16px; }
+
+  /* ---------- quadro Kanban ---------- */
+  .quadro { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; align-items: flex-start; min-height: 320px; }
+  .quadro__coluna { flex: 0 0 250px; background: var(--card-2); border: 1px solid var(--border); border-radius: var(--raio-card); display: flex; flex-direction: column; transition: border-color 120ms ease-out, background 120ms ease-out; }
+  .quadro__coluna.alvo { border-color: var(--acento); background: var(--acento-suave); }
+  .quadro__cabeca { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 650; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-2); }
+  .contagem { background: var(--border); color: var(--ink-2); border-radius: 999px; padding: 1px 8px; font-size: 11px; font-variant-numeric: tabular-nums; }
+  .quadro__cards { padding: 8px; display: flex; flex-direction: column; gap: 8px; min-height: 70px; flex: 1; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--raio); padding: 10px; box-shadow: var(--elev-1); cursor: grab; transition: box-shadow 150ms ease-out, opacity 150ms ease-out; }
+  .card:hover { box-shadow: var(--elev-2); }
+  .card.arrastando { opacity: .4; }
+  .card__nome { display: block; font-weight: 600; color: var(--ink); text-decoration: none; margin-bottom: 4px; cursor: pointer; }
+  .card__nome:hover { color: var(--acento); }
+  .card__linha { margin: 0; font-size: 12px; color: var(--ink-3); }
+  .card__pe { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; font-size: 13px; }
+  .card__pe strong { font-variant-numeric: tabular-nums; }
+  .card__resp { margin: 6px 0 0; font-size: 11px; color: var(--ink-3); }
+  .vazio { color: var(--ink-3); font-size: 12px; text-align: center; padding: 20px 8px; margin: 0; }
+
+  /* ---------- linha do tempo ---------- */
+  .tempo { list-style: none; margin: 0; padding: 0; }
+  .tempo__item { display: grid; grid-template-columns: 12px 1fr; gap: 12px; padding-bottom: 16px; position: relative; }
+  .tempo__item:not(:last-child)::before { content: ""; position: absolute; left: 5px; top: 14px; bottom: 0; width: 1px; background: var(--border); }
+  .tempo__ponto { width: 9px; height: 9px; border-radius: 50%; background: var(--acento); margin-top: 5px; z-index: 1; }
+  .tempo__texto { font-size: 13px; margin: 0; }
+  .tempo__quando { font-size: 12px; color: var(--ink-3); margin: 2px 0 0; }
+
+  /* `min-width: 0` nos filhos: sem isso um item de grid cresce até caber a
+     tabela mais larga que ele contém, e a página inteira ganha rolagem
+     lateral no celular — mesmo com a tabela dentro de `.rolagem`. */
+  .duas-colunas { display: grid; gap: 16px; grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); }
+  .duas-colunas > * { min-width: 0; }
+  @media (max-width: 900px) { .duas-colunas { grid-template-columns: 1fr; } }
+  .dado__rotulo { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); }
+  .dado__valor { margin-top: 2px; }
+  .link-acento { color: var(--acento); text-decoration: none; }
+
+  /* ---------- busca ⌘K ---------- */
+  .busca-gatilho { display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid var(--border); border-radius: var(--raio); background: var(--card-2); color: var(--ink-3); font: inherit; font-size: 13px; cursor: pointer; min-width: 210px; }
+  .busca-gatilho:hover { border-color: var(--ink-3); color: var(--ink-2); }
+  .busca-gatilho svg { width: 15px; height: 15px; flex: none; }
+  .busca-gatilho span { flex: 1; text-align: left; }
+  .busca-gatilho kbd { font: inherit; font-size: 11px; border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; background: var(--card); }
+  @media (max-width: 720px) { .busca-gatilho { min-width: 0; } .busca-gatilho span, .busca-gatilho kbd { display: none; } }
+
+  .fundo { position: fixed; inset: 0; background: rgba(16,25,23,.4); backdrop-filter: blur(2px); z-index: 100; display: flex; justify-content: center; padding: 12vh 16px 16px; }
+  .busca-caixa { width: min(560px, 100%); max-height: 62vh; background: var(--card); border: 1px solid var(--border); border-radius: var(--raio-card); box-shadow: var(--elev-2); display: flex; flex-direction: column; overflow: hidden; align-self: flex-start; }
+  .busca-campo { border: none; border-bottom: 1px solid var(--border); background: transparent; color: var(--ink); font: inherit; font-size: 15px; padding: 14px 16px; outline: none; width: 100%; }
+  .busca-lista { overflow-y: auto; padding: 6px; }
+  .busca-item { display: flex; align-items: baseline; gap: 10px; width: 100%; text-align: left; padding: 9px 10px; border: none; border-radius: var(--raio); background: transparent; color: var(--ink); font: inherit; cursor: pointer; }
+  .busca-item--ativo { background: var(--acento-suave); }
+  .busca-tipo { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; flex: none; }
+  .busca-titulo { font-weight: 550; }
+  .busca-sub { color: var(--ink-3); font-size: 12px; margin-left: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .busca-aviso { color: var(--ink-3); font-size: 13px; padding: 16px; margin: 0; text-align: center; }
+
+  /* ---------- modal ---------- */
+  .modal { width: min(620px, 100%); background: var(--card); border: 1px solid var(--border); border-radius: var(--raio-card); box-shadow: var(--elev-2); align-self: flex-start; max-height: 84vh; display: flex; flex-direction: column; }
+  .modal__cabeca { padding: 16px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .modal__corpo { padding: 18px; overflow-y: auto; }
+  .modal__pe { padding: 14px 18px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+  .modal h2 { margin: 0; font-size: 17px; letter-spacing: -.01em; }
+
+  /* ---------- aviso de sessão / feedback ---------- */
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: var(--surface); padding: 10px 16px; border-radius: 999px; font-size: 13px; box-shadow: var(--elev-2); z-index: 200; opacity: 0; pointer-events: none; transition: opacity 200ms ease-out, transform 200ms ease-out; }
+  .toast.visivel { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+
+  .faixa-demo { background: var(--acento-suave); border-bottom: 1px solid color-mix(in srgb, var(--acento) 25%, transparent); color: var(--acento-forte); font-size: 12.5px; padding: 8px 20px; display: flex; gap: 10px; align-items: center; justify-content: center; text-align: center; }
+  .faixa-demo b { font-weight: 650; }
+
+  /* ---------- login ---------- */
+  .login-tela { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+  .login-caixa { width: min(360px, 100%); background: var(--card); border: 1px solid var(--border); border-radius: var(--raio-card); box-shadow: var(--elev-1); padding: 28px; display: flex; flex-direction: column; gap: 16px; }
+  .login-caixa h1 { margin: 0; font-size: 24px; letter-spacing: -.02em; }
+
+  /* ---------- avisos no menu ---------- */
+  .pino { margin-left: auto; background: var(--acento); color: var(--acento-texto); border-radius: 999px; min-width: 18px; height: 18px; padding: 0 5px; display: grid; place-items: center; font-size: 11px; font-weight: 650; font-variant-numeric: tabular-nums; }
+  @media (max-width: 1024px) { .pino { position: absolute; margin: 0; transform: translate(14px, -10px); } .nav__item { position: relative; } }
+
+  /* ---------- abas da ficha ---------- */
+  .abas { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 18px; overflow-x: auto; }
+  .aba { border: none; background: none; font: inherit; color: var(--ink-2); padding: 9px 14px; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; border-radius: var(--raio) var(--raio) 0 0; }
+  .aba:hover { background: var(--border-2); color: var(--ink); }
+  .aba[aria-selected="true"] { color: var(--acento-forte); border-bottom-color: var(--acento); font-weight: 600; }
+
+  /* ---------- barra de progresso / mini-gráfico ---------- */
+  .barra-prog { height: 6px; border-radius: 999px; background: var(--border); overflow: hidden; }
+  .barra-prog > i { display: block; height: 100%; background: var(--acento); border-radius: 999px; }
+  .colunas-mini { display: flex; align-items: flex-end; gap: 2px; height: 44px; }
+  .colunas-mini i { flex: 1; background: color-mix(in srgb, var(--acento) 55%, transparent); border-radius: 2px 2px 0 0; min-height: 2px; }
+  .colunas-mini i:last-child { background: var(--acento); }
+
+  /* ---------- cofre ---------- */
+  .segredo { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace; font-size: 13px; letter-spacing: .04em; }
+  .caixa-aviso { background: var(--card-2); border: 1px solid var(--border); border-left: 3px solid var(--acento); border-radius: var(--raio); padding: 12px 14px; font-size: 13px; color: var(--ink-2); }
+  .caixa-aviso strong { color: var(--ink); }
+  .caixa-bloqueio { text-align: center; padding: 40px 24px; }
+  .caixa-bloqueio svg { width: 34px; height: 34px; color: var(--ink-3); margin-bottom: 10px; }
+
+  .lista-seca { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .lista-seca li { display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+
+  .dia { border-top: 1px solid var(--border-2); padding: 14px 16px; }
+  .dia:first-child { border-top: none; }
+  .dia__cabeca { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+  .dia__nome { font-weight: 600; text-transform: capitalize; }
+  .dia--hoje .dia__nome { color: var(--acento-forte); }
+
+  @media (prefers-reduced-motion: reduce) { * { transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+</style>
+
+<div id="raiz"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================================
+   MARK SISTEM — versão navegável.
+
+   Os algoritmos abaixo são os mesmos do sistema real, portados para o
+   navegador: normalização de telefone (packages/core/src/telefone.ts),
+   ordenação fracionária do Kanban (ordem.ts) e a busca tolerante a acento e
+   erro de digitação (busca.ts).
+
+   A diferença é onde o dado mora: aqui é o localStorage do seu navegador; lá é
+   Postgres com Row Level Security. A lógica que você vai sentir clicando é a
+   mesma.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- telefone */
+const DDDS = new Set([11,12,13,14,15,16,17,18,19,21,22,24,27,28,31,32,33,34,35,37,38,
+  41,42,43,44,45,46,47,48,49,51,53,54,55,61,62,63,64,65,66,67,68,69,71,73,74,75,77,79,
+  81,82,83,84,85,86,87,88,89,91,92,93,94,95,96,97,98,99]);
+
+function normalizarTelefone(bruto) {
+  if (!bruto) return null;
+  const tinhaMais = String(bruto).trim().startsWith("+");
+  let d = String(bruto).replace(/\D/g, "");
+  if (!d) return null;
+
+  if (tinhaMais && !d.startsWith("55")) return d.length >= 8 && d.length <= 15 ? "+" + d : null;
+  if (d.startsWith("00")) d = d.slice(2);
+  if (d.length >= 12 && d.startsWith("55")) d = d.slice(2);
+  if (d.length > 11 && d.startsWith("0")) d = d.replace(/^0+/, "");
+  if ((d.length === 11 || d.length === 12) && d.startsWith("0")) d = d.slice(1);
+  if (d.length !== 10 && d.length !== 11) return null;
+
+  const ddd = Number(d.slice(0, 2));
+  if (!DDDS.has(ddd)) return null;
+
+  let ass = d.slice(2);
+  // Nono dígito: celular antigo de 8 dígitos ganha o 9 na frente.
+  if (ass.length === 8 && /^[6-9]/.test(ass)) ass = "9" + ass;
+  if (ass.length === 9 && !ass.startsWith("9")) return null;
+  if (ass.length === 8 && !/^[2-5]/.test(ass)) return null;
+  return "+55" + ddd + ass;
+}
+
+function formatarTelefone(e164) {
+  if (!e164) return "";
+  if (!e164.startsWith("+55")) return e164;
+  const d = e164.slice(3);
+  if (d.length === 11) return `(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`;
+  if (d.length === 10) return `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`;
+  return e164;
+}
+
+const linkWhatsApp = (e164) => e164 ? "https://wa.me/" + e164.replace(/\D/g, "") : null;
+
+/* ----------------------------------------------------- ordenação do Kanban */
+const PASSO = 1000, MINIMO = 1e-6;
+
+function entre(anterior, proximo) {
+  if (anterior === null && proximo === null) return PASSO;
+  if (anterior === null) return proximo - PASSO;
+  if (proximo === null) return anterior + PASSO;
+  if (proximo - anterior < MINIMO) return null;
+  return anterior + (proximo - anterior) / 2;
+}
+const aoInicio = (p) => p === null ? PASSO : p - PASSO;
+
+/* ---------------------------------------------------------------- utilidades */
+const semAcento = (s) => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+/** Similaridade por bigramas — o que o pg_trgm faz no banco. */
+function similaridade(a, b) {
+  const A = semAcento(a), B = semAcento(b);
+  if (!A || !B) return 0;
+  if (A.includes(B) || B.includes(A)) return 1;
+  const par = (s) => { const r = new Set(); for (let i = 0; i < s.length - 1; i++) r.add(s.slice(i, i + 2)); return r; };
+  const pa = par(A), pb = par(B);
+  if (!pa.size || !pb.size) return 0;
+  let comuns = 0;
+  pb.forEach((g) => { if (pa.has(g)) comuns++; });
+  return (2 * comuns) / (pa.size + pb.size);
+}
+
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const moeda = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+const moedaExata = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+const inteiro = new Intl.NumberFormat("pt-BR");
+const fmtData = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
+const fmtDataHora = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+const hojeISO = () => new Date().toISOString().slice(0, 10);
+
+function quando(iso) {
+  const seg = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (seg < 60) return "agora";
+  if (seg < 3600) return `há ${Math.floor(seg / 60)} min`;
+  if (seg < 86400) return `há ${Math.floor(seg / 3600)} h`;
+  if (seg < 604800) return `há ${Math.floor(seg / 86400)} d`;
+  return fmtData.format(new Date(iso));
+}
+
+/** Escapa antes de interpolar em HTML. O nome do lead é digitado pelo usuário. */
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+/* ------------------------------------------------------------------ estado */
+const CHAVE = "mark-sistem-demo-v2";
+
+const ETAPAS = [
+  { id: "e1", nome: "Lead novo", tipo: "aberta" },
+  { id: "e2", nome: "Primeiro contato", tipo: "aberta" },
+  { id: "e3", nome: "Reunião agendada", tipo: "aberta" },
+  { id: "e4", nome: "Diagnóstico", tipo: "aberta" },
+  { id: "e5", nome: "Proposta enviada", tipo: "aberta" },
+  { id: "e6", nome: "Negociação", tipo: "aberta" },
+  { id: "e7", nome: "Fechado", tipo: "ganho" },
+  { id: "e8", nome: "Perdido", tipo: "perda" },
+];
+
+const EQUIPE = [
+  { id: "u1", nome: "Diogo", papel: "Proprietário", email: "diogo@marktiva.com.br" },
+  { id: "u2", nome: "Micael", papel: "Comercial", email: "micael@marktiva.com.br" },
+  { id: "u3", nome: "Gabriel", papel: "Gestor de Tráfego", email: "gabriel@marktiva.com.br" },
+  { id: "u4", nome: "João", papel: "Criação", email: "joao@marktiva.com.br" },
+];
+
+const MOTIVOS = {
+  preco: "Preço", sem_orcamento: "Sem orçamento", nao_respondeu: "Não respondeu",
+  concorrente: "Fechou com concorrente", nao_era_momento: "Não era o momento",
+  servico_incompativel: "Serviço não compatível", desistiu: "Desistiu",
+  sem_interesse: "Sem interesse", outro: "Outro",
+};
+
+const TIPOS_ATIVIDADE = {
+  ligacao: "Ligação", reuniao: "Reunião", follow_up: "Follow-up", mensagem: "Mensagem",
+  visita: "Visita", apresentacao: "Apresentação", proposta: "Envio de proposta", tarefa: "Tarefa",
+};
+
+const STATUS_CLIENTE = { ativo: "Ativo", onboarding: "Onboarding", pausado: "Pausado", inadimplente: "Inadimplente", em_risco: "Em risco", cancelado: "Cancelado", encerrado: "Encerrado" };
+const SAUDE_CLIENTE = { verde: "Saudável", amarelo: "Atenção", vermelho: "Risco" };
+
+/* Fases do CRM operacional. A última é terminal: entrar nela conclui a demanda. */
+const FASES = [
+  { id: "backlog", nome: "Backlog" },
+  { id: "fazendo", nome: "Fazendo" },
+  { id: "revisao", nome: "Revisão interna" },
+  { id: "cliente", nome: "Com o cliente" },
+  { id: "concluida", nome: "Concluída", final: true },
+];
+
+const TIPOS_DEMANDA = {
+  criativo: "Criativo", campanha: "Campanha", social: "Social media",
+  site: "Site / landing", relatorio: "Relatório", reuniao: "Reunião", outro: "Outro",
+};
+
+const PRIORIDADES = { alta: "Alta", media: "Média", baixa: "Baixa" };
+
+const STATUS_APROVACAO = { pendente: "Aguardando", aprovado: "Aprovado", ajuste: "Pedido de ajuste" };
+
+const CATEGORIAS_DESPESA = {
+  ferramentas: "Ferramentas", equipe: "Equipe", impostos: "Impostos",
+  estrutura: "Estrutura", midia: "Mídia", outro: "Outro",
+};
+
+/**
+ * Permissões por papel — o mesmo mapa de `packages/core/src/permissoes.ts`.
+ * `*` concede tudo, e mesmo assim não abre o financeiro pessoal: aquela trava
+ * é anterior a qualquer permissão e responde só ao dono da organização.
+ */
+const PAPEIS = {
+  Proprietário: ["*"],
+  Comercial: ["vendas.*", "clientes.ler", "agenda.*", "operacional.ler", "arquivos.ler"],
+  "Gestor de Tráfego": ["clientes.*", "operacional.*", "trafego.*", "estrategia.*", "agenda.*", "arquivos.*", "cofre.ler", "aprovacoes.*", "vendas.ler", "financeiro.ler"],
+  Criação: ["operacional.*", "clientes.ler", "arquivos.*", "agenda.*", "aprovacoes.ler"],
+};
+
+function concede(permissoes, alvo) {
+  return permissoes.some((p) =>
+    p === "*" || p === alvo || (p.endsWith(".*") && alvo.startsWith(p.slice(0, -1))));
+}
+
+/** A única pergunta de autorização do sistema — porte de `core/contexto.ts`. */
+function pode(permissao) {
+  const eu = usuarioDe(S.usuarioId);
+  // Trava do financeiro pessoal: vem do dono da organização e de mais nada.
+  // Fica antes de tudo de propósito — nem `*` atravessa.
+  if (permissao.startsWith("financeiro.pessoal.")) return eu.id === "u1";
+  return concede(PAPEIS[eu.papel] || [], permissao);
+}
+
+function dias(n) { return new Date(Date.now() + n * 86400000).toISOString(); }
+const soData = (n) => dias(n).slice(0, 10);
+const competencia = (d = new Date()) => d.toISOString().slice(0, 7);
+const mesPassado = (n) => { const d = new Date(); d.setMonth(d.getMonth() + n); return d.toISOString().slice(0, 7); };
+const nomeMes = (comp) => new Intl.DateTimeFormat("pt-BR", { month: "long", year: "numeric" }).format(new Date(comp + "-15T12:00:00"));
+
+function dadosIniciais() {
+  const c = (nome, tel, extra = {}) => ({ id: uid(), nome, telefone: normalizarTelefone(tel), ...extra });
+
+  const contatos = [
+    c("Rafael Munhoz", "44 99812-4477", { email: "rafael@munhozodonto.com.br" }),
+    c("Studio Bonatto", "44 99640-2210"),
+    c("Camila Prestes", "44 99551-8834"),
+    c("Auto Peças Iguaçu", "45 99127-8890"),
+    c("Fernanda Luiz", "44 99203-7745"),
+    c("Garagem 3", "44 99815-3300", { email: "contato@garagem3.com.br" }),
+    c("Kellin Obana", "44 99508-6612"),
+    c("Moraes Eletrônicos", "44 99733-1108"),
+    c("Franciele Bill", "44 99447-2019"),
+    c("Marcos Gouveia", "44 99721-0043"),
+    c("Helena Carvalho", "44 99884-1129"),
+    c("Bruno Home", "44 99612-7754"),
+  ];
+
+  const acha = (n) => contatos.find((x) => x.nome === n).id;
+
+  const clientes = [
+    { id: uid(), nome: "Óticas Gouveia", segmento: "Óptica", cidade: "Maringá", estado: "PR", status: "ativo", saude: "verde", telefone: "+5544997210043", responsavelId: "u3", contatoId: acha("Marcos Gouveia"), criadoEm: dias(-420), atualizadoEm: dias(-0.1), observacoes: "" },
+    { id: uid(), nome: "Casa Carvalho", segmento: "Material de construção", cidade: "Sarandi", estado: "PR", status: "ativo", saude: "amarelo", telefone: "+5544998841129", responsavelId: "u3", contatoId: acha("Helena Carvalho"), criadoEm: dias(-310), atualizadoEm: dias(-0.2), observacoes: "Pediu revisão do criativo de agosto." },
+    { id: uid(), nome: "Bom pra Home", segmento: "Móveis planejados", cidade: "Maringá", estado: "PR", status: "ativo", saude: "verde", telefone: "+5544996127754", responsavelId: "u2", contatoId: acha("Bruno Home"), criadoEm: dias(-260), atualizadoEm: dias(-1), observacoes: "" },
+    { id: uid(), nome: "Moraes Eletrônicos", segmento: "Assistência técnica", cidade: "Paiçandu", estado: "PR", status: "pausado", saude: "amarelo", telefone: "+5544997331108", responsavelId: "u2", contatoId: acha("Moraes Eletrônicos"), criadoEm: dias(-180), atualizadoEm: dias(-3), observacoes: "Pausou em julho, retorno previsto para setembro." },
+    { id: uid(), nome: "Kellin Obana", segmento: "Estética e beleza", cidade: "Maringá", estado: "PR", status: "ativo", saude: "verde", telefone: "+5544995086612", responsavelId: "u4", contatoId: acha("Kellin Obana"), criadoEm: dias(-95), atualizadoEm: dias(-4), observacoes: "" },
+  ];
+
+  let ordem = 0;
+  const l = (nomeContato, etapaId, extra = {}) => ({
+    id: uid(), contatoId: acha(nomeContato), etapaId, ordem: (++ordem) * PASSO,
+    empresa: null, cidade: null, origem: null, servico: null, valorEstimado: null,
+    temperatura: null, responsavelId: "u1", observacoes: null, proximaAcao: null,
+    proximoContatoEm: null, motivoPerda: null, fechadoEm: null, perdidoEm: null,
+    clienteId: null, criadoEm: dias(-10), ...extra,
+  });
+
+  const leads = [
+    l("Rafael Munhoz", "e1", { empresa: "Munhoz Odontologia", valorEstimado: 3500, temperatura: "quente", origem: "Indicação", cidade: "Maringá", servico: "Tráfego + social", proximaAcao: "Retornar sobre o plano de tráfego", proximoContatoEm: hojeISO(), criadoEm: dias(-3) }),
+    l("Studio Bonatto", "e1", { temperatura: "morno", responsavelId: "u2", origem: "Instagram", criadoEm: dias(-2) }),
+    l("Camila Prestes", "e1", { empresa: "Prestes Estética", valorEstimado: 2200, temperatura: "frio", origem: "Meta Ads", criadoEm: dias(-1) }),
+    l("Auto Peças Iguaçu", "e2", { valorEstimado: 4800, temperatura: "morno", responsavelId: "u3", cidade: "Foz do Iguaçu", origem: "Prospecção ativa", criadoEm: dias(-8) }),
+    l("Fernanda Luiz", "e2", { temperatura: "quente", origem: "Indicação", criadoEm: dias(-6) }),
+    l("Garagem 3", "e3", { empresa: "Garagem 3", valorEstimado: 6500, temperatura: "quente", origem: "Indicação", cidade: "Maringá", servico: "Gestão completa", proximaAcao: "Diagnóstico presencial na oficina", proximoContatoEm: hojeISO(), criadoEm: dias(-12) }),
+    l("Moraes Eletrônicos", "e5", { valorEstimado: 5400, temperatura: "quente", responsavelId: "u2", origem: "Cliente antigo", proximaAcao: "Cobrar retorno da proposta", proximoContatoEm: dias(-2).slice(0, 10), criadoEm: dias(-20) }),
+    l("Franciele Bill", "e7", { valorEstimado: 3200, temperatura: "quente", fechadoEm: dias(-5), origem: "Indicação", criadoEm: dias(-30) }),
+  ];
+
+  const garagem = leads.find((x) => x.empresa === "Garagem 3");
+
+  const atividades = [
+    { id: uid(), leadId: garagem.id, tipo: "reuniao", titulo: "Diagnóstico presencial na oficina", responsavelId: "u1", agendadaPara: new Date(new Date().setHours(14, 0, 0, 0)).toISOString(), concluidaEm: null, criadoEm: dias(-2) },
+    { id: uid(), leadId: garagem.id, tipo: "ligacao", titulo: "Confirmou interesse em tráfego e social", responsavelId: "u1", agendadaPara: dias(-4), concluidaEm: dias(-4), criadoEm: dias(-4) },
+    { id: uid(), leadId: garagem.id, tipo: "mensagem", titulo: "Primeiro contato pelo WhatsApp", responsavelId: "u2", agendadaPara: dias(-12), concluidaEm: dias(-12), criadoEm: dias(-12) },
+  ];
+
+  const eventos = [];
+  leads.forEach((x) => eventos.push({ id: uid(), entidade: "lead", entidadeId: x.id, tipo: "lead.criado", dados: {}, criadoEm: x.criadoEm, atorId: x.responsavelId }));
+  clientes.forEach((x) => eventos.push({ id: uid(), entidade: "cliente", entidadeId: x.id, tipo: "cliente.criado", dados: { nome: x.nome }, criadoEm: x.criadoEm, atorId: "u1" }));
+
+  /* ---------------------------------------------------------- operacional */
+  const cl = (n) => clientes.find((x) => x.nome === n).id;
+  let ordD = 0;
+  const d = (clienteNome, titulo, tipo, fase, extra = {}) => ({
+    id: uid(), clienteId: cl(clienteNome), titulo, tipo, fase,
+    ordem: (++ordD) * PASSO, responsavelId: "u4", prioridade: "media",
+    prazo: null, descricao: null, criadoEm: dias(-7), concluidaEm: null, ...extra,
+  });
+
+  const demandas = [
+    d("Óticas Gouveia", "Criativos da campanha de óculos de sol", "criativo", "fazendo", { prazo: soData(1), prioridade: "alta", responsavelId: "u4" }),
+    d("Óticas Gouveia", "Relatório de agosto", "relatorio", "backlog", { prazo: soData(6), responsavelId: "u3" }),
+    d("Casa Carvalho", "Revisar criativo de agosto", "criativo", "revisao", { prazo: soData(-1), prioridade: "alta", responsavelId: "u4", descricao: "Cliente pediu troca da foto principal e do texto da oferta." }),
+    d("Casa Carvalho", "Subir campanha de telhas", "campanha", "backlog", { prazo: soData(3), responsavelId: "u3" }),
+    d("Bom pra Home", "Landing page da promoção de setembro", "site", "fazendo", { prazo: soData(4), responsavelId: "u4" }),
+    d("Bom pra Home", "Calendário de posts — setembro", "social", "cliente", { prazo: soData(2), responsavelId: "u4" }),
+    d("Kellin Obana", "Ensaio de fotos no estúdio", "criativo", "cliente", { prazo: soData(5), responsavelId: "u4" }),
+    d("Kellin Obana", "Campanha de reativação", "campanha", "backlog", { prazo: soData(9), responsavelId: "u3" }),
+    d("Moraes Eletrônicos", "Encerrar campanhas da pausa", "campanha", "concluida", { concluidaEm: dias(-3), responsavelId: "u3", criadoEm: dias(-12) }),
+    d("Óticas Gouveia", "Relatório de julho", "relatorio", "concluida", { concluidaEm: dias(-20), responsavelId: "u3", criadoEm: dias(-30) }),
+  ];
+
+  /* ---------------------------------------------------------- aprovações */
+  const acharDemanda = (t) => demandas.find((x) => x.titulo === t);
+  const aprovacoes = [
+    { id: uid(), clienteId: cl("Bom pra Home"), demandaId: acharDemanda("Calendário de posts — setembro").id, titulo: "Calendário de posts — setembro", tipo: "social", status: "pendente", enviadoEm: dias(-2), respondidoEm: null, comentario: null },
+    { id: uid(), clienteId: cl("Kellin Obana"), demandaId: acharDemanda("Ensaio de fotos no estúdio").id, titulo: "Roteiro do ensaio de fotos", tipo: "criativo", status: "pendente", enviadoEm: dias(-1), respondidoEm: null, comentario: null },
+    { id: uid(), clienteId: cl("Casa Carvalho"), demandaId: null, titulo: "Criativo de agosto — versão 1", tipo: "criativo", status: "ajuste", enviadoEm: dias(-5), respondidoEm: dias(-4), comentario: "Trocar a foto principal e deixar o preço maior." },
+    { id: uid(), clienteId: cl("Óticas Gouveia"), demandaId: null, titulo: "Relatório de julho", tipo: "relatorio", status: "aprovado", enviadoEm: dias(-21), respondidoEm: dias(-20), comentario: null },
+  ];
+
+  /* ----------------------------------------------------------- financeiro */
+  const contratos = [
+    { id: uid(), clienteId: cl("Óticas Gouveia"), descricao: "Gestão de tráfego + social", valorMensal: 2800, diaVencimento: 10, inicio: dias(-420), ativo: true },
+    { id: uid(), clienteId: cl("Casa Carvalho"), descricao: "Gestão de tráfego", valorMensal: 1900, diaVencimento: 5, inicio: dias(-310), ativo: true },
+    { id: uid(), clienteId: cl("Bom pra Home"), descricao: "Gestão completa", valorMensal: 3400, diaVencimento: 15, inicio: dias(-260), ativo: true },
+    { id: uid(), clienteId: cl("Kellin Obana"), descricao: "Social media", valorMensal: 1200, diaVencimento: 20, inicio: dias(-95), ativo: true },
+    { id: uid(), clienteId: cl("Moraes Eletrônicos"), descricao: "Gestão de tráfego", valorMensal: 1600, diaVencimento: 10, inicio: dias(-180), ativo: false },
+  ];
+
+  const cobrancas = [];
+  contratos.filter((k) => k.ativo).forEach((k) => {
+    const dia = String(k.diaVencimento).padStart(2, "0");
+    const venc = (comp) => `${comp}-${dia}`;
+
+    // Casa Carvalho deixa uma mensalidade do mês passado em aberto: é o caso que
+    // o painel precisa saber mostrar, e é o motivo da saúde dela estar amarela.
+    // Vem do mês anterior de propósito — assim está vencida em qualquer dia
+    // que esta demonstração for aberta.
+    const carvalho = k.clienteId === cl("Casa Carvalho");
+    // Kellin fecha depois no mês: é o "a receber" que sobra na tela.
+    const aReceber = carvalho || k.clienteId === cl("Kellin Obana");
+
+    [[mesPassado(-2), true], [mesPassado(-1), !carvalho], [competencia(), !aReceber]]
+      .forEach(([comp, pago]) => {
+        cobrancas.push({ id: uid(), clienteId: k.clienteId, contratoId: k.id, competencia: comp,
+          valor: k.valorMensal, vencimento: venc(comp), pagoEm: pago ? venc(comp) : null });
+      });
+  });
+
+  const despesas = [
+    { id: uid(), descricao: "Meta Ads — verba de gestão", categoria: "midia", valor: 380, vencimento: `${competencia()}-05`, pagoEm: `${competencia()}-05`, recorrente: true },
+    { id: uid(), descricao: "Ferramentas (design, agendamento, e-mail)", categoria: "ferramentas", valor: 620, vencimento: `${competencia()}-08`, pagoEm: `${competencia()}-08`, recorrente: true },
+    { id: uid(), descricao: "Equipe", categoria: "equipe", valor: 4200, vencimento: `${competencia()}-05`, pagoEm: `${competencia()}-05`, recorrente: true },
+    { id: uid(), descricao: "Contador", categoria: "impostos", valor: 480, vencimento: `${competencia()}-20`, pagoEm: null, recorrente: true },
+    { id: uid(), descricao: "Internet e energia", categoria: "estrutura", valor: 390, vencimento: `${competencia()}-15`, pagoEm: null, recorrente: true },
+  ];
+
+  /* --------------------------------------------- cofre, arquivos, estratégia */
+  const senhas = [
+    { id: uid(), clienteId: cl("Óticas Gouveia"), servico: "Meta Business", usuario: "marcos@oticasgouveia.com.br", segredo: "Gv#2024oticas!", url: "https://business.facebook.com", atualizadoEm: dias(-40) },
+    { id: uid(), clienteId: cl("Óticas Gouveia"), servico: "Instagram", usuario: "@oticasgouveia", segredo: "InstaGouveia@77", url: null, atualizadoEm: dias(-40) },
+    { id: uid(), clienteId: cl("Casa Carvalho"), servico: "Google Ads", usuario: "helena@casacarvalho.com.br", segredo: "CC-ads-2024#", url: "https://ads.google.com", atualizadoEm: dias(-120) },
+    { id: uid(), clienteId: cl("Bom pra Home"), servico: "Painel do site", usuario: "admin", segredo: "bph!Site2024", url: "https://bomprahome.com.br/wp-admin", atualizadoEm: dias(-15) },
+  ];
+
+  const arquivos = [
+    { id: uid(), clienteId: cl("Óticas Gouveia"), nome: "Manual da marca.pdf", tipo: "pdf", tamanho: 4_200_000, criadoEm: dias(-400) },
+    { id: uid(), clienteId: cl("Óticas Gouveia"), nome: "Logo — vetor.ai", tipo: "vetor", tamanho: 1_800_000, criadoEm: dias(-400) },
+    { id: uid(), clienteId: cl("Casa Carvalho"), nome: "Contrato assinado.pdf", tipo: "pdf", tamanho: 900_000, criadoEm: dias(-310) },
+    { id: uid(), clienteId: cl("Bom pra Home"), nome: "Fotos do showroom.zip", tipo: "zip", tamanho: 128_000_000, criadoEm: dias(-60) },
+    { id: uid(), clienteId: cl("Kellin Obana"), nome: "Briefing do ensaio.docx", tipo: "doc", tamanho: 240_000, criadoEm: dias(-10) },
+  ];
+
+  const estrategias = [
+    { id: uid(), clienteId: cl("Óticas Gouveia"), objetivo: "Aumentar agendamentos de exame de vista nas duas lojas.", publico: "Homens e mulheres 30-60 anos, Maringá e região, interesse em saúde e moda.", canais: "Meta Ads (Instagram + Facebook), remarketing", verbaMensal: 1800, atualizadoEm: dias(-30) },
+    { id: uid(), clienteId: cl("Casa Carvalho"), objetivo: "Vender telhas e material de acabamento para autoconstrução.", publico: "Homens 28-55, Sarandi e Maringá, construção civil.", canais: "Meta Ads + WhatsApp", verbaMensal: 1200, atualizadoEm: dias(-45) },
+    { id: uid(), clienteId: cl("Bom pra Home"), objetivo: "Gerar orçamentos qualificados de móveis planejados.", publico: "Casais 30-50, renda média-alta, imóvel novo.", canais: "Meta Ads, Google Ads, indicação", verbaMensal: 2500, atualizadoEm: dias(-20) },
+  ];
+
+  /* ------------------------------------------------------ tráfego (Meta Ads) */
+  const trafego = [];
+  clientes.filter((x) => x.status === "ativo").forEach((x, i) => {
+    for (let k = 29; k >= 0; k--) {
+      const base = 45 + i * 18;
+      const onda = 1 + Math.sin((k + i * 3) / 4.5) * 0.28;
+      const gasto = Math.round(base * onda * 100) / 100;
+      const cliques = Math.round(gasto / (0.75 + i * 0.12));
+      const resultados = Math.max(0, Math.round(cliques / (7 + i)));
+      trafego.push({ clienteId: x.id, data: soData(-k), gasto, impressoes: cliques * (38 + i * 4), cliques, resultados });
+    }
+  });
+
+  return {
+    contatos, clientes, leads, atividades, eventos,
+    demandas, aprovacoes, contratos, cobrancas, despesas,
+    senhas, arquivos, estrategias, trafego,
+    usuarioId: "u1",
+  };
+}
+
+let S = carregar();
+
+function carregar() {
+  try {
+    const bruto = localStorage.getItem(CHAVE);
+    if (bruto) {
+      // Preenche coleções que não existiam quando o dado foi gravado. Sem isso,
+      // uma tela nova quebraria no primeiro `.filter` de quem já tinha usado.
+      const salvo = JSON.parse(bruto);
+      const padrao = dadosIniciais();
+      for (const chave of Object.keys(padrao)) {
+        if (salvo[chave] === undefined) salvo[chave] = Array.isArray(padrao[chave]) ? [] : padrao[chave];
+      }
+      return salvo;
+    }
+  } catch (e) { /* storage indisponível: segue com dados de exemplo */ }
+  return dadosIniciais();
+}
+
+function salvar() {
+  try { localStorage.setItem(CHAVE, JSON.stringify(S)); }
+  catch (e) { /* modo privado pode recusar; o app continua em memória */ }
+}
+
+function reiniciar() {
+  S = dadosIniciais();
+  salvar();
+  ir("#/painel");
+  toast("Dados de exemplo restaurados");
+}
+
+/* -------------------------------------------------------------- utilidades */
+const contatoDe = (id) => S.contatos.find((c) => c.id === id);
+const clienteDe = (id) => S.clientes.find((c) => c.id === id);
+const leadDe = (id) => S.leads.find((l) => l.id === id);
+const usuarioDe = (id) => EQUIPE.find((u) => u.id === id);
+const etapaDe = (id) => ETAPAS.find((e) => e.id === id);
+const leadsVivos = () => S.leads.filter((l) => !l.excluidoEm);
+
+const demandaDe = (id) => S.demandas.find((d) => d.id === id);
+const faseDe = (id) => FASES.find((f) => f.id === id);
+const clientesVivos = () => S.clientes.filter((c) => !c.excluidoEm);
+const demandasVivas = () => S.demandas.filter((d) => !d.excluidoEm);
+const nomeCliente = (id) => { const c = clienteDe(id); return c ? c.nome : "—"; };
+const emAberto = () => S.cobrancas.filter((b) => !b.pagoEm);
+const aprovacoesPendentes = () => S.aprovacoes.filter((a) => a.status === "pendente");
+
+/** Só o que já venceu conta como inadimplência; o que vence depois é a receber. */
+const vencidas = () => emAberto().filter((b) => b.vencimento < hojeISO());
+
+const tamanho = (bytes) => {
+  if (bytes < 1024) return bytes + " B";
+  if (bytes < 1048576) return Math.round(bytes / 1024) + " KB";
+  if (bytes < 1073741824) return (bytes / 1048576).toFixed(1).replace(".", ",") + " MB";
+  return (bytes / 1073741824).toFixed(1).replace(".", ",") + " GB";
+};
+
+function registrar(entidade, entidadeId, tipo, dados = {}) {
+  S.eventos.push({ id: uid(), entidade, entidadeId, tipo, dados, criadoEm: new Date().toISOString(), atorId: S.usuarioId });
+}
+
+const historicoDe = (entidade, id) =>
+  S.eventos.filter((e) => e.entidade === entidade && e.entidadeId === id)
+    .sort((a, b) => b.criadoEm.localeCompare(a.criadoEm));
+
+let temporizadorToast;
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("visivel");
+  clearTimeout(temporizadorToast);
+  temporizadorToast = setTimeout(() => el.classList.remove("visivel"), 2600);
+}
+
+/* ------------------------------------------------------------------- rotas */
+function ir(hash) {
+  if (location.hash === hash) render();
+  else location.hash = hash;
+}
+
+const ICONES = {
+  painel: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7.5" height="8" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="5" rx="1.5"/><rect x="3" y="14" width="7.5" height="7" rx="1.5"/><rect x="13.5" y="11" width="7.5" height="10" rx="1.5"/></svg>',
+  funil: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3.5 5h17l-6.5 7.5V20l-4-2.5v-5L3.5 5Z" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  predio: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="10" height="18" rx="1.5"/><path d="M14 8h5a1.5 1.5 0 0 1 1.5 1.5V21" stroke-linecap="round"/><path d="M7.5 7h3M7.5 11h3M7.5 15h3" stroke-linecap="round"/></svg>',
+  pessoas: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0" stroke-linecap="round"/><path d="M16 5.5a3.2 3.2 0 0 1 0 5M17.5 20a5.5 5.5 0 0 0-2-4.3" stroke-linecap="round"/></svg>',
+  colunas: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="9.5" y="4" width="5" height="11" rx="1.5"/><rect x="16" y="4" width="5" height="14" rx="1.5"/></svg>',
+  calendario: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4" stroke-linecap="round"/></svg>',
+  dinheiro: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 12h.01M18 12h.01" stroke-linecap="round"/></svg>',
+  visto: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6.5 9.5 17 4 11.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  cadeado: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke-linecap="round"/></svg>',
+  pasta: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" stroke-linejoin="round"/></svg>',
+  alvo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg>',
+  grafico: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16" stroke-linecap="round"/><path d="m7.5 15 3.5-4.5 3 2.5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  engrenagem: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.4M12 18.8v2.4M21.2 12h-2.4M5.2 12H2.8M18.5 5.5l-1.7 1.7M7.2 16.8l-1.7 1.7M18.5 18.5l-1.7-1.7M7.2 7.2 5.5 5.5" stroke-linecap="round"/></svg>',
+};
+
+/**
+ * O menu é filtrado por permissão. Não é enfeite: um item que a pessoa não
+ * pode abrir só serve para ela descobrir que existe algo escondido dela.
+ */
+const MENU = [
+  { grupo: null, itens: [{ href: "#/painel", rotulo: "Painel", icone: "painel", perm: null }] },
+  { grupo: "Comercial", itens: [
+    { href: "#/vendas", rotulo: "Pipeline", icone: "funil", perm: "vendas.ler" },
+    { href: "#/agenda", rotulo: "Agenda", icone: "calendario", perm: "agenda.ler" },
+  ] },
+  { grupo: "Entrega", itens: [
+    { href: "#/operacional", rotulo: "Operacional", icone: "colunas", perm: "operacional.ler" },
+    { href: "#/aprovacoes", rotulo: "Aprovações", icone: "visto", perm: "aprovacoes.ler" },
+    { href: "#/trafego", rotulo: "Tráfego", icone: "grafico", perm: "trafego.ler" },
+  ] },
+  { grupo: "Gestão", itens: [
+    { href: "#/clientes", rotulo: "Clientes", icone: "predio", perm: "clientes.ler" },
+    { href: "#/estrategias", rotulo: "Estratégias", icone: "alvo", perm: "estrategia.ler" },
+    { href: "#/financeiro", rotulo: "Financeiro", icone: "dinheiro", perm: "financeiro.ler" },
+  ] },
+  { grupo: "Apoio", itens: [
+    { href: "#/arquivos", rotulo: "Arquivos", icone: "pasta", perm: "arquivos.ler" },
+    { href: "#/cofre", rotulo: "Senhas e acessos", icone: "cadeado", perm: "cofre.ler" },
+    { href: "#/config", rotulo: "Configurações", icone: "engrenagem", perm: null },
+  ] },
+];
+
+/** Rota → permissão exigida. A tela recusa mesmo se a pessoa digitar o hash. */
+const GUARDAS = [
+  ["#/vendas", "vendas.ler"], ["#/lead/", "vendas.ler"], ["#/agenda", "agenda.ler"],
+  ["#/operacional", "operacional.ler"], ["#/aprovacoes", "aprovacoes.ler"],
+  ["#/trafego", "trafego.ler"], ["#/clientes", "clientes.ler"], ["#/cliente/", "clientes.ler"],
+  ["#/estrategias", "estrategia.ler"], ["#/financeiro", "financeiro.ler"],
+  ["#/arquivos", "arquivos.ler"], ["#/cofre", "cofre.ler"],
+];
+
+function casca(conteudo) {
+  const rota = location.hash || "#/painel";
+  const eu = usuarioDe(S.usuarioId);
+
+  const nav = MENU.map((g) => {
+    const itens = g.itens.filter((i) => !i.perm || pode(i.perm));
+    if (!itens.length) return "";
+    return `
+      ${g.grupo ? `<div class="nav__grupo">${g.grupo}</div>` : ""}
+      ${itens.map((i) => {
+        const aviso = i.href === "#/aprovacoes" && aprovacoesPendentes().length
+          ? `<span class="pino">${aprovacoesPendentes().length}</span>` : "";
+        return `
+        <a class="nav__item" href="${i.href}" ${rota.startsWith(i.href) ? 'aria-current="page"' : ""}>
+          ${ICONES[i.icone]}<span>${i.rotulo}</span>${aviso}
+        </a>`;
+      }).join("")}`;
+  }).join("");
+
+  return `
+    <div class="sistema">
+      <aside class="barra">
+        <a class="marca" href="#/painel"><span class="logo">M</span><span>MARK SISTEM</span></a>
+        <nav class="nav" aria-label="Navegação principal">${nav}</nav>
+        <div class="barra__pe">
+          Demonstração · dados no seu navegador<br>
+          <button type="button" data-acao="reiniciar">Restaurar exemplo</button>
+        </div>
+      </aside>
+
+      <header class="topo">
+        <p class="topo__org">Marktiva</p>
+        <button type="button" class="busca-gatilho" data-acao="abrir-busca">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5" stroke-linecap="round"/></svg>
+          <span>Buscar</span><kbd>⌘K</kbd>
+        </button>
+        <div class="topo__dir">
+          <span><strong>${esc(eu.nome)}</strong> · ${esc(eu.papel)}</span>
+          <button type="button" class="btn btn--discreto btn--pequeno" data-acao="tema">Tema</button>
+        </div>
+      </header>
+
+      <main class="conteudo">${conteudo}</main>
+    </div>`;
+}
+
+/* ------------------------------------------------------------ tela: painel */
+function telaPainel() {
+  const vivos = leadsVivos();
+  const abertos = vivos.filter((l) => !l.fechadoEm && !l.perdidoEm);
+  const hoje = hojeISO();
+  const semRetorno = abertos.filter((l) => l.proximoContatoEm && l.proximoContatoEm < hoje);
+  const paraHoje = abertos.filter((l) => l.proximoContatoEm && l.proximoContatoEm <= hoje);
+  const novos = vivos.filter((l) => new Date(l.criadoEm) > new Date(Date.now() - 7 * 86400000));
+  const fechados = vivos.filter((l) => l.fechadoEm);
+  const valorAberto = abertos.reduce((s, l) => s + (l.valorEstimado || 0), 0);
+
+  const cli = clientesVivos();
+  const eu = usuarioDe(S.usuarioId);
+
+  const andamento = demandasVivas().filter((d) => d.fase !== "concluida");
+  const atrasadas = andamento.filter((d) => d.prazo && d.prazo < hoje);
+  const minhas = andamento.filter((d) => d.responsavelId === S.usuarioId);
+
+  const comp = competencia();
+  const mrr = S.contratos.filter((k) => k.ativo).reduce((s, k) => s + k.valorMensal, 0);
+  const doMes = S.cobrancas.filter((b) => b.competencia === comp);
+  const recebido = doMes.filter((b) => b.pagoEm).reduce((s, b) => s + b.valor, 0);
+  const aReceber = doMes.filter((b) => !b.pagoEm && b.vencimento >= hoje).reduce((s, b) => s + b.valor, 0);
+  const vencido = vencidas().reduce((s, b) => s + b.valor, 0);
+  const despesasPagas = S.despesas.filter((x) => x.pagoEm && x.pagoEm.startsWith(comp)).reduce((s, x) => s + x.valor, 0);
+
+  const linhaAtencao = paraHoje.map((l) => {
+    const ct = contatoDe(l.contatoId);
+    const atrasado = l.proximoContatoEm < hoje;
+    return `<tr>
+      <td><a href="#/lead/${l.id}">${esc(ct.nome)}</a>
+        <div class="pagina__sub">${esc(l.proximaAcao || etapaDe(l.etapaId).nome)}</div></td>
+      <td style="width:120px;text-align:right">
+        <span class="selo ${atrasado ? "selo--vermelho" : ""}">${atrasado ? "Atrasado" : "Hoje"}</span>
+      </td></tr>`;
+  }).join("");
+
+  const ind = (rotulo, valor, href, tom, nota) => {
+    const cor = tom === "risco" ? "var(--crit)" : tom === "atencao" ? "var(--warn)" : "";
+    const corpo = `<p class="indicador__rotulo">${rotulo}</p>
+      <p class="indicador__valor"${cor ? ` style="color:${cor}"` : ""}>${valor}</p>
+      ${nota ? `<p class="indicador__nota">${nota}</p>` : ""}`;
+    return href ? `<a class="indicador" href="${href}">${corpo}</a>` : `<div class="indicador">${corpo}</div>`;
+  };
+
+  return `
+    <div class="pagina__cabeca">
+      <div>
+        <h1 class="pagina__titulo">Olá, ${esc(eu.nome.split(" ")[0])}</h1>
+        <p class="pagina__sub">${new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "numeric", month: "long" }).format(new Date())}</p>
+      </div>
+    </div>
+
+    ${pode("vendas.ler") && paraHoje.length ? `
+      <div class="cartao" style="margin-bottom:20px">
+        <div class="cartao__cabeca"><strong>Precisa de você hoje</strong>
+          <span class="pagina__sub">${paraHoje.length} item(ns)</span></div>
+        <div class="rolagem"><table><tbody>${linhaAtencao}</tbody></table></div>
+      </div>` : ""}
+
+    ${pode("vendas.ler") ? `
+    <section style="margin-bottom:28px">
+      <h2 class="secao-rotulo">Comercial</h2>
+      <div class="indicadores">
+        ${ind("Leads novos (7 dias)", inteiro.format(novos.length), "#/vendas")}
+        ${ind("Em aberto", inteiro.format(abertos.length), "#/vendas")}
+        ${ind("Sem retorno", inteiro.format(semRetorno.length), "#/vendas", semRetorno.length ? "risco" : null, semRetorno.length ? "A data de retorno já passou" : null)}
+        ${ind("Fechados", inteiro.format(fechados.length), "#/vendas")}
+        ${ind("Valor em aberto", moeda.format(valorAberto), "#/vendas")}
+      </div>
+    </section>` : ""}
+
+    ${pode("clientes.ler") ? `
+    <section style="margin-bottom:28px">
+      <h2 class="secao-rotulo">Clientes</h2>
+      <div class="indicadores">
+        ${ind("Ativos", inteiro.format(cli.filter((c) => c.status === "ativo").length), "#/clientes?status=ativo")}
+        ${ind("Em onboarding", inteiro.format(cli.filter((c) => c.status === "onboarding").length), "#/clientes?status=onboarding")}
+        ${ind("Precisam de atenção", inteiro.format(cli.filter((c) => c.saude === "amarelo").length), "#/clientes", cli.some((c) => c.saude === "amarelo") ? "atencao" : null)}
+        ${ind("Em risco", inteiro.format(cli.filter((c) => c.saude === "vermelho").length), "#/clientes", cli.some((c) => c.saude === "vermelho") ? "risco" : null)}
+        ${ind("Inadimplentes", inteiro.format(cli.filter((c) => c.status === "inadimplente").length), "#/clientes?status=inadimplente")}
+      </div>
+    </section>` : ""}
+
+    ${pode("operacional.ler") ? `
+    <section style="margin-bottom:28px">
+      <h2 class="secao-rotulo">Entrega</h2>
+      <div class="indicadores">
+        ${ind("Em andamento", inteiro.format(andamento.length), "#/operacional")}
+        ${ind("Atrasadas", inteiro.format(atrasadas.length), "#/operacional", atrasadas.length ? "risco" : null, atrasadas.length ? "O prazo já passou" : null)}
+        ${ind("Minhas demandas", inteiro.format(minhas.length), "#/operacional?resp=eu")}
+        ${ind("Com o cliente", inteiro.format(demandasVivas().filter((d) => d.fase === "cliente").length), "#/operacional")}
+        ${pode("aprovacoes.ler") ? ind("Aguardando aprovação", inteiro.format(aprovacoesPendentes().length), "#/aprovacoes", aprovacoesPendentes().length ? "atencao" : null) : ""}
+      </div>
+    </section>` : ""}
+
+    ${pode("financeiro.ler") ? `
+    <section>
+      <h2 class="secao-rotulo">Financeiro — ${nomeMes(competencia())}</h2>
+      <div class="indicadores">
+        ${ind("Receita recorrente", moeda.format(mrr), "#/financeiro", null, "Contratos ativos")}
+        ${ind("Recebido no mês", moeda.format(recebido), "#/financeiro")}
+        ${ind("A receber", moeda.format(aReceber), "#/financeiro")}
+        ${ind("Vencido", moeda.format(vencido), "#/financeiro", vencido ? "risco" : null, vencido ? `${vencidas().length} cobrança(s), de qualquer mês` : null)}
+        ${ind("Resultado do mês", moeda.format(recebido - despesasPagas), "#/financeiro", recebido - despesasPagas < 0 ? "risco" : null, "Recebido menos despesas pagas")}
+      </div>
+    </section>` : ""}`;
+}
+
+/* ------------------------------------------------------------ tela: vendas */
+let filtrosVendas = { q: "", responsavel: "", temperatura: "" };
+
+function telaVendas() {
+  const vivos = leadsVivos().filter((l) => {
+    if (filtrosVendas.responsavel && l.responsavelId !== filtrosVendas.responsavel) return false;
+    if (filtrosVendas.temperatura && l.temperatura !== filtrosVendas.temperatura) return false;
+    if (filtrosVendas.q) {
+      const ct = contatoDe(l.contatoId);
+      const alvo = semAcento(`${ct.nome} ${ct.telefone || ""} ${l.empresa || ""}`);
+      if (!alvo.includes(semAcento(filtrosVendas.q))) return false;
+    }
+    return true;
+  });
+
+  const abertos = leadsVivos().filter((l) => !l.fechadoEm && !l.perdidoEm);
+  const valorAberto = abertos.reduce((s, l) => s + (l.valorEstimado || 0), 0);
+  const hoje = hojeISO();
+  const semRetorno = abertos.filter((l) => l.proximoContatoEm && l.proximoContatoEm < hoje).length;
+
+  const colunas = ETAPAS.map((et) => {
+    const cards = vivos.filter((l) => l.etapaId === et.id).sort((a, b) => a.ordem - b.ordem);
+    return `
+      <section class="quadro__coluna" data-etapa="${et.id}" aria-label="${et.nome}">
+        <header class="quadro__cabeca"><span>${et.nome}</span><span class="contagem">${cards.length}</span></header>
+        <div class="quadro__cards" data-cards="${et.id}">
+          ${cards.length === 0 ? '<p class="vazio">Arraste um card para cá</p>' : ""}
+          ${cards.map((l) => {
+            const ct = contatoDe(l.contatoId);
+            const resp = usuarioDe(l.responsavelId);
+            const tempClasse = l.temperatura === "quente" ? "selo--vermelho" : l.temperatura === "morno" ? "selo--ambar" : "";
+            return `
+              <article class="card" draggable="true" data-lead="${l.id}">
+                <a class="card__nome" href="#/lead/${l.id}">${esc(ct.nome)}</a>
+                ${l.empresa ? `<p class="card__linha">${esc(l.empresa)}</p>` : ""}
+                ${ct.telefone ? `<p class="card__linha">${formatarTelefone(ct.telefone)}</p>` : ""}
+                <div class="card__pe">
+                  ${l.valorEstimado ? `<strong>${moeda.format(l.valorEstimado)}</strong>` : "<span></span>"}
+                  ${l.temperatura ? `<span class="selo ${tempClasse}">${l.temperatura}</span>` : ""}
+                </div>
+                ${resp ? `<p class="card__resp">${esc(resp.nome)}</p>` : ""}
+              </article>`;
+          }).join("")}
+        </div>
+      </section>`;
+  }).join("");
+
+  return `
+    <div class="pagina__cabeca">
+      <div>
+        <h1 class="pagina__titulo">Comercial</h1>
+        <p class="pagina__sub">Arraste os cards entre as etapas</p>
+      </div>
+      ${pode("vendas.criar") || pode("vendas.editar") ? '<button class="btn btn--acento" data-acao="novo-lead">Novo lead</button>' : ""}
+    </div>
+
+    <div class="indicadores" style="margin-bottom:18px">
+      <div class="indicador"><p class="indicador__rotulo">Em aberto</p><p class="indicador__valor">${abertos.length}</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Valor em aberto</p><p class="indicador__valor">${moeda.format(valorAberto)}</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Fechados</p><p class="indicador__valor">${leadsVivos().filter((l) => l.fechadoEm).length}</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Perdidos</p><p class="indicador__valor">${leadsVivos().filter((l) => l.perdidoEm).length}</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Sem retorno</p><p class="indicador__valor"${semRetorno ? ' style="color:var(--crit)"' : ""}>${semRetorno}</p></div>
+    </div>
+
+    <form class="filtros" data-form="filtros-vendas">
+      <label class="campo" style="min-width:220px"><span>Buscar</span>
+        <input name="q" value="${esc(filtrosVendas.q)}" placeholder="Nome, telefone ou empresa"></label>
+      <label class="campo" style="min-width:170px"><span>Responsável</span>
+        <select name="responsavel">
+          <option value="">Todos</option>
+          ${EQUIPE.map((u) => `<option value="${u.id}"${filtrosVendas.responsavel === u.id ? " selected" : ""}>${u.nome}</option>`).join("")}
+        </select></label>
+      <label class="campo" style="min-width:150px"><span>Temperatura</span>
+        <select name="temperatura">
+          <option value="">Todas</option>
+          ${["quente", "morno", "frio"].map((t) => `<option value="${t}"${filtrosVendas.temperatura === t ? " selected" : ""}>${t[0].toUpperCase() + t.slice(1)}</option>`).join("")}
+        </select></label>
+      <button class="btn" type="submit">Filtrar</button>
+      ${(filtrosVendas.q || filtrosVendas.responsavel || filtrosVendas.temperatura)
+        ? '<button class="btn btn--discreto" type="button" data-acao="limpar-filtros">Limpar</button>' : ""}
+    </form>
+
+    <div class="quadro">${colunas}</div>`;
+}
+
+/* -------------------------------------------------------------- tela: lead */
+function telaLead(id) {
+  const l = leadDe(id);
+  if (!l) return `<div class="cartao"><div class="estado">
+    <h2 class="estado__titulo">Lead não encontrado</h2>
+    <a class="btn" href="#/vendas">Voltar ao quadro</a></div></div>`;
+
+  const ct = contatoDe(l.contatoId);
+  const resp = usuarioDe(l.responsavelId);
+  const zap = linkWhatsApp(ct.telefone);
+  const etapa = etapaDe(l.etapaId);
+  const perdido = Boolean(l.perdidoEm);
+  const atividades = S.atividades.filter((a) => a.leadId === l.id && !a.excluidoEm)
+    .sort((a, b) => b.criadoEm.localeCompare(a.criadoEm));
+
+  const dado = (rotulo, valor) =>
+    `<div><div class="dado__rotulo">${rotulo}</div><div class="dado__valor">${valor || "—"}</div></div>`;
+
+  return `
+    <div class="pagina__cabeca">
+      <div>
+        <h1 class="pagina__titulo">${esc(ct.nome)}</h1>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span class="selo">${etapa.nome}</span>
+          ${l.fechadoEm ? '<span class="selo selo--verde">Fechado</span>' : ""}
+          ${perdido ? '<span class="selo selo--vermelho">Perdido</span>' : ""}
+          ${l.empresa ? `<span class="pagina__sub">${esc(l.empresa)}</span>` : ""}
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a class="btn btn--discreto" href="#/vendas">Voltar ao quadro</a>
+        ${zap ? `<a class="btn btn--acento" href="${zap}" target="_blank" rel="noreferrer">Abrir no WhatsApp</a>` : ""}
+      </div>
+    </div>
+
+    <div class="duas-colunas">
+      <div style="display:grid;gap:16px;align-content:start">
+        <div class="cartao">
+          <div class="cartao__cabeca"><strong>Dados</strong>
+            <button class="btn btn--pequeno" data-acao="editar-lead" data-id="${l.id}">Editar</button></div>
+          <div class="cartao__corpo grade-2">
+            ${dado("Telefone", zap ? `<a class="link-acento" href="${zap}" target="_blank" rel="noreferrer">${formatarTelefone(ct.telefone)}</a>` : "")}
+            ${dado("E-mail", esc(ct.email || ""))}
+            ${dado("Empresa", esc(l.empresa || ""))}
+            ${dado("Cidade", esc(l.cidade || ""))}
+            ${dado("Origem", esc(l.origem || ""))}
+            ${dado("Serviço", esc(l.servico || ""))}
+            ${dado("Valor estimado", l.valorEstimado ? moedaExata.format(l.valorEstimado) : "")}
+            ${dado("Temperatura", esc(l.temperatura || ""))}
+            ${dado("Responsável", esc(resp ? resp.nome : ""))}
+            ${dado("Criado em", fmtData.format(new Date(l.criadoEm)))}
+          </div>
+        </div>
+
+        <div class="cartao">
+          <div class="cartao__cabeca"><strong>Atividades</strong>
+            <span class="pagina__sub">${atividades.length}</span></div>
+
+          <div class="cartao__corpo" style="border-bottom:1px solid var(--border-2)">
+            <form data-form="nova-atividade" data-lead="${l.id}" style="display:grid;gap:10px">
+              <div class="erro-form"></div>
+              <div style="display:grid;gap:10px;grid-template-columns:150px 1fr">
+                <label class="campo"><span>Tipo</span>
+                  <select name="tipo">${Object.entries(TIPOS_ATIVIDADE).map(([v, r]) => `<option value="${v}">${r}</option>`).join("")}</select>
+                </label>
+                <label class="campo"><span>O que aconteceu, ou o que fazer</span>
+                  <input name="titulo" required maxlength="200" placeholder="Ligou, sem resposta"></label>
+              </div>
+              <label class="campo"><span>Agendar para <span class="opcional">· opcional</span></span>
+                <input name="agendadaPara" type="datetime-local"></label>
+              <p class="pagina__sub" style="margin:0">Com data, vira o próximo contato do lead e aparece no painel.</p>
+              <div><button class="btn" type="submit">Registrar</button></div>
+            </form>
+          </div>
+
+          <div class="cartao__corpo">
+            ${atividades.length === 0 ? '<p class="pagina__sub" style="margin:0">Nada registrado ainda.</p>' : `
+              <ul class="tempo">${atividades.map((a) => {
+                const r = usuarioDe(a.responsavelId);
+                const atrasada = !a.concluidaEm && a.agendadaPara && new Date(a.agendadaPara) < new Date();
+                const cor = a.concluidaEm ? "var(--good)" : atrasada ? "var(--crit)" : "var(--acento)";
+                return `<li class="tempo__item">
+                  <span class="tempo__ponto" style="background:${cor}"></span>
+                  <div>
+                    <p class="tempo__texto"><strong>${TIPOS_ATIVIDADE[a.tipo] || a.tipo}</strong> · ${esc(a.titulo)}</p>
+                    <p class="tempo__quando">${a.agendadaPara ? fmtDataHora.format(new Date(a.agendadaPara)) : "sem data"}${r ? " · " + esc(r.nome) : ""}${a.concluidaEm ? " · concluída" : atrasada ? " · atrasada" : ""}</p>
+                    ${!a.concluidaEm ? `<button class="btn btn--discreto btn--pequeno" style="margin-top:6px" data-acao="concluir-atividade" data-id="${a.id}">Marcar como feita</button>` : ""}
+                  </div></li>`;
+              }).join("")}</ul>`}
+          </div>
+        </div>
+
+        <div class="cartao">
+          <div class="cartao__cabeca"><strong>Histórico</strong></div>
+          <div class="cartao__corpo">
+            <ul class="tempo">${historicoDe("lead", l.id).map((e) => `
+              <li class="tempo__item"><span class="tempo__ponto"></span>
+                <div><p class="tempo__texto">${descreverEvento(e)}</p>
+                  <p class="tempo__quando">${fmtDataHora.format(new Date(e.criadoEm))}</p></div></li>`).join("")}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;gap:16px;align-content:start">
+        ${!perdido && !l.clienteId ? `
+          <div class="cartao">
+            <div class="cartao__cabeca"><strong>Fechou?</strong></div>
+            <div class="cartao__corpo">
+              <p class="pagina__sub" style="margin-bottom:12px">
+                Vira cliente sem copiar nada: o contato continua o mesmo, então o histórico
+                e a conversa de WhatsApp seguem junto.
+              </p>
+              <form data-form="converter" data-lead="${l.id}" style="display:grid;gap:10px">
+                <div class="erro-form"></div>
+                <label class="campo"><span>Nome do cliente <span class="opcional">· opcional</span></span>
+                  <input name="nomeCliente" value="${esc(l.empresa || ct.nome)}"></label>
+                <button class="btn btn--acento" type="submit">Transformar em cliente</button>
+              </form>
+            </div>
+          </div>` : ""}
+
+        ${l.clienteId ? `
+          <div class="cartao">
+            <div class="cartao__cabeca"><strong>Virou cliente</strong></div>
+            <div class="cartao__corpo">
+              <a class="btn" href="#/cliente/${l.clienteId}">Abrir ficha do cliente</a>
+            </div>
+          </div>` : ""}
+
+        ${perdido ? `
+          <div class="cartao">
+            <div class="cartao__cabeca"><strong>Motivo da perda</strong></div>
+            <div class="cartao__corpo">
+              ${l.motivoPerda ? `<p style="margin:0">${MOTIVOS[l.motivoPerda] || esc(l.motivoPerda)}</p>` : `
+                <form data-form="motivo-perda" data-lead="${l.id}" style="display:grid;gap:10px">
+                  <label class="campo"><span class="opcional">Pode pular, se não souber</span>
+                    <select name="motivo"><option value="">Não informar</option>
+                      ${Object.entries(MOTIVOS).map(([v, r]) => `<option value="${v}">${r}</option>`).join("")}
+                    </select></label>
+                  <button class="btn" type="submit">Registrar</button>
+                </form>`}
+            </div>
+          </div>` : ""}
+
+        <div class="cartao">
+          <div class="cartao__cabeca"><strong>Próximo passo</strong></div>
+          <div class="cartao__corpo">
+            <div class="dado__rotulo">Ação</div>
+            <div class="dado__valor" style="margin-bottom:12px">${esc(l.proximaAcao || "—")}</div>
+            <div class="dado__rotulo">Retorno em</div>
+            <div class="dado__valor num">${l.proximoContatoEm ? fmtData.format(new Date(l.proximoContatoEm + "T12:00:00")) : "—"}</div>
+          </div>
+        </div>
+
+        <div class="cartao">
+          <div class="cartao__cabeca"><strong>Zona de risco</strong></div>
+          <div class="cartao__corpo">
+            <p class="pagina__sub" style="margin-bottom:12px">Sai das listas, mas nada é apagado.</p>
+            <button class="btn btn--risco" data-acao="excluir-lead" data-id="${l.id}">Enviar para a lixeira</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function descreverEvento(e) {
+  switch (e.tipo) {
+    case "lead.criado": return e.dados.contatoReaproveitado ? "Lead criado — contato já existia, histórico aproveitado" : "Lead criado";
+    case "lead.etapa_alterada": return `Etapa: ${esc(e.dados.de)} → ${esc(e.dados.para)}`;
+    case "lead.convertido": return `Virou cliente: ${esc(e.dados.cliente)}`;
+    case "lead.perdido": return `Perdido${e.dados.motivo ? " · " + (MOTIVOS[e.dados.motivo] || e.dados.motivo) : ""}`;
+    case "lead.editado": return "Dados editados";
+    case "lead.excluido": return "Enviado para a lixeira";
+    case "lead.atividade_criada": return `Atividade: ${esc(e.dados.titulo)}`;
+    case "lead.atividade_concluida": return `Concluída: ${esc(e.dados.titulo)}`;
+    case "cliente.criado": return e.dados.origem === "onboarding" ? "Cliente criado a partir de um lead" : "Cliente criado";
+    case "cliente.editado": return "Dados editados";
+    case "demanda.criada": return `Demanda criada: ${esc(e.dados.titulo)}`;
+    case "demanda.editada": return "Demanda editada";
+    case "demanda.fase_alterada": return `Demanda movida para ${esc(e.dados.para)}`;
+    case "demanda.ajuste_pedido": return `Ajuste pedido: ${esc(e.dados.comentario)}`;
+    case "aprovacao.aprovada": return `Cliente aprovou: ${esc(e.dados.titulo)}`;
+    case "aprovacao.ajuste": return `Cliente pediu ajuste: ${esc(e.dados.titulo)}`;
+    case "financeiro.recebido": return `Mensalidade recebida — ${moedaExata.format(e.dados.valor)}`;
+    case "estrategia.atualizada": return "Estratégia atualizada";
+    case "senha.revelada": return "Senha revelada";
+    case "senha.copiada": return "Senha copiada";
+    default: return esc(e.tipo);
+  }
+}
+
+/* ---------------------------------------------------------- tela: clientes */
+let filtrosClientes = { q: "", status: "" };
+
+function telaClientes() {
+  const lista = S.clientes.filter((c) => {
+    if (c.excluidoEm) return false;
+    if (filtrosClientes.status && c.status !== filtrosClientes.status) return false;
+    if (filtrosClientes.q && !semAcento(c.nome + " " + (c.segmento || "")).includes(semAcento(filtrosClientes.q))) return false;
+    return true;
+  }).sort((a, b) => b.atualizadoEm.localeCompare(a.atualizadoEm));
+
+  const filtrando = Boolean(filtrosClientes.q || filtrosClientes.status);
+
+  return `
+    <div class="pagina__cabeca">
+      <div><h1 class="pagina__titulo">Clientes</h1>
+        <p class="pagina__sub">${lista.length === 0 ? "Nenhum cliente nesta visão" : `${lista.length} cliente${lista.length > 1 ? "s" : ""}`}</p></div>
+      ${pode("clientes.criar") || pode("clientes.editar") ? '<button class="btn btn--acento" data-acao="novo-cliente">Novo cliente</button>' : ""}
+    </div>
+
+    <form class="filtros" data-form="filtros-clientes">
+      <label class="campo" style="min-width:250px"><span>Buscar</span>
+        <input name="q" value="${esc(filtrosClientes.q)}" placeholder="Nome ou segmento"></label>
+      <label class="campo" style="min-width:180px"><span>Status</span>
+        <select name="status"><option value="">Todos</option>
+          ${Object.entries(STATUS_CLIENTE).map(([v, r]) => `<option value="${v}"${filtrosClientes.status === v ? " selected" : ""}>${r}</option>`).join("")}
+        </select></label>
+      <button class="btn" type="submit">Filtrar</button>
+      ${filtrando ? '<button class="btn btn--discreto" type="button" data-acao="limpar-clientes">Limpar</button>' : ""}
+    </form>
+
+    <div class="cartao">
+      ${lista.length === 0 ? `
+        <div class="estado">
+          <h2 class="estado__titulo">${filtrando ? "Nada encontrado" : "Nenhum cliente ainda"}</h2>
+          <p class="estado__texto">${filtrando ? "Nenhum cliente combina com esses filtros." : "Feche um lead no pipeline, ou cadastre à mão."}</p>
+          ${filtrando ? '<button class="btn" data-acao="limpar-clientes">Limpar filtros</button>'
+            : '<button class="btn btn--acento" data-acao="novo-cliente">Cadastrar cliente</button>'}
+        </div>` : `
+        <div class="rolagem"><table>
+          <thead><tr><th>Cliente</th><th>Status</th><th>Saúde</th><th>Telefone</th><th>Cidade</th><th>Atualizado</th></tr></thead>
+          <tbody>${lista.map((c) => `
+            <tr>
+              <td><a href="#/cliente/${c.id}">${esc(c.nome)}</a>
+                ${c.segmento ? `<div class="pagina__sub">${esc(c.segmento)}</div>` : ""}</td>
+              <td>${seloStatus(c.status)}</td>
+              <td>${seloSaude(c.saude)}</td>
+              <td class="num">${formatarTelefone(c.telefone) || "—"}</td>
+              <td>${esc(c.cidade || "—")}</td>
+              <td class="pagina__sub">${quando(c.atualizadoEm)}</td>
+            </tr>`).join("")}</tbody>
+        </table></div>`}
+    </div>`;
+}
+
+function seloStatus(s) {
+  const classe = s === "ativo" ? "selo--verde"
+    : ["inadimplente", "cancelado", "encerrado"].includes(s) ? "selo--vermelho"
+    : ["em_risco", "pausado"].includes(s) ? "selo--ambar" : "";
+  return `<span class="selo ${classe}">${STATUS_CLIENTE[s]}</span>`;
+}
+function seloSaude(s) {
+  const classe = s === "verde" ? "selo--verde" : s === "amarelo" ? "selo--ambar" : "selo--vermelho";
+  return `<span class="selo ${classe}">${SAUDE_CLIENTE[s]}</span>`;
+}
+
+/* ----------------------------------------------------------- tela: cliente */
+let abaCliente = "geral";
+
+function telaCliente(id) {
+  const c = clienteDe(id);
+  if (!c) return `<div class="cartao"><div class="estado">
+    <h2 class="estado__titulo">Cliente não encontrado</h2><a class="btn" href="#/clientes">Voltar</a></div></div>`;
+
+  const abas = [
+    { id: "geral", rotulo: "Visão geral", perm: null },
+    { id: "entrega", rotulo: "Entrega", perm: "operacional.ler" },
+    { id: "financeiro", rotulo: "Financeiro", perm: "financeiro.ler" },
+    { id: "estrategia", rotulo: "Estratégia", perm: "estrategia.ler" },
+    { id: "acessos", rotulo: "Arquivos e acessos", perm: "arquivos.ler" },
+    { id: "historico", rotulo: "Histórico", perm: null },
+  ].filter((a) => !a.perm || pode(a.perm));
+
+  const atual = abas.some((a) => a.id === abaCliente) ? abaCliente : "geral";
+
+  return `
+    <div class="pagina__cabeca">
+      <div><h1 class="pagina__titulo">${esc(c.nome)}</h1>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          ${seloStatus(c.status)}${seloSaude(c.saude)}
+          ${c.segmento ? `<span class="pagina__sub">${esc(c.segmento)}</span>` : ""}
+        </div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a class="btn btn--discreto" href="#/clientes">Voltar</a>
+        ${linkWhatsApp(c.telefone) ? `<a class="btn" href="${linkWhatsApp(c.telefone)}" target="_blank" rel="noreferrer">WhatsApp</a>` : ""}
+        ${pode("clientes.editar") ? `<button class="btn btn--acento" data-acao="editar-cliente" data-id="${c.id}">Editar</button>` : ""}
+      </div>
+    </div>
+
+    <div class="abas" role="tablist">
+      ${abas.map((a) => `<button class="aba" role="tab" aria-selected="${a.id === atual}"
+        data-acao="aba-cliente" data-aba="${a.id}">${a.rotulo}</button>`).join("")}
+    </div>
+
+    ${atual === "geral" ? abaGeral(c)
+      : atual === "entrega" ? abaEntrega(c)
+      : atual === "financeiro" ? abaFinanceiroCliente(c)
+      : atual === "estrategia" ? abaEstrategia(c)
+      : atual === "acessos" ? abaAcessos(c)
+      : abaHistorico(c)}`;
+}
+
+function abaGeral(c) {
+  const resp = usuarioDe(c.responsavelId);
+  const zap = linkWhatsApp(c.telefone);
+  const origem = S.leads.find((l) => l.clienteId === c.id);
+  const dado = (r, v) => `<div><div class="dado__rotulo">${r}</div><div class="dado__valor">${v || "—"}</div></div>`;
+
+  const abertas = demandasVivas().filter((d) => d.clienteId === c.id && d.fase !== "concluida");
+  const contrato = S.contratos.find((k) => k.clienteId === c.id);
+  const pendentes = S.aprovacoes.filter((a) => a.clienteId === c.id && a.status === "pendente");
+  const atrasadas = emAberto().filter((b) => b.clienteId === c.id && b.vencimento < hojeISO());
+
+  return `
+    <div class="indicadores" style="margin-bottom:18px">
+      ${pode("financeiro.ler") ? `<div class="indicador"><p class="indicador__rotulo">Mensalidade</p>
+        <p class="indicador__valor">${contrato ? moeda.format(contrato.valorMensal) : "—"}</p>
+        <p class="indicador__nota">${contrato ? (contrato.ativo ? "vence dia " + contrato.diaVencimento : "contrato pausado") : "sem contrato"}</p></div>` : ""}
+      ${pode("operacional.ler") ? `<div class="indicador"><p class="indicador__rotulo">Demandas abertas</p><p class="indicador__valor">${abertas.length}</p></div>` : ""}
+      ${pode("aprovacoes.ler") ? `<div class="indicador"><p class="indicador__rotulo">Esperando o cliente</p><p class="indicador__valor">${pendentes.length}</p></div>` : ""}
+      ${pode("financeiro.ler") ? `<div class="indicador"><p class="indicador__rotulo">Em atraso</p>
+        <p class="indicador__valor"${atrasadas.length ? ' style="color:var(--crit)"' : ""}>${moeda.format(atrasadas.reduce((s, b) => s + b.valor, 0))}</p></div>` : ""}
+    </div>
+
+    <div class="duas-colunas">
+      <div style="display:grid;gap:16px;align-content:start">
+        <div class="cartao">
+          <div class="cartao__cabeca"><strong>Dados</strong></div>
+          <div class="cartao__corpo grade-2">
+            ${dado("Segmento", esc(c.segmento || ""))}
+            ${dado("Telefone", zap ? `<a class="link-acento" href="${zap}" target="_blank" rel="noreferrer">${formatarTelefone(c.telefone)}</a>` : "")}
+            ${dado("Cidade", esc([c.cidade, c.estado].filter(Boolean).join(" · ")))}
+            ${dado("Responsável", esc(resp ? resp.nome : ""))}
+            ${dado("Cliente desde", fmtData.format(new Date(c.criadoEm)))}
+            ${origem ? dado("Veio do lead", `<a class="link-acento" href="#/lead/${origem.id}">${esc(contatoDe(origem.contatoId).nome)}</a>`) : ""}
+          </div>
+        </div>
+
+        ${c.observacoes ? `<div class="cartao">
+          <div class="cartao__cabeca"><strong>Observações</strong></div>
+          <div class="cartao__corpo" style="white-space:pre-wrap">${esc(c.observacoes)}</div></div>` : ""}
+
+        ${pode("clientes.excluir") || pode("clientes.*") ? `
+        <div class="cartao">
+          <div class="cartao__cabeca"><strong>Zona de risco</strong></div>
+          <div class="cartao__corpo">
+            <p class="pagina__sub" style="margin-bottom:12px">
+              A lixeira tira das listas sem apagar nada — dá para restaurar depois.</p>
+            <button class="btn btn--risco" data-acao="excluir-cliente" data-id="${c.id}">Enviar para a lixeira</button>
+          </div>
+        </div>` : ""}
+      </div>
+
+      <div style="display:grid;gap:16px;align-content:start">
+        ${pode("operacional.ler") ? `
+        <div class="cartao">
+          <div class="cartao__cabeca"><strong>Em andamento</strong></div>
+          <div class="cartao__corpo">
+            ${abertas.length === 0 ? '<p class="pagina__sub" style="margin:0">Nada aberto para este cliente.</p>' : `
+              <ul class="lista-seca">${abertas.slice(0, 6).map((d) => `
+                <li><div style="min-width:0">
+                  <div style="font-weight:550">${esc(d.titulo)}</div>
+                  <div class="pagina__sub">${faseDe(d.fase).nome}${d.prazo ? " · " + fmtData.format(new Date(d.prazo + "T12:00:00")) : ""}</div>
+                </div></li>`).join("")}</ul>`}
+          </div>
+        </div>` : ""}
+
+        ${pode("trafego.ler") && S.trafego.some((t) => t.clienteId === c.id) ? `
+        <div class="cartao">
+          <div class="cartao__cabeca"><strong>Tráfego · 7 dias</strong>
+            <a class="pagina__sub link-acento" href="#/trafego">ver tudo</a></div>
+          <div class="cartao__corpo">
+            ${(() => {
+              const s = S.trafego.filter((t) => t.clienteId === c.id).slice(-7);
+              const g = s.reduce((x, t) => x + t.gasto, 0);
+              const r = s.reduce((x, t) => x + t.resultados, 0);
+              return `<div class="grade-2">
+                <div><div class="dado__rotulo">Investido</div><div class="dado__valor num">${moedaExata.format(g)}</div></div>
+                <div><div class="dado__rotulo">Resultados</div><div class="dado__valor num">${inteiro.format(r)}</div></div>
+                <div><div class="dado__rotulo">Custo por resultado</div><div class="dado__valor num">${r ? moedaExata.format(g / r) : "—"}</div></div>
+              </div>`;
+            })()}
+          </div>
+        </div>` : ""}
+      </div>
+    </div>`;
+}
+
+function abaEntrega(c) {
+  const doCliente = demandasVivas().filter((d) => d.clienteId === c.id);
+  const hoje = hojeISO();
+
+  return `
+    <div class="cartao">
+      <div class="cartao__cabeca"><strong>Demandas</strong>
+        ${pode("operacional.editar") ? '<button class="btn btn--pequeno" data-acao="nova-demanda">Nova demanda</button>' : ""}</div>
+      ${doCliente.length === 0 ? '<div class="estado"><p class="estado__texto" style="margin:0">Nenhuma demanda registrada.</p></div>' : `
+      <div class="rolagem"><table>
+        <thead><tr><th>Demanda</th><th>Tipo</th><th>Fase</th><th>Responsável</th><th>Prazo</th><th></th></tr></thead>
+        <tbody>${doCliente.sort((a, b) => (a.prazo || "9").localeCompare(b.prazo || "9")).map((d) => {
+          const atrasada = d.prazo && d.prazo < hoje && d.fase !== "concluida";
+          return `<tr>
+            <td><strong>${esc(d.titulo)}</strong></td>
+            <td class="pagina__sub">${TIPOS_DEMANDA[d.tipo] || esc(d.tipo)}</td>
+            <td><span class="selo ${d.fase === "concluida" ? "selo--verde" : ""}">${faseDe(d.fase).nome}</span></td>
+            <td class="pagina__sub">${esc((usuarioDe(d.responsavelId) || {}).nome || "—")}</td>
+            <td class="num"${atrasada ? ' style="color:var(--crit)"' : ""}>${d.prazo ? fmtData.format(new Date(d.prazo + "T12:00:00")) : "—"}</td>
+            <td style="text-align:right">${pode("operacional.editar") ? `<button class="btn btn--discreto btn--pequeno" data-acao="editar-demanda" data-id="${d.id}">Abrir</button>` : ""}</td>
+          </tr>`;
+        }).join("")}</tbody>
+      </table></div>`}
+    </div>
+
+    ${pode("aprovacoes.ler") ? `
+    <div class="cartao" style="margin-top:16px">
+      <div class="cartao__cabeca"><strong>Aprovações</strong>
+        <a class="pagina__sub link-acento" href="#/aprovacoes">ver a fila</a></div>
+      <div class="cartao__corpo">
+        ${(() => {
+          const lista = S.aprovacoes.filter((a) => a.clienteId === c.id);
+          if (!lista.length) return '<p class="pagina__sub" style="margin:0">Nada enviado ainda.</p>';
+          return `<ul class="lista-seca">${lista.map((a) => `
+            <li><div style="min-width:0">
+              <div style="font-weight:550">${esc(a.titulo)}</div>
+              <div class="pagina__sub">enviado ${quando(a.enviadoEm)}${a.comentario ? " · " + esc(a.comentario) : ""}</div>
+            </div>
+            <span class="selo ${a.status === "aprovado" ? "selo--verde" : a.status === "ajuste" ? "selo--ambar" : ""}">${STATUS_APROVACAO[a.status]}</span>
+            </li>`).join("")}</ul>`;
+        })()}
+      </div>
+    </div>` : ""}`;
+}
+
+function abaFinanceiroCliente(c) {
+  const contrato = S.contratos.find((k) => k.clienteId === c.id);
+  const cobrancas = S.cobrancas.filter((b) => b.clienteId === c.id)
+    .sort((a, b) => b.vencimento.localeCompare(a.vencimento));
+  const hoje = hojeISO();
+  const pago = cobrancas.filter((b) => b.pagoEm).reduce((s, b) => s + b.valor, 0);
+
+  return `
+    <div class="indicadores" style="margin-bottom:16px">
+      <div class="indicador"><p class="indicador__rotulo">Mensalidade</p><p class="indicador__valor">${contrato ? moeda.format(contrato.valorMensal) : "—"}</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Já recebido</p><p class="indicador__valor">${moeda.format(pago)}</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Em aberto</p><p class="indicador__valor">${moeda.format(cobrancas.filter((b) => !b.pagoEm).reduce((s, b) => s + b.valor, 0))}</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Situação</p><p class="indicador__valor" style="font-size:16px">${contrato ? (contrato.ativo ? "Ativo" : "Pausado") : "Sem contrato"}</p></div>
+    </div>
+
+    <div class="cartao">
+      <div class="cartao__cabeca"><strong>Mensalidades</strong>
+        <a class="pagina__sub link-acento" href="#/financeiro">ver o financeiro</a></div>
+      ${cobrancas.length === 0 ? '<div class="estado"><p class="estado__texto" style="margin:0">Nenhuma cobrança registrada.</p></div>' : `
+      <div class="rolagem"><table>
+        <thead><tr><th>Competência</th><th>Vencimento</th><th>Valor</th><th>Situação</th><th></th></tr></thead>
+        <tbody>${cobrancas.map((b) => `
+          <tr>
+            <td style="text-transform:capitalize">${nomeMes(b.competencia)}</td>
+            <td class="num">${fmtData.format(new Date(b.vencimento + "T12:00:00"))}</td>
+            <td class="num">${moedaExata.format(b.valor)}</td>
+            <td>${b.pagoEm ? '<span class="selo selo--verde">Recebido</span>'
+              : b.vencimento < hoje ? '<span class="selo selo--vermelho">Vencido</span>' : '<span class="selo">Em aberto</span>'}</td>
+            <td style="text-align:right">${!b.pagoEm && pode("financeiro.editar")
+              ? `<button class="btn btn--pequeno" data-acao="receber" data-id="${b.id}">Marcar recebido</button>` : ""}</td>
+          </tr>`).join("")}</tbody>
+      </table></div>`}
+    </div>`;
+}
+
+function abaEstrategia(c) {
+  const e = S.estrategias.find((x) => x.clienteId === c.id);
+  return `
+    <div class="cartao">
+      <div class="cartao__cabeca"><strong>Estratégia</strong>
+        ${pode("estrategia.editar") ? `<button class="btn btn--pequeno" data-acao="editar-estrategia" data-id="${c.id}">${e ? "Editar" : "Definir"}</button>` : ""}</div>
+      ${e ? `<div class="cartao__corpo" style="display:grid;gap:16px">
+        <div><div class="dado__rotulo">Objetivo</div><div class="dado__valor">${esc(e.objetivo)}</div></div>
+        <div><div class="dado__rotulo">Público</div><div class="dado__valor">${esc(e.publico) || "—"}</div></div>
+        <div class="grade-2">
+          <div><div class="dado__rotulo">Canais</div><div class="dado__valor">${esc(e.canais) || "—"}</div></div>
+          <div><div class="dado__rotulo">Verba mensal</div><div class="dado__valor num">${e.verbaMensal ? moedaExata.format(e.verbaMensal) : "—"}</div></div>
+        </div>
+        <p class="pagina__sub" style="margin:0">Atualizada ${quando(e.atualizadoEm)}</p>
+      </div>` : `<div class="estado">
+        <h2 class="estado__titulo">Sem estratégia</h2>
+        <p class="estado__texto">É daqui que campanha, criativo e relatório deveriam sair. Vale escrever.</p>
+        ${pode("estrategia.editar") ? `<button class="btn btn--acento" data-acao="editar-estrategia" data-id="${c.id}">Definir estratégia</button>` : ""}
+      </div>`}
+    </div>`;
+}
+
+function abaAcessos(c) {
+  const arqs = S.arquivos.filter((a) => a.clienteId === c.id);
+  const chaves = S.senhas.filter((s) => s.clienteId === c.id);
+
+  return `
+    <div class="duas-colunas">
+      <div class="cartao" style="align-self:start">
+        <div class="cartao__cabeca"><strong>Arquivos</strong>
+          ${pode("arquivos.editar") ? '<button class="btn btn--pequeno" data-acao="novo-arquivo">Registrar</button>' : ""}</div>
+        <div class="cartao__corpo">
+          ${arqs.length === 0 ? '<p class="pagina__sub" style="margin:0">Nenhum arquivo.</p>' : `
+            <ul class="lista-seca">${arqs.map((a) => `
+              <li><div style="min-width:0"><div style="font-weight:550">${esc(a.nome)}</div>
+                <div class="pagina__sub">${esc(a.tipo)} · ${quando(a.criadoEm)}</div></div>
+                <span class="pagina__sub num">${tamanho(a.tamanho)}</span></li>`).join("")}</ul>`}
+        </div>
+      </div>
+
+      <div class="cartao" style="align-self:start">
+        <div class="cartao__cabeca"><strong>Acessos</strong>
+          <a class="pagina__sub link-acento" href="#/cofre">abrir o cofre</a></div>
+        <div class="cartao__corpo">
+          ${!pode("cofre.ler") ? '<p class="pagina__sub" style="margin:0">Seu papel não alcança o cofre.</p>'
+            : chaves.length === 0 ? '<p class="pagina__sub" style="margin:0">Nenhum acesso guardado.</p>' : `
+            <ul class="lista-seca">${chaves.map((s) => `
+              <li><div style="min-width:0"><div style="font-weight:550">${esc(s.servico)}</div>
+                <div class="pagina__sub segredo">${esc(s.usuario)}</div></div>
+                <button class="btn btn--discreto btn--pequeno" data-acao="revelar" data-id="${s.id}">
+                  ${revelados.has(s.id) ? esc(s.segredo) : "Mostrar"}</button></li>`).join("")}</ul>`}
+        </div>
+      </div>
+    </div>`;
+}
+
+function abaHistorico(c) {
+  const eventos = historicoDe("cliente", c.id);
+  return `
+    <div class="cartao">
+      <div class="cartao__cabeca"><strong>Histórico</strong>
+        <span class="pagina__sub">${eventos.length} registro(s)</span></div>
+      <div class="cartao__corpo">
+        ${eventos.length === 0 ? '<p class="pagina__sub" style="margin:0">Nada registrado.</p>' : `
+          <ul class="tempo">${eventos.map((e) => `
+            <li class="tempo__item"><span class="tempo__ponto"></span>
+              <div><p class="tempo__texto">${descreverEvento(e)}</p>
+                <p class="tempo__quando">${fmtDataHora.format(new Date(e.criadoEm))}${usuarioDe(e.atorId) ? " · " + esc(usuarioDe(e.atorId).nome) : ""}</p></div></li>`).join("")}
+          </ul>`}
+      </div>
+    </div>`;
+}
+
+/* ------------------------------------------------------- tela: operacional */
+let filtrosOp = { cliente: "", responsavel: "", q: "" };
+
+function telaOperacional() {
+  const vivas = demandasVivas().filter((d) => {
+    if (filtrosOp.cliente && d.clienteId !== filtrosOp.cliente) return false;
+    if (filtrosOp.responsavel && d.responsavelId !== filtrosOp.responsavel) return false;
+    if (filtrosOp.q && !semAcento(`${d.titulo} ${nomeCliente(d.clienteId)}`).includes(semAcento(filtrosOp.q))) return false;
+    return true;
+  });
+
+  const hoje = hojeISO();
+  const abertas = demandasVivas().filter((d) => d.fase !== "concluida");
+  const atrasadas = abertas.filter((d) => d.prazo && d.prazo < hoje);
+
+  const colunas = FASES.map((f) => {
+    const cards = vivas.filter((d) => d.fase === f.id).sort((a, b) => a.ordem - b.ordem);
+    return `
+      <section class="quadro__coluna" data-fase="${f.id}" aria-label="${f.nome}">
+        <header class="quadro__cabeca"><span>${f.nome}</span><span class="contagem">${cards.length}</span></header>
+        <div class="quadro__cards">
+          ${cards.length === 0 ? '<p class="vazio">Arraste uma demanda para cá</p>' : ""}
+          ${cards.map((d) => {
+            const r = usuarioDe(d.responsavelId);
+            const atrasada = d.prazo && d.prazo < hoje && d.fase !== "concluida";
+            const selo = d.prioridade === "alta" ? "selo--vermelho" : d.prioridade === "baixa" ? "" : "selo--ambar";
+            return `
+              <article class="card" draggable="true" data-demanda="${d.id}">
+                <button class="card__nome" style="background:none;border:none;padding:0;font:inherit;text-align:left"
+                        data-acao="editar-demanda" data-id="${d.id}">${esc(d.titulo)}</button>
+                <p class="card__linha">${esc(nomeCliente(d.clienteId))}</p>
+                <div class="card__pe">
+                  <span class="selo ${atrasada ? "selo--vermelho" : ""}" style="font-size:11px">
+                    ${d.prazo ? (atrasada ? "Atrasada · " : "") + fmtData.format(new Date(d.prazo + "T12:00:00")) : "sem prazo"}
+                  </span>
+                  <span class="selo ${selo}" style="font-size:11px">${PRIORIDADES[d.prioridade] || "—"}</span>
+                </div>
+                <p class="card__resp">${esc(TIPOS_DEMANDA[d.tipo] || d.tipo)}${r ? " · " + esc(r.nome) : ""}</p>
+              </article>`;
+          }).join("")}
+        </div>
+      </section>`;
+  }).join("");
+
+  return `
+    <div class="pagina__cabeca">
+      <div><h1 class="pagina__titulo">Operacional</h1>
+        <p class="pagina__sub">O que a agência precisa entregar. Arraste entre as fases.</p></div>
+      ${pode("operacional.criar") || pode("operacional.editar") ? '<button class="btn btn--acento" data-acao="nova-demanda">Nova demanda</button>' : ""}
+    </div>
+
+    <div class="indicadores" style="margin-bottom:18px">
+      <div class="indicador"><p class="indicador__rotulo">Em andamento</p><p class="indicador__valor">${abertas.length}</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Atrasadas</p><p class="indicador__valor"${atrasadas.length ? ' style="color:var(--crit)"' : ""}>${atrasadas.length}</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Com o cliente</p><p class="indicador__valor">${abertas.filter((d) => d.fase === "cliente").length}</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Minhas</p><p class="indicador__valor">${abertas.filter((d) => d.responsavelId === S.usuarioId).length}</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Concluídas</p><p class="indicador__valor">${demandasVivas().filter((d) => d.fase === "concluida").length}</p></div>
+    </div>
+
+    <form class="filtros" data-form="filtros-op">
+      <label class="campo" style="min-width:220px"><span>Buscar</span>
+        <input name="q" value="${esc(filtrosOp.q)}" placeholder="Título ou cliente"></label>
+      <label class="campo" style="min-width:190px"><span>Cliente</span>
+        <select name="cliente"><option value="">Todos</option>
+          ${clientesVivos().map((c) => `<option value="${c.id}"${filtrosOp.cliente === c.id ? " selected" : ""}>${esc(c.nome)}</option>`).join("")}
+        </select></label>
+      <label class="campo" style="min-width:170px"><span>Responsável</span>
+        <select name="responsavel"><option value="">Todos</option>
+          ${EQUIPE.map((u) => `<option value="${u.id}"${filtrosOp.responsavel === u.id ? " selected" : ""}>${u.nome}</option>`).join("")}
+        </select></label>
+      <button class="btn" type="submit">Filtrar</button>
+      ${(filtrosOp.q || filtrosOp.cliente || filtrosOp.responsavel)
+        ? '<button class="btn btn--discreto" type="button" data-acao="limpar-op">Limpar</button>' : ""}
+    </form>
+
+    <div class="quadro">${colunas}</div>`;
+}
+
+/* ------------------------------------------------------------ tela: agenda */
+function telaAgenda() {
+  const inicio = new Date(); inicio.setHours(0, 0, 0, 0); inicio.setDate(inicio.getDate() - 2);
+  const hoje = hojeISO();
+
+  const itens = [];
+  if (pode("vendas.ler")) {
+    S.atividades.filter((a) => a.agendadaPara && !a.excluidoEm).forEach((a) => {
+      const l = leadDe(a.leadId);
+      if (!l || l.excluidoEm) return;
+      itens.push({ data: a.agendadaPara.slice(0, 10), hora: fmtDataHora.format(new Date(a.agendadaPara)).split(", ")[1] || "",
+        tipo: "Comercial", titulo: a.titulo, sub: contatoDe(l.contatoId).nome, href: `#/lead/${l.id}`,
+        feito: Boolean(a.concluidaEm), acao: a.concluidaEm ? null : { nome: "concluir-atividade", id: a.id, rotulo: "Feito" } });
+    });
+  }
+  if (pode("operacional.ler")) {
+    demandasVivas().filter((d) => d.prazo).forEach((d) => {
+      itens.push({ data: d.prazo, hora: "", tipo: "Entrega", titulo: d.titulo, sub: nomeCliente(d.clienteId),
+        href: "#/operacional", feito: d.fase === "concluida", acao: null });
+    });
+  }
+  if (pode("financeiro.ler")) {
+    S.cobrancas.forEach((b) => {
+      itens.push({ data: b.vencimento, hora: "", tipo: "Financeiro", titulo: `Mensalidade — ${moeda.format(b.valor)}`,
+        sub: nomeCliente(b.clienteId), href: "#/financeiro", feito: Boolean(b.pagoEm),
+        acao: b.pagoEm ? null : { nome: "receber", id: b.id, rotulo: "Recebido" } });
+    });
+  }
+
+  const blocos = [];
+  for (let k = 0; k < 14; k++) {
+    const d = new Date(inicio); d.setDate(d.getDate() + k);
+    const iso = d.toISOString().slice(0, 10);
+    const doDia = itens.filter((x) => x.data === iso).sort((a, b) => a.hora.localeCompare(b.hora));
+    if (!doDia.length && iso !== hoje) continue;
+
+    blocos.push(`
+      <div class="dia ${iso === hoje ? "dia--hoje" : ""}">
+        <div class="dia__cabeca">
+          <span class="dia__nome">${iso === hoje ? "Hoje" : new Intl.DateTimeFormat("pt-BR", { weekday: "long" }).format(d)}</span>
+          <span class="pagina__sub">${new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "long" }).format(d)}</span>
+          ${iso < hoje && doDia.some((x) => !x.feito) ? '<span class="selo selo--vermelho">em atraso</span>' : ""}
+        </div>
+        ${doDia.length === 0 ? '<p class="pagina__sub" style="margin:0">Nada marcado.</p>' : `
+          <ul class="lista-seca">${doDia.map((x) => `
+            <li>
+              <div style="min-width:0">
+                <a class="link-acento" href="${x.href}" style="font-weight:550">${esc(x.titulo)}</a>
+                <div class="pagina__sub">${x.hora ? esc(x.hora) + " · " : ""}${esc(x.tipo)} · ${esc(x.sub)}</div>
+              </div>
+              <div style="flex:none">
+                ${x.feito ? '<span class="selo selo--verde">feito</span>'
+                  : x.acao ? `<button class="btn btn--pequeno" data-acao="${x.acao.nome}" data-id="${x.acao.id}">${x.acao.rotulo}</button>`
+                  : '<span class="selo">aberto</span>'}
+              </div>
+            </li>`).join("")}</ul>`}
+      </div>`);
+  }
+
+  return `
+    <div class="pagina__cabeca">
+      <div><h1 class="pagina__titulo">Agenda</h1>
+        <p class="pagina__sub">Compromissos comerciais, prazos de entrega e vencimentos, num lugar só</p></div>
+    </div>
+    <div class="cartao">${blocos.join("")}</div>`;
+}
+
+/* -------------------------------------------------------- tela: aprovações */
+function telaAprovacoes() {
+  const grupo = (status) => S.aprovacoes.filter((a) => a.status === status)
+    .sort((a, b) => b.enviadoEm.localeCompare(a.enviadoEm));
+
+  const cartao = (a) => {
+    const podeResponder = pode("aprovacoes.responder") || pode("aprovacoes.editar");
+    return `
+      <div class="cartao" style="margin-bottom:12px">
+        <div class="cartao__cabeca">
+          <div><strong>${esc(a.titulo)}</strong>
+            <div class="pagina__sub">${esc(nomeCliente(a.clienteId))} · ${esc(TIPOS_DEMANDA[a.tipo] || a.tipo)} · enviado ${quando(a.enviadoEm)}</div>
+          </div>
+          <span class="selo ${a.status === "aprovado" ? "selo--verde" : a.status === "ajuste" ? "selo--ambar" : ""}">${STATUS_APROVACAO[a.status]}</span>
+        </div>
+        ${a.comentario ? `<div class="cartao__corpo" style="padding-bottom:0"><div class="caixa-aviso"><strong>O cliente respondeu:</strong> ${esc(a.comentario)}</div></div>` : ""}
+        ${a.status === "pendente" && podeResponder ? `
+          <div class="cartao__corpo">
+            <form data-form="responder-aprovacao" data-id="${a.id}" style="display:grid;gap:10px">
+              <div class="erro-form"></div>
+              <label class="campo"><span>Comentário <span class="opcional">· obrigatório para pedir ajuste</span></span>
+                <input name="comentario" placeholder="O que o cliente falou"></label>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn btn--acento" type="submit" name="decisao" value="aprovado">Registrar aprovação</button>
+                <button class="btn" type="submit" name="decisao" value="ajuste">Registrar pedido de ajuste</button>
+              </div>
+            </form>
+          </div>` : ""}
+        ${a.status === "ajuste" && podeResponder ? `
+          <div class="cartao__corpo">
+            <button class="btn btn--pequeno" data-acao="reenviar-aprovacao" data-id="${a.id}">Reenviar para aprovação</button>
+          </div>` : ""}
+      </div>`;
+  };
+
+  const pendentes = grupo("pendente");
+  const ajustes = grupo("ajuste");
+  const aprovados = grupo("aprovado");
+
+  return `
+    <div class="pagina__cabeca">
+      <div><h1 class="pagina__titulo">Aprovações</h1>
+        <p class="pagina__sub">O que está com o cliente esperando resposta</p></div>
+      ${pode("aprovacoes.editar") ? '<button class="btn btn--acento" data-acao="nova-aprovacao">Enviar para aprovação</button>' : ""}
+    </div>
+
+    <h2 class="secao-rotulo">Aguardando resposta · ${pendentes.length}</h2>
+    ${pendentes.length ? pendentes.map(cartao).join("") : '<div class="cartao"><div class="estado"><p class="estado__texto" style="margin:0">Nada esperando o cliente agora.</p></div></div>'}
+
+    ${ajustes.length ? `<h2 class="secao-rotulo" style="margin-top:24px">Pediram ajuste · ${ajustes.length}</h2>${ajustes.map(cartao).join("")}` : ""}
+    ${aprovados.length ? `<h2 class="secao-rotulo" style="margin-top:24px">Aprovados · ${aprovados.length}</h2>${aprovados.map(cartao).join("")}` : ""}`;
+}
+
+/* -------------------------------------------------------- tela: financeiro */
+let mesFinanceiro = null;
+
+function telaFinanceiro() {
+  const comp = mesFinanceiro || competencia();
+  const hoje = hojeISO();
+
+  const doMes = S.cobrancas.filter((b) => b.competencia === comp)
+    .sort((a, b) => a.vencimento.localeCompare(b.vencimento));
+  const recebido = doMes.filter((b) => b.pagoEm).reduce((s, b) => s + b.valor, 0);
+  const aReceber = doMes.filter((b) => !b.pagoEm && b.vencimento >= hoje).reduce((s, b) => s + b.valor, 0);
+  const atrasado = vencidas().reduce((s, b) => s + b.valor, 0);
+  const mrr = S.contratos.filter((k) => k.ativo).reduce((s, k) => s + k.valorMensal, 0);
+
+  const despMes = S.despesas.filter((x) => x.vencimento.startsWith(comp));
+  const despPagas = despMes.filter((x) => x.pagoEm).reduce((s, x) => s + x.valor, 0);
+  const despAbertas = despMes.filter((x) => !x.pagoEm).reduce((s, x) => s + x.valor, 0);
+  const resultado = recebido - despPagas;
+
+  const meses = [mesPassado(-3), mesPassado(-2), mesPassado(-1), competencia()];
+  const podeEditar = pode("financeiro.editar") || pode("financeiro.*");
+
+  return `
+    <div class="pagina__cabeca">
+      <div><h1 class="pagina__titulo">Financeiro</h1>
+        <p class="pagina__sub">Da agência. O seu pessoal fica na aba abaixo, separado de propósito.</p></div>
+      <form data-form="mes-financeiro" style="display:flex;gap:8px;align-items:flex-end">
+        <label class="campo" style="min-width:180px"><span>Competência</span>
+          <select name="mes">${meses.map((m) => `<option value="${m}"${m === comp ? " selected" : ""}>${nomeMes(m)}</option>`).join("")}</select></label>
+        <button class="btn" type="submit">Ver</button>
+      </form>
+    </div>
+
+    <div class="indicadores" style="margin-bottom:20px">
+      <div class="indicador"><p class="indicador__rotulo">Receita recorrente</p><p class="indicador__valor">${moeda.format(mrr)}</p><p class="indicador__nota">${S.contratos.filter((k) => k.ativo).length} contratos ativos</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Recebido</p><p class="indicador__valor" style="color:var(--good)">${moeda.format(recebido)}</p></div>
+      <div class="indicador"><p class="indicador__rotulo">A receber</p><p class="indicador__valor">${moeda.format(aReceber)}</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Vencido</p><p class="indicador__valor"${atrasado ? ' style="color:var(--crit)"' : ""}>${moeda.format(atrasado)}</p>
+        <p class="indicador__nota">${vencidas().length} cobrança(s), somando todas as competências</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Despesas pagas</p><p class="indicador__valor">${moeda.format(despPagas)}</p><p class="indicador__nota">${moeda.format(despAbertas)} em aberto</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Resultado</p><p class="indicador__valor" style="color:${resultado >= 0 ? "var(--good)" : "var(--crit)"}">${moeda.format(resultado)}</p></div>
+    </div>
+
+    <div class="cartao" style="margin-bottom:16px">
+      <div class="cartao__cabeca"><strong>Mensalidades · ${nomeMes(comp)}</strong>
+        <span class="pagina__sub">${doMes.length} cobrança(s)</span></div>
+      ${doMes.length === 0 ? '<div class="estado"><p class="estado__texto" style="margin:0">Nenhuma cobrança nesta competência.</p></div>' : `
+      <div class="rolagem"><table>
+        <thead><tr><th>Cliente</th><th>Descrição</th><th>Vencimento</th><th>Valor</th><th>Situação</th><th></th></tr></thead>
+        <tbody>${doMes.map((b) => {
+          const k = S.contratos.find((x) => x.id === b.contratoId);
+          const venceu = !b.pagoEm && b.vencimento < hoje;
+          return `<tr>
+            <td><a href="#/cliente/${b.clienteId}">${esc(nomeCliente(b.clienteId))}</a></td>
+            <td class="pagina__sub">${esc(k ? k.descricao : "—")}</td>
+            <td class="num">${fmtData.format(new Date(b.vencimento + "T12:00:00"))}</td>
+            <td class="num">${moedaExata.format(b.valor)}</td>
+            <td>${b.pagoEm ? '<span class="selo selo--verde">Recebido</span>'
+              : venceu ? '<span class="selo selo--vermelho">Vencido</span>' : '<span class="selo">Em aberto</span>'}</td>
+            <td style="text-align:right">${!podeEditar ? "" : b.pagoEm
+              ? `<button class="btn btn--discreto btn--pequeno" data-acao="desfazer-recebimento" data-id="${b.id}">Desfazer</button>`
+              : `<button class="btn btn--pequeno" data-acao="receber" data-id="${b.id}">Marcar recebido</button>`}</td>
+          </tr>`;
+        }).join("")}</tbody>
+      </table></div>`}
+    </div>
+
+    <div class="duas-colunas">
+      <div class="cartao" style="align-self:start">
+        <div class="cartao__cabeca"><strong>Despesas do mês</strong>
+          ${podeEditar ? '<button class="btn btn--pequeno" data-acao="nova-despesa">Lançar</button>' : ""}</div>
+        <div class="rolagem"><table>
+          <thead><tr><th>Descrição</th><th>Categoria</th><th>Vence</th><th>Valor</th><th></th></tr></thead>
+          <tbody>${despMes.map((x) => `
+            <tr>
+              <td>${esc(x.descricao)}</td>
+              <td class="pagina__sub">${CATEGORIAS_DESPESA[x.categoria] || esc(x.categoria)}</td>
+              <td class="num">${fmtData.format(new Date(x.vencimento + "T12:00:00"))}</td>
+              <td class="num">${moedaExata.format(x.valor)}</td>
+              <td style="text-align:right">${x.pagoEm ? '<span class="selo selo--verde">Paga</span>'
+                : podeEditar ? `<button class="btn btn--pequeno" data-acao="pagar-despesa" data-id="${x.id}">Pagar</button>`
+                : '<span class="selo">Aberta</span>'}</td>
+            </tr>`).join("")}</tbody>
+        </table></div>
+      </div>
+
+      <div style="display:grid;gap:16px;align-content:start">
+        <div class="cartao">
+          <div class="cartao__cabeca"><strong>Contratos</strong></div>
+          <div class="cartao__corpo">
+            <ul class="lista-seca">${S.contratos.map((k) => `
+              <li>
+                <div style="min-width:0">
+                  <a class="link-acento" href="#/cliente/${k.clienteId}" style="font-weight:550">${esc(nomeCliente(k.clienteId))}</a>
+                  <div class="pagina__sub">${esc(k.descricao)} · dia ${k.diaVencimento}</div>
+                </div>
+                <div style="flex:none;text-align:right">
+                  <div class="num">${moeda.format(k.valorMensal)}</div>
+                  ${k.ativo ? "" : '<span class="pagina__sub">pausado</span>'}
+                </div>
+              </li>`).join("")}</ul>
+          </div>
+        </div>
+
+        <div class="cartao">
+          <div class="cartao__cabeca"><strong>Financeiro pessoal</strong>
+            <span class="selo">${pode("financeiro.pessoal.ler") ? "liberado" : "restrito"}</span></div>
+          ${pode("financeiro.pessoal.ler") ? `
+            <div class="cartao__corpo">
+              <div class="grade-2" style="margin-bottom:14px">
+                <div><div class="dado__rotulo">Pró-labore do mês</div><div class="dado__valor num">${moedaExata.format(6500)}</div></div>
+                <div><div class="dado__rotulo">Reserva</div><div class="dado__valor num">${moedaExata.format(28400)}</div></div>
+                <div><div class="dado__rotulo">Contas pessoais</div><div class="dado__valor num">${moedaExata.format(4120)}</div></div>
+                <div><div class="dado__rotulo">Sobra</div><div class="dado__valor num" style="color:var(--good)">${moedaExata.format(2380)}</div></div>
+              </div>
+              <div class="caixa-aviso">
+                Esta área responde a <strong>organizacoes.proprietario_id</strong> e a mais nada.
+                Nenhum papel a concede — nem o coringa <code>*</code>. Entre como outra pessoa
+                em Configurações e volte aqui para ver o bloqueio.
+              </div>
+            </div>` : `
+            <div class="caixa-bloqueio">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke-linecap="round"/></svg>
+              <p class="estado__titulo">Só o proprietário</p>
+              <p class="estado__texto">
+                A trava vem antes de qualquer permissão: nem um papel com <code>*</code> atravessa.
+                No sistema real o banco também recusa a leitura, então nem uma rota escrita errada
+                consegue mostrar este dado.
+              </p>
+            </div>`}
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ----------------------------------------------------------- tela: tráfego */
+let clienteTrafego = null;
+
+function telaTrafego() {
+  const ativos = clientesVivos().filter((c) => S.trafego.some((t) => t.clienteId === c.id));
+  if (!ativos.length) return vazio("Sem dados de tráfego", "Nenhum cliente com conta de anúncios conectada.");
+
+  const alvo = ativos.find((c) => c.id === clienteTrafego) || ativos[0];
+  const serie = S.trafego.filter((t) => t.clienteId === alvo.id).sort((a, b) => a.data.localeCompare(b.data));
+  const ult7 = serie.slice(-7), ant7 = serie.slice(-14, -7);
+
+  const soma = (arr, campo) => arr.reduce((s, x) => s + x[campo], 0);
+  const gasto = soma(serie, "gasto"), resultados = soma(serie, "resultados");
+  const cliques = soma(serie, "cliques"), impressoes = soma(serie, "impressoes");
+  const cpl = resultados ? gasto / resultados : 0;
+  const ctr = impressoes ? (cliques / impressoes) * 100 : 0;
+
+  const variacao = (campo) => {
+    const a = soma(ant7, campo), b = soma(ult7, campo);
+    if (!a) return null;
+    return ((b - a) / a) * 100;
+  };
+  const setaVar = (v, bomSubir = true) => {
+    if (v === null) return "";
+    const bom = bomSubir ? v >= 0 : v <= 0;
+    return `<p class="indicador__nota" style="color:${bom ? "var(--good)" : "var(--crit)"}">${v >= 0 ? "▲" : "▼"} ${Math.abs(v).toFixed(0)}% vs. 7 dias antes</p>`;
+  };
+
+  const maximo = Math.max(...serie.map((t) => t.gasto));
+
+  return `
+    <div class="pagina__cabeca">
+      <div><h1 class="pagina__titulo">Gestão de tráfego</h1>
+        <p class="pagina__sub">Últimos 30 dias · dados do Meta Ads</p></div>
+      <form data-form="cliente-trafego" style="display:flex;gap:8px;align-items:flex-end">
+        <label class="campo" style="min-width:210px"><span>Cliente</span>
+          <select name="cliente">${ativos.map((c) => `<option value="${c.id}"${c.id === alvo.id ? " selected" : ""}>${esc(c.nome)}</option>`).join("")}</select></label>
+        <button class="btn" type="submit">Ver</button>
+      </form>
+    </div>
+
+    <div class="indicadores" style="margin-bottom:20px">
+      <div class="indicador"><p class="indicador__rotulo">Investido</p><p class="indicador__valor">${moeda.format(gasto)}</p>${setaVar(variacao("gasto"))}</div>
+      <div class="indicador"><p class="indicador__rotulo">Resultados</p><p class="indicador__valor">${inteiro.format(resultados)}</p>${setaVar(variacao("resultados"))}</div>
+      <div class="indicador"><p class="indicador__rotulo">Custo por resultado</p><p class="indicador__valor">${moedaExata.format(cpl)}</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Cliques</p><p class="indicador__valor">${inteiro.format(cliques)}</p>${setaVar(variacao("cliques"))}</div>
+      <div class="indicador"><p class="indicador__rotulo">CTR</p><p class="indicador__valor">${ctr.toFixed(2).replace(".", ",")}%</p></div>
+    </div>
+
+    <div class="cartao" style="margin-bottom:16px">
+      <div class="cartao__cabeca"><strong>Investimento diário</strong>
+        <span class="pagina__sub">30 dias</span></div>
+      <div class="cartao__corpo">
+        <div class="colunas-mini" style="height:96px">
+          ${serie.map((t) => `<i style="height:${Math.max(2, (t.gasto / maximo) * 100)}%" title="${fmtData.format(new Date(t.data + "T12:00:00"))} · ${moedaExata.format(t.gasto)}"></i>`).join("")}
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px" class="pagina__sub">
+          <span>${fmtData.format(new Date(serie[0].data + "T12:00:00"))}</span>
+          <span>${fmtData.format(new Date(serie[serie.length - 1].data + "T12:00:00"))}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cartao">
+      <div class="cartao__cabeca"><strong>Últimos 7 dias</strong></div>
+      <div class="rolagem"><table>
+        <thead><tr><th>Dia</th><th>Investido</th><th>Impressões</th><th>Cliques</th><th>Resultados</th><th>Custo/result.</th></tr></thead>
+        <tbody>${[...ult7].reverse().map((t) => `
+          <tr>
+            <td>${fmtData.format(new Date(t.data + "T12:00:00"))}</td>
+            <td class="num">${moedaExata.format(t.gasto)}</td>
+            <td class="num">${inteiro.format(t.impressoes)}</td>
+            <td class="num">${inteiro.format(t.cliques)}</td>
+            <td class="num">${inteiro.format(t.resultados)}</td>
+            <td class="num">${t.resultados ? moedaExata.format(t.gasto / t.resultados) : "—"}</td>
+          </tr>`).join("")}</tbody>
+      </table></div>
+    </div>
+
+    <div class="caixa-aviso" style="margin-top:16px">
+      No sistema real esses números <strong>não</strong> são buscados quando a tela abre.
+      Um processo separado sincroniza a Graph API e grava as métricas; a tela só lê o banco.
+      É o que faz o painel abrir rápido mesmo quando a Meta está lenta ou fora do ar.
+    </div>`;
+}
+
+/* ------------------------------------------------------- tela: estratégias */
+function telaEstrategias() {
+  const lista = clientesVivos().map((c) => ({ c, e: S.estrategias.find((x) => x.clienteId === c.id) }));
+
+  return `
+    <div class="pagina__cabeca">
+      <div><h1 class="pagina__titulo">Estratégias</h1>
+        <p class="pagina__sub">O plano de cada cliente — objetivo, público, canais e verba</p></div>
+    </div>
+
+    <div style="display:grid;gap:16px">
+      ${lista.map(({ c, e }) => `
+        <div class="cartao">
+          <div class="cartao__cabeca">
+            <div><strong><a class="link-acento" href="#/cliente/${c.id}">${esc(c.nome)}</a></strong>
+              <div class="pagina__sub">${e ? "Atualizada " + quando(e.atualizadoEm) : "Sem estratégia registrada"}</div></div>
+            ${pode("estrategia.editar") ? `<button class="btn btn--pequeno" data-acao="editar-estrategia" data-id="${c.id}">${e ? "Editar" : "Definir"}</button>` : ""}
+          </div>
+          ${e ? `<div class="cartao__corpo grade-2">
+            <div><div class="dado__rotulo">Objetivo</div><div class="dado__valor">${esc(e.objetivo)}</div></div>
+            <div><div class="dado__rotulo">Público</div><div class="dado__valor">${esc(e.publico)}</div></div>
+            <div><div class="dado__rotulo">Canais</div><div class="dado__valor">${esc(e.canais)}</div></div>
+            <div><div class="dado__rotulo">Verba mensal</div><div class="dado__valor num">${e.verbaMensal ? moedaExata.format(e.verbaMensal) : "—"}</div></div>
+          </div>` : `<div class="cartao__corpo"><p class="pagina__sub" style="margin:0">Ninguém escreveu o plano deste cliente ainda.</p></div>`}
+        </div>`).join("")}
+    </div>`;
+}
+
+/* ---------------------------------------------------------- tela: arquivos */
+let clienteArquivos = "";
+
+function telaArquivos() {
+  const lista = S.arquivos
+    .filter((a) => !clienteArquivos || a.clienteId === clienteArquivos)
+    .sort((a, b) => b.criadoEm.localeCompare(a.criadoEm));
+
+  return `
+    <div class="pagina__cabeca">
+      <div><h1 class="pagina__titulo">Arquivos</h1>
+        <p class="pagina__sub">Logo, manual da marca, contrato, fotos — por cliente</p></div>
+      ${pode("arquivos.editar") ? '<button class="btn btn--acento" data-acao="novo-arquivo">Registrar arquivo</button>' : ""}
+    </div>
+
+    <form class="filtros" data-form="filtros-arquivos">
+      <label class="campo" style="min-width:220px"><span>Cliente</span>
+        <select name="cliente"><option value="">Todos</option>
+          ${clientesVivos().map((c) => `<option value="${c.id}"${clienteArquivos === c.id ? " selected" : ""}>${esc(c.nome)}</option>`).join("")}
+        </select></label>
+      <button class="btn" type="submit">Filtrar</button>
+    </form>
+
+    <div class="cartao">
+      ${lista.length === 0 ? '<div class="estado"><h2 class="estado__titulo">Nenhum arquivo</h2><p class="estado__texto">Nada registrado para este filtro.</p></div>' : `
+      <div class="rolagem"><table>
+        <thead><tr><th>Arquivo</th><th>Cliente</th><th>Tipo</th><th>Tamanho</th><th>Enviado</th></tr></thead>
+        <tbody>${lista.map((a) => `
+          <tr>
+            <td><strong>${esc(a.nome)}</strong></td>
+            <td><a href="#/cliente/${a.clienteId}">${esc(nomeCliente(a.clienteId))}</a></td>
+            <td class="pagina__sub">${esc(a.tipo)}</td>
+            <td class="num">${tamanho(a.tamanho)}</td>
+            <td class="pagina__sub">${quando(a.criadoEm)}</td>
+          </tr>`).join("")}</tbody>
+      </table></div>`}
+    </div>
+
+    <div class="caixa-aviso" style="margin-top:16px">
+      Aqui a lista é só o registro. No sistema real o arquivo em si vai para um bucket com
+      link temporário, e o banco guarda só o ponteiro — assim o download expira sozinho e
+      não vira um endereço público esquecido na internet.
+    </div>`;
+}
+
+/* ------------------------------------------------------------- tela: cofre */
+const revelados = new Set();
+
+function telaCofre() {
+  const podeEditar = pode("cofre.editar");
+  const lista = [...S.senhas].sort((a, b) => nomeCliente(a.clienteId).localeCompare(nomeCliente(b.clienteId)));
+
+  return `
+    <div class="pagina__cabeca">
+      <div><h1 class="pagina__titulo">Senhas e acessos</h1>
+        <p class="pagina__sub">${lista.length} acesso(s) guardados${podeEditar ? "" : " · você tem leitura, não edição"}</p></div>
+      ${podeEditar ? '<button class="btn btn--acento" data-acao="nova-senha">Guardar acesso</button>' : ""}
+    </div>
+
+    <div class="cartao">
+      <div class="rolagem"><table>
+        <thead><tr><th>Cliente</th><th>Serviço</th><th>Usuário</th><th>Senha</th><th>Atualizada</th><th></th></tr></thead>
+        <tbody>${lista.map((s) => {
+          const aberto = revelados.has(s.id);
+          return `<tr>
+            <td><a href="#/cliente/${s.clienteId}">${esc(nomeCliente(s.clienteId))}</a></td>
+            <td>${s.url ? `<a class="link-acento" href="${esc(s.url)}" target="_blank" rel="noreferrer">${esc(s.servico)}</a>` : esc(s.servico)}</td>
+            <td class="segredo">${esc(s.usuario)}</td>
+            <td class="segredo">${aberto ? esc(s.segredo) : "••••••••••"}</td>
+            <td class="pagina__sub">${quando(s.atualizadoEm)}</td>
+            <td style="text-align:right;white-space:nowrap">
+              <button class="btn btn--discreto btn--pequeno" data-acao="revelar" data-id="${s.id}">${aberto ? "Esconder" : "Mostrar"}</button>
+              <button class="btn btn--discreto btn--pequeno" data-acao="copiar-senha" data-id="${s.id}">Copiar</button>
+              ${podeEditar ? `<button class="btn btn--discreto btn--pequeno" data-acao="editar-senha" data-id="${s.id}">Editar</button>` : ""}
+            </td>
+          </tr>`;
+        }).join("")}</tbody>
+      </table></div>
+    </div>
+
+    <div class="caixa-aviso" style="margin-top:16px">
+      <strong>Como isso fica seguro no sistema real.</strong> A senha não é gravada como texto:
+      cada linha tem sua própria chave, e essa chave é guardada cifrada por uma chave mestra que
+      só existe em variável de ambiente. A cifra é amarrada à organização e à linha, então um
+      valor copiado do banco de um cliente não abre no outro. Quem tem só leitura vê a lista;
+      revelar e copiar ficam registrados no histórico.
+    </div>`;
+}
+
+/* ----------------------------------------------------- tela: configurações */
+function telaConfig() {
+  const eu = usuarioDe(S.usuarioId);
+
+  return `
+    <div class="pagina__cabeca">
+      <div><h1 class="pagina__titulo">Configurações</h1>
+        <p class="pagina__sub">Organização, equipe e as etapas que o sistema usa</p></div>
+    </div>
+
+    <div class="cartao" style="margin-bottom:16px">
+      <div class="cartao__cabeca"><strong>Equipe</strong>
+        <span class="pagina__sub">${EQUIPE.length} pessoas</span></div>
+      <div class="rolagem"><table>
+        <thead><tr><th>Pessoa</th><th>Papel</th><th>Alcance</th><th>Ver como</th></tr></thead>
+        <tbody>${EQUIPE.map((u) => `
+          <tr>
+            <td><strong>${esc(u.nome)}</strong><div class="pagina__sub">${esc(u.email)}</div></td>
+            <td>${esc(u.papel)}</td>
+            <td class="pagina__sub segredo">${(PAPEIS[u.papel] || []).join("  ")}</td>
+            <td>${u.id === S.usuarioId ? '<span class="pagina__sub">é você agora</span>'
+              : `<button class="btn btn--pequeno" data-acao="trocar-usuario" data-id="${u.id}">Entrar como</button>`}</td>
+          </tr>`).join("")}</tbody>
+      </table></div>
+      <div class="cartao__corpo">
+        <div class="caixa-aviso">
+          Você está como <strong>${esc(eu.nome)}</strong> (${esc(eu.papel)}). Troque de pessoa e
+          repare no menu: itens que o papel não alcança somem, e digitar o endereço na mão também
+          não abre. No sistema real a mesma resposta vem duas vezes — na regra e no banco.
+        </div>
+      </div>
+    </div>
+
+    <div class="duas-colunas">
+      <div class="cartao" style="align-self:start">
+        <div class="cartao__cabeca"><strong>Etapas do funil de vendas</strong></div>
+        <div class="cartao__corpo">
+          <ol style="margin:0;padding-left:20px;display:grid;gap:6px">
+            ${ETAPAS.map((e) => `<li>${esc(e.nome)}
+              ${e.tipo === "ganho" ? '<span class="selo selo--verde" style="margin-left:6px">fecha o lead</span>' : ""}
+              ${e.tipo === "perda" ? '<span class="selo selo--vermelho" style="margin-left:6px">marca como perdido</span>' : ""}
+            </li>`).join("")}
+          </ol>
+          <p class="pagina__sub" style="margin-top:12px">
+            Arrastar um card para uma etapa de ganho ou perda muda o estado do lead sozinho —
+            ninguém precisa lembrar de marcar duas coisas.
+          </p>
+        </div>
+      </div>
+
+      <div style="display:grid;gap:16px;align-content:start">
+        <div class="cartao">
+          <div class="cartao__cabeca"><strong>Fases da entrega</strong></div>
+          <div class="cartao__corpo">
+            <ol style="margin:0;padding-left:20px;display:grid;gap:6px">
+              ${FASES.map((f) => `<li>${esc(f.nome)}${f.final ? '<span class="selo selo--verde" style="margin-left:6px">conclui</span>' : ""}</li>`).join("")}
+            </ol>
+          </div>
+        </div>
+
+        <div class="cartao">
+          <div class="cartao__cabeca"><strong>Esta demonstração</strong></div>
+          <div class="cartao__corpo">
+            <p class="pagina__sub" style="margin-bottom:12px">
+              Tudo que você criar aqui fica salvo no seu navegador, e só nele. Fechar a aba
+              não perde nada; limpar os dados do site, sim.
+            </p>
+            <button class="btn btn--risco" data-acao="reiniciar">Restaurar dados de exemplo</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function vazio(titulo, texto) {
+  return `<div class="cartao"><div class="estado">
+    <h2 class="estado__titulo">${esc(titulo)}</h2>
+    <p class="estado__texto">${esc(texto)}</p></div></div>`;
+}
+
+function semPermissao() {
+  const eu = usuarioDe(S.usuarioId);
+  return `
+    <div class="cartao"><div class="caixa-bloqueio">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke-linecap="round"/></svg>
+      <p class="estado__titulo">Esta área não é do seu papel</p>
+      <p class="estado__texto">
+        Você está como <strong>${esc(eu.nome)}</strong> (${esc(eu.papel)}). Digitar o endereço
+        não abre — a resposta é a mesma que o menu já dava ao esconder o item.
+      </p>
+      <a class="btn" href="#/painel">Voltar ao painel</a>
+      <a class="btn btn--discreto" href="#/config">Trocar de pessoa</a>
+    </div></div>`;
+}
+
+/* ------------------------------------------------------------------ modais */
+let modalAberto = null;
+
+function abrirModal(html) {
+  fecharModal();
+  const fundo = document.createElement("div");
+  fundo.className = "fundo";
+  fundo.innerHTML = `<div class="modal" role="dialog" aria-modal="true">${html}</div>`;
+  fundo.addEventListener("click", (e) => { if (e.target === fundo) fecharModal(); });
+  document.body.appendChild(fundo);
+  modalAberto = fundo;
+  const primeiro = fundo.querySelector("input, select, textarea");
+  if (primeiro) primeiro.focus();
+}
+
+function fecharModal() {
+  if (modalAberto) { modalAberto.remove(); modalAberto = null; }
+}
+
+function modalLead(lead) {
+  const ct = lead ? contatoDe(lead.contatoId) : null;
+  const campo = (nome, rotulo, valor, extra = "") =>
+    `<label class="campo"><span>${rotulo}</span><input name="${nome}" value="${esc(valor ?? "")}" ${extra}></label>`;
+
+  return `
+    <form data-form="salvar-lead" ${lead ? `data-lead="${lead.id}"` : ""}>
+      <div class="modal__cabeca">
+        <div><h2>${lead ? "Editar lead" : "Novo lead"}</h2>
+          <p class="pagina__sub">${lead ? "" : "Nome e telefone bastam. O resto pode ficar para depois."}</p></div>
+      </div>
+      <div class="modal__corpo">
+        <div class="erro-form"></div>
+        <div class="grade-2" style="margin-bottom:16px">
+          ${campo("nome", "Nome", ct ? ct.nome : "", "required maxlength=200 autofocus")}
+          ${campo("telefone", "Telefone / WhatsApp", ct ? formatarTelefone(ct.telefone) : "", 'required inputmode="tel" placeholder="(44) 99888-7777"')}
+        </div>
+        <div class="grade-2">
+          ${campo("empresa", '<span>Empresa <span class="opcional">· opcional</span></span>', lead ? lead.empresa : "")}
+          ${campo("email", '<span>E-mail <span class="opcional">· opcional</span></span>', ct ? ct.email : "", 'type="email"')}
+          ${campo("cidade", '<span>Cidade <span class="opcional">· opcional</span></span>', lead ? lead.cidade : "")}
+          ${campo("origem", '<span>Origem <span class="opcional">· opcional</span></span>', lead ? lead.origem : "", 'placeholder="Indicação, Instagram…"')}
+          ${campo("servico", '<span>Serviço <span class="opcional">· opcional</span></span>', lead ? lead.servico : "")}
+          ${campo("valorEstimado", '<span>Valor estimado <span class="opcional">· opcional</span></span>', lead && lead.valorEstimado ? lead.valorEstimado : "", 'inputmode="decimal" placeholder="2500"')}
+          <label class="campo"><span>Temperatura <span class="opcional">· opcional</span></span>
+            <select name="temperatura"><option value="">Não sei ainda</option>
+              ${["quente", "morno", "frio"].map((t) => `<option value="${t}"${lead && lead.temperatura === t ? " selected" : ""}>${t[0].toUpperCase() + t.slice(1)}</option>`).join("")}
+            </select></label>
+          <label class="campo"><span>Responsável <span class="opcional">· opcional</span></span>
+            <select name="responsavelId">
+              ${EQUIPE.map((u) => `<option value="${u.id}"${lead && lead.responsavelId === u.id ? " selected" : (!lead && u.id === S.usuarioId ? " selected" : "")}>${u.nome}</option>`).join("")}
+            </select></label>
+        </div>
+      </div>
+      <div class="modal__pe">
+        <button class="btn" type="button" data-acao="fechar-modal">Cancelar</button>
+        <button class="btn btn--acento" type="submit">${lead ? "Salvar" : "Criar lead"}</button>
+      </div>
+    </form>`;
+}
+
+function modalCliente(cliente) {
+  const campo = (nome, rotulo, valor, extra = "") =>
+    `<label class="campo"><span>${rotulo}</span><input name="${nome}" value="${esc(valor ?? "")}" ${extra}></label>`;
+
+  return `
+    <form data-form="salvar-cliente" ${cliente ? `data-cliente="${cliente.id}"` : ""}>
+      <div class="modal__cabeca">
+        <div><h2>${cliente ? "Editar cliente" : "Novo cliente"}</h2>
+          <p class="pagina__sub">Só o nome é obrigatório.</p></div>
+      </div>
+      <div class="modal__corpo">
+        <div class="erro-form"></div>
+        <div class="grade-2">
+          ${campo("nome", "Nome da empresa", cliente ? cliente.nome : "", "required maxlength=200 autofocus")}
+          ${campo("segmento", '<span>Segmento <span class="opcional">· opcional</span></span>', cliente ? cliente.segmento : "")}
+          ${campo("telefone", '<span>Telefone <span class="opcional">· opcional</span></span>', cliente ? formatarTelefone(cliente.telefone) : "", 'inputmode="tel"')}
+          ${campo("cidade", '<span>Cidade <span class="opcional">· opcional</span></span>', cliente ? cliente.cidade : "")}
+          <label class="campo"><span>Status</span>
+            <select name="status">${Object.entries(STATUS_CLIENTE).map(([v, r]) => `<option value="${v}"${cliente && cliente.status === v ? " selected" : (!cliente && v === "onboarding" ? " selected" : "")}>${r}</option>`).join("")}</select></label>
+          <label class="campo"><span>Saúde</span>
+            <select name="saude">${Object.entries(SAUDE_CLIENTE).map(([v, r]) => `<option value="${v}"${cliente && cliente.saude === v ? " selected" : ""}>${r}</option>`).join("")}</select></label>
+          <label class="campo"><span>Responsável <span class="opcional">· opcional</span></span>
+            <select name="responsavelId"><option value="">Sem responsável</option>
+              ${EQUIPE.map((u) => `<option value="${u.id}"${cliente && cliente.responsavelId === u.id ? " selected" : ""}>${u.nome}</option>`).join("")}</select></label>
+        </div>
+        <label class="campo" style="margin-top:14px"><span>Observações <span class="opcional">· opcional</span></span>
+          <textarea name="observacoes" rows="3">${esc(cliente ? cliente.observacoes : "")}</textarea></label>
+      </div>
+      <div class="modal__pe">
+        <button class="btn" type="button" data-acao="fechar-modal">Cancelar</button>
+        <button class="btn btn--acento" type="submit">${cliente ? "Salvar" : "Criar cliente"}</button>
+      </div>
+    </form>`;
+}
+
+function opcoesCliente(selecionado) {
+  return clientesVivos().map((c) =>
+    `<option value="${c.id}"${c.id === selecionado ? " selected" : ""}>${esc(c.nome)}</option>`).join("");
+}
+
+function modalDemanda(d) {
+  return `
+    <form data-form="salvar-demanda" ${d ? `data-id="${d.id}"` : ""}>
+      <div class="modal__cabeca">
+        <div><h2>${d ? "Editar demanda" : "Nova demanda"}</h2>
+          <p class="pagina__sub">Cliente e título bastam. Prazo é o que faz ela aparecer na agenda.</p></div>
+      </div>
+      <div class="modal__corpo">
+        <div class="erro-form"></div>
+        <label class="campo" style="margin-bottom:14px"><span>O que precisa ser feito</span>
+          <input name="titulo" value="${esc(d ? d.titulo : "")}" required maxlength="200" autofocus placeholder="Criativos da campanha de setembro"></label>
+        <div class="grade-2">
+          <label class="campo"><span>Cliente</span>
+            <select name="clienteId" required>${opcoesCliente(d ? d.clienteId : null)}</select></label>
+          <label class="campo"><span>Tipo</span>
+            <select name="tipo">${Object.entries(TIPOS_DEMANDA).map(([v, r]) => `<option value="${v}"${d && d.tipo === v ? " selected" : ""}>${r}</option>`).join("")}</select></label>
+          <label class="campo"><span>Responsável</span>
+            <select name="responsavelId">${EQUIPE.map((u) => `<option value="${u.id}"${(d ? d.responsavelId === u.id : u.id === S.usuarioId) ? " selected" : ""}>${u.nome}</option>`).join("")}</select></label>
+          <label class="campo"><span>Prioridade</span>
+            <select name="prioridade">${Object.entries(PRIORIDADES).map(([v, r]) => `<option value="${v}"${(d ? d.prioridade === v : v === "media") ? " selected" : ""}>${r}</option>`).join("")}</select></label>
+          <label class="campo"><span>Prazo <span class="opcional">· opcional</span></span>
+            <input name="prazo" type="date" value="${esc(d && d.prazo ? d.prazo : "")}"></label>
+          <label class="campo"><span>Fase</span>
+            <select name="fase">${FASES.map((f) => `<option value="${f.id}"${(d ? d.fase === f.id : f.id === "backlog") ? " selected" : ""}>${f.nome}</option>`).join("")}</select></label>
+        </div>
+        <label class="campo" style="margin-top:14px"><span>Detalhes <span class="opcional">· opcional</span></span>
+          <textarea name="descricao" rows="3">${esc(d ? d.descricao : "")}</textarea></label>
+      </div>
+      <div class="modal__pe">
+        ${d ? `<button class="btn btn--risco" type="button" data-acao="excluir-demanda" data-id="${d.id}">Excluir</button>` : ""}
+        <button class="btn" type="button" data-acao="fechar-modal">Cancelar</button>
+        <button class="btn btn--acento" type="submit">${d ? "Salvar" : "Criar demanda"}</button>
+      </div>
+    </form>`;
+}
+
+function modalAprovacao() {
+  return `
+    <form data-form="nova-aprovacao">
+      <div class="modal__cabeca">
+        <div><h2>Enviar para aprovação</h2>
+          <p class="pagina__sub">Vai para a fila do cliente e some do seu radar até ele responder.</p></div>
+      </div>
+      <div class="modal__corpo">
+        <div class="erro-form"></div>
+        <label class="campo" style="margin-bottom:14px"><span>O que está sendo enviado</span>
+          <input name="titulo" required maxlength="200" autofocus placeholder="Calendário de posts — setembro"></label>
+        <div class="grade-2">
+          <label class="campo"><span>Cliente</span><select name="clienteId" required>${opcoesCliente(null)}</select></label>
+          <label class="campo"><span>Tipo</span>
+            <select name="tipo">${Object.entries(TIPOS_DEMANDA).map(([v, r]) => `<option value="${v}">${r}</option>`).join("")}</select></label>
+        </div>
+      </div>
+      <div class="modal__pe">
+        <button class="btn" type="button" data-acao="fechar-modal">Cancelar</button>
+        <button class="btn btn--acento" type="submit">Enviar</button>
+      </div>
+    </form>`;
+}
+
+function modalSenha(s) {
+  return `
+    <form data-form="salvar-senha" ${s ? `data-id="${s.id}"` : ""}>
+      <div class="modal__cabeca">
+        <div><h2>${s ? "Editar acesso" : "Guardar acesso"}</h2>
+          <p class="pagina__sub">No sistema real, isto sai daqui cifrado e nunca volta em texto para um log.</p></div>
+      </div>
+      <div class="modal__corpo">
+        <div class="erro-form"></div>
+        <div class="grade-2">
+          <label class="campo"><span>Cliente</span><select name="clienteId" required>${opcoesCliente(s ? s.clienteId : null)}</select></label>
+          <label class="campo"><span>Serviço</span><input name="servico" value="${esc(s ? s.servico : "")}" required autofocus placeholder="Meta Business"></label>
+          <label class="campo"><span>Usuário</span><input name="usuario" value="${esc(s ? s.usuario : "")}" required></label>
+          <label class="campo"><span>Senha</span><input name="segredo" value="${esc(s ? s.segredo : "")}" required></label>
+          <label class="campo"><span>Endereço <span class="opcional">· opcional</span></span>
+            <input name="url" value="${esc(s && s.url ? s.url : "")}" placeholder="https://"></label>
+        </div>
+      </div>
+      <div class="modal__pe">
+        ${s ? `<button class="btn btn--risco" type="button" data-acao="excluir-senha" data-id="${s.id}">Excluir</button>` : ""}
+        <button class="btn" type="button" data-acao="fechar-modal">Cancelar</button>
+        <button class="btn btn--acento" type="submit">Salvar</button>
+      </div>
+    </form>`;
+}
+
+function modalArquivo() {
+  return `
+    <form data-form="salvar-arquivo">
+      <div class="modal__cabeca"><div><h2>Registrar arquivo</h2>
+        <p class="pagina__sub">Aqui é só o registro; no sistema real o envio vai para o bucket.</p></div></div>
+      <div class="modal__corpo">
+        <div class="erro-form"></div>
+        <div class="grade-2">
+          <label class="campo"><span>Nome do arquivo</span><input name="nome" required autofocus placeholder="Manual da marca.pdf"></label>
+          <label class="campo"><span>Cliente</span><select name="clienteId" required>${opcoesCliente(clienteArquivos || null)}</select></label>
+          <label class="campo"><span>Tipo</span>
+            <select name="tipo">${["pdf", "imagem", "vetor", "doc", "planilha", "zip", "vídeo"].map((t) => `<option value="${t}">${t}</option>`).join("")}</select></label>
+          <label class="campo"><span>Tamanho em MB <span class="opcional">· opcional</span></span>
+            <input name="mb" inputmode="decimal" placeholder="2,5"></label>
+        </div>
+      </div>
+      <div class="modal__pe">
+        <button class="btn" type="button" data-acao="fechar-modal">Cancelar</button>
+        <button class="btn btn--acento" type="submit">Registrar</button>
+      </div>
+    </form>`;
+}
+
+function modalDespesa() {
+  return `
+    <form data-form="salvar-despesa">
+      <div class="modal__cabeca"><div><h2>Lançar despesa</h2>
+        <p class="pagina__sub">Entra no resultado do mês quando for marcada como paga.</p></div></div>
+      <div class="modal__corpo">
+        <div class="erro-form"></div>
+        <label class="campo" style="margin-bottom:14px"><span>Descrição</span>
+          <input name="descricao" required autofocus placeholder="Assinatura de ferramenta"></label>
+        <div class="grade-2">
+          <label class="campo"><span>Categoria</span>
+            <select name="categoria">${Object.entries(CATEGORIAS_DESPESA).map(([v, r]) => `<option value="${v}">${r}</option>`).join("")}</select></label>
+          <label class="campo"><span>Valor</span><input name="valor" required inputmode="decimal" placeholder="480"></label>
+          <label class="campo"><span>Vencimento</span><input name="vencimento" type="date" value="${hojeISO()}" required></label>
+        </div>
+      </div>
+      <div class="modal__pe">
+        <button class="btn" type="button" data-acao="fechar-modal">Cancelar</button>
+        <button class="btn btn--acento" type="submit">Lançar</button>
+      </div>
+    </form>`;
+}
+
+function modalEstrategia(clienteId) {
+  const e = S.estrategias.find((x) => x.clienteId === clienteId);
+  return `
+    <form data-form="salvar-estrategia" data-id="${clienteId}">
+      <div class="modal__cabeca"><div><h2>Estratégia — ${esc(nomeCliente(clienteId))}</h2>
+        <p class="pagina__sub">O plano que orienta campanha, criativo e relatório.</p></div></div>
+      <div class="modal__corpo">
+        <div class="erro-form"></div>
+        <label class="campo" style="margin-bottom:12px"><span>Objetivo</span>
+          <textarea name="objetivo" rows="2" required>${esc(e ? e.objetivo : "")}</textarea></label>
+        <label class="campo" style="margin-bottom:12px"><span>Público</span>
+          <textarea name="publico" rows="2">${esc(e ? e.publico : "")}</textarea></label>
+        <div class="grade-2">
+          <label class="campo"><span>Canais</span><input name="canais" value="${esc(e ? e.canais : "")}" placeholder="Meta Ads, Google Ads"></label>
+          <label class="campo"><span>Verba mensal <span class="opcional">· opcional</span></span>
+            <input name="verbaMensal" inputmode="decimal" value="${e && e.verbaMensal ? e.verbaMensal : ""}"></label>
+        </div>
+      </div>
+      <div class="modal__pe">
+        <button class="btn" type="button" data-acao="fechar-modal">Cancelar</button>
+        <button class="btn btn--acento" type="submit">Salvar</button>
+      </div>
+    </form>`;
+}
+
+/* ------------------------------------------------------------------- busca */
+let buscaAberta = false, buscaResultados = [], buscaSel = 0;
+
+function buscar(termo) {
+  const alvo = termo.trim();
+  if (alvo.length < 2) return [];
+  const tel = normalizarTelefone(alvo);
+  const achados = [];
+
+  // A busca respeita a permissão como qualquer tela: não é atalho para ver o
+  // que o menu escondeu.
+  if (pode("clientes.ler")) clientesVivos().forEach((c) => {
+    const s = Math.max(similaridade(c.nome, alvo), c.telefone === tel ? 1 : 0);
+    if (s > 0.25) achados.push({ tipo: "Cliente", titulo: c.nome, sub: [c.segmento, c.cidade].filter(Boolean).join(" · "), href: `#/cliente/${c.id}`, s });
+  });
+
+  if (pode("vendas.ler")) leadsVivos().forEach((l) => {
+    const ct = contatoDe(l.contatoId);
+    const s = Math.max(similaridade(ct.nome, alvo), similaridade(l.empresa || "", alvo), ct.telefone === tel ? 1 : 0);
+    if (s > 0.25) achados.push({ tipo: "Lead", titulo: ct.nome, sub: l.empresa || formatarTelefone(ct.telefone), href: `#/lead/${l.id}`, s });
+  });
+
+  if (pode("operacional.ler")) demandasVivas().forEach((d) => {
+    const s = similaridade(d.titulo, alvo);
+    if (s > 0.3) achados.push({ tipo: "Demanda", titulo: d.titulo, sub: nomeCliente(d.clienteId), href: "#/operacional", s });
+  });
+
+  return achados.sort((a, b) => b.s - a.s).slice(0, 8);
+}
+
+function abrirBusca() {
+  buscaAberta = true; buscaResultados = []; buscaSel = 0;
+  fecharModal();
+  const fundo = document.createElement("div");
+  fundo.className = "fundo";
+  fundo.innerHTML = `
+    <div class="busca-caixa" role="dialog" aria-modal="true" aria-label="Busca global">
+      <input class="busca-campo" id="busca-campo" placeholder="Cliente, lead, telefone…" aria-label="Termo de busca">
+      <div class="busca-lista" id="busca-lista">
+        <p class="busca-aviso">Digite ao menos duas letras. Acento não faz diferença.</p>
+      </div>
+    </div>`;
+  fundo.addEventListener("click", (e) => { if (e.target === fundo) fecharBusca(); });
+  document.body.appendChild(fundo);
+  modalAberto = fundo;
+
+  const campo = document.getElementById("busca-campo");
+  campo.focus();
+  campo.addEventListener("input", () => {
+    buscaResultados = buscar(campo.value);
+    buscaSel = 0;
+    pintarBusca(campo.value);
+  });
+  campo.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowDown") { e.preventDefault(); buscaSel = Math.min(buscaSel + 1, buscaResultados.length - 1); pintarBusca(campo.value); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); buscaSel = Math.max(buscaSel - 1, 0); pintarBusca(campo.value); }
+    else if (e.key === "Enter") { e.preventDefault(); const r = buscaResultados[buscaSel]; if (r) { fecharBusca(); ir(r.href); } }
+  });
+}
+
+function pintarBusca(termo) {
+  const lista = document.getElementById("busca-lista");
+  if (!lista) return;
+  if (termo.trim().length < 2) {
+    lista.innerHTML = '<p class="busca-aviso">Digite ao menos duas letras. Acento não faz diferença.</p>';
+    return;
+  }
+  if (buscaResultados.length === 0) {
+    lista.innerHTML = `<p class="busca-aviso">Nada encontrado para “${esc(termo)}”.</p>`;
+    return;
+  }
+  lista.innerHTML = buscaResultados.map((r, i) => `
+    <button type="button" class="busca-item ${i === buscaSel ? "busca-item--ativo" : ""}" data-href="${r.href}">
+      <span class="busca-tipo">${r.tipo}</span>
+      <span class="busca-titulo">${esc(r.titulo)}</span>
+      ${r.sub ? `<span class="busca-sub">${esc(r.sub)}</span>` : ""}
+    </button>`).join("");
+}
+
+function fecharBusca() { buscaAberta = false; fecharModal(); }
+
+/* ------------------------------------------------------------------ render */
+function render() {
+  const rota = location.hash || "#/painel";
+  const guarda = GUARDAS.find(([prefixo]) => rota.startsWith(prefixo));
+  let conteudo;
+
+  if (guarda && !pode(guarda[1])) conteudo = semPermissao();
+  else if (rota.startsWith("#/lead/")) conteudo = telaLead(rota.slice(7).split("?")[0]);
+  else if (rota.startsWith("#/cliente/")) conteudo = telaCliente(rota.slice(10).split("?")[0]);
+  else if (rota.startsWith("#/vendas")) conteudo = telaVendas();
+  else if (rota.startsWith("#/clientes")) {
+    const q = rota.split("?")[1];
+    if (q) { const p = new URLSearchParams(q); filtrosClientes.status = p.get("status") || ""; }
+    conteudo = telaClientes();
+  }
+  else if (rota.startsWith("#/operacional")) {
+    const q = rota.split("?")[1];
+    if (q && new URLSearchParams(q).get("resp") === "eu") filtrosOp.responsavel = S.usuarioId;
+    conteudo = telaOperacional();
+  }
+  else if (rota.startsWith("#/agenda")) conteudo = telaAgenda();
+  else if (rota.startsWith("#/aprovacoes")) conteudo = telaAprovacoes();
+  else if (rota.startsWith("#/financeiro")) conteudo = telaFinanceiro();
+  else if (rota.startsWith("#/trafego")) conteudo = telaTrafego();
+  else if (rota.startsWith("#/estrategias")) conteudo = telaEstrategias();
+  else if (rota.startsWith("#/arquivos")) conteudo = telaArquivos();
+  else if (rota.startsWith("#/cofre")) conteudo = telaCofre();
+  else if (rota.startsWith("#/config") || rota.startsWith("#/equipe")) conteudo = telaConfig();
+  else conteudo = telaPainel();
+
+  document.getElementById("raiz").innerHTML = casca(conteudo);
+  if (rota.startsWith("#/vendas")) ligarArrasto();
+  if (rota.startsWith("#/operacional")) ligarArrastoDemandas();
+  window.scrollTo(0, 0);
+}
+
+/* ---------------------------------------------------- arrastar e soltar */
+let arrastando = null;
+
+function ligarArrasto() {
+  document.querySelectorAll(".card").forEach((card) => {
+    card.addEventListener("dragstart", () => { arrastando = card.dataset.lead; card.classList.add("arrastando"); });
+    card.addEventListener("dragend", () => { arrastando = null; card.classList.remove("arrastando"); document.querySelectorAll(".alvo").forEach((c) => c.classList.remove("alvo")); });
+    card.addEventListener("dragover", (e) => e.preventDefault());
+    card.addEventListener("drop", (e) => {
+      e.preventDefault(); e.stopPropagation();
+      const coluna = card.closest(".quadro__coluna");
+      moverLead(arrastando, coluna.dataset.etapa, card.dataset.lead);
+    });
+  });
+
+  document.querySelectorAll(".quadro__coluna").forEach((col) => {
+    col.addEventListener("dragover", (e) => { e.preventDefault(); col.classList.add("alvo"); });
+    col.addEventListener("dragleave", () => col.classList.remove("alvo"));
+    col.addEventListener("drop", (e) => { e.preventDefault(); col.classList.remove("alvo"); moverLead(arrastando, col.dataset.etapa, null); });
+  });
+}
+
+/**
+ * Move o card. Mesma lógica de core/leads.ts: a posição sai de `entre()`, então
+ * é uma alteração de um registro só, sem tocar nos vizinhos.
+ */
+function moverLead(leadId, etapaId, antesDe) {
+  if (!leadId) return;
+  const l = leadDe(leadId);
+  if (!l) return;
+
+  const destino = leadsVivos().filter((x) => x.etapaId === etapaId && x.id !== leadId).sort((a, b) => a.ordem - b.ordem);
+  const idx = antesDe ? destino.findIndex((x) => x.id === antesDe) : destino.length;
+  const i = idx < 0 ? destino.length : idx;
+  const anterior = i > 0 ? destino[i - 1].ordem : null;
+  const proximo = i < destino.length ? destino[i].ordem : null;
+
+  let ordem = entre(anterior, proximo);
+  if (ordem === null) {
+    // Espaço esgotado: redistribui a coluna. Raro, e invisível para quem arrasta.
+    destino.forEach((x, k) => { x.ordem = (k + 1) * PASSO; });
+    ordem = (destino.length + 1) * PASSO;
+  }
+
+  const etapaAntiga = etapaDe(l.etapaId);
+  const etapaNova = etapaDe(etapaId);
+  const mudou = l.etapaId !== etapaId;
+
+  l.etapaId = etapaId;
+  l.ordem = ordem;
+
+  if (mudou) {
+    registrar("lead", l.id, "lead.etapa_alterada", { de: etapaAntiga.nome, para: etapaNova.nome });
+    if (etapaNova.tipo === "ganho") { l.fechadoEm = new Date().toISOString(); l.perdidoEm = null; }
+    else if (etapaNova.tipo === "perda") { l.perdidoEm = new Date().toISOString(); l.fechadoEm = null; }
+    else { l.fechadoEm = null; l.perdidoEm = null; }
+    toast(`Movido para “${etapaNova.nome}”`);
+  }
+
+  salvar();
+  render();
+}
+
+/* ------------------------------------------ arrastar e soltar: operacional */
+let arrastandoDemanda = null;
+
+function ligarArrastoDemandas() {
+  document.querySelectorAll(".card[data-demanda]").forEach((card) => {
+    card.addEventListener("dragstart", () => { arrastandoDemanda = card.dataset.demanda; card.classList.add("arrastando"); });
+    card.addEventListener("dragend", () => { arrastandoDemanda = null; card.classList.remove("arrastando"); document.querySelectorAll(".alvo").forEach((c) => c.classList.remove("alvo")); });
+    card.addEventListener("dragover", (e) => e.preventDefault());
+    card.addEventListener("drop", (e) => {
+      e.preventDefault(); e.stopPropagation();
+      moverDemanda(arrastandoDemanda, card.closest(".quadro__coluna").dataset.fase, card.dataset.demanda);
+    });
+  });
+
+  document.querySelectorAll(".quadro__coluna[data-fase]").forEach((col) => {
+    col.addEventListener("dragover", (e) => { e.preventDefault(); col.classList.add("alvo"); });
+    col.addEventListener("dragleave", () => col.classList.remove("alvo"));
+    col.addEventListener("drop", (e) => { e.preventDefault(); col.classList.remove("alvo"); moverDemanda(arrastandoDemanda, col.dataset.fase, null); });
+  });
+}
+
+/** Mesma ordenação fracionária do funil — um registro alterado, vizinhos intactos. */
+function moverDemanda(demandaId, faseId, antesDe) {
+  if (!demandaId) return;
+  const d = demandaDe(demandaId);
+  if (!d) return;
+  if (!pode("operacional.editar")) return toast("Seu papel não edita a entrega.");
+
+  const destino = demandasVivas().filter((x) => x.fase === faseId && x.id !== demandaId).sort((a, b) => a.ordem - b.ordem);
+  const idx = antesDe ? destino.findIndex((x) => x.id === antesDe) : destino.length;
+  const i = idx < 0 ? destino.length : idx;
+
+  let ordem = entre(i > 0 ? destino[i - 1].ordem : null, i < destino.length ? destino[i].ordem : null);
+  if (ordem === null) {
+    destino.forEach((x, k) => { x.ordem = (k + 1) * PASSO; });
+    ordem = (destino.length + 1) * PASSO;
+  }
+
+  const mudou = d.fase !== faseId;
+  const nova = faseDe(faseId);
+  d.fase = faseId;
+  d.ordem = ordem;
+
+  if (mudou) {
+    // A fase final é quem carimba a conclusão. Sair dela reabre a demanda —
+    // senão uma volta atrás deixaria um registro concluído em fase aberta.
+    d.concluidaEm = nova.final ? new Date().toISOString() : null;
+    registrar("demanda", d.id, "demanda.fase_alterada", { para: nova.nome });
+
+    // Mandar para o cliente é o mesmo gesto de pedir aprovação. Fazer disso
+    // duas telas garantiria que uma das duas ficasse desatualizada.
+    if (faseId === "cliente" && !S.aprovacoes.some((a) => a.demandaId === d.id && a.status === "pendente")) {
+      S.aprovacoes.push({ id: uid(), clienteId: d.clienteId, demandaId: d.id, titulo: d.titulo,
+        tipo: d.tipo, status: "pendente", enviadoEm: new Date().toISOString(), respondidoEm: null, comentario: null });
+      toast(`“${nova.nome}” — pedido de aprovação criado`);
+    } else {
+      toast(`Movida para “${nova.nome}”`);
+    }
+  }
+
+  salvar();
+  render();
+}
+
+/* ------------------------------------------------------------------ ações */
+document.addEventListener("click", (e) => {
+  const alvo = e.target.closest("[data-acao]");
+  const itemBusca = e.target.closest(".busca-item");
+
+  if (itemBusca) { const href = itemBusca.dataset.href; fecharBusca(); ir(href); return; }
+  if (!alvo) return;
+
+  const acao = alvo.dataset.acao;
+  const id = alvo.dataset.id;
+
+  if (acao === "abrir-busca") abrirBusca();
+  else if (acao === "fechar-modal") fecharModal();
+  else if (acao === "reiniciar") { if (confirm("Restaurar os dados de exemplo? O que você criou aqui será apagado.")) reiniciar(); }
+  else if (acao === "tema") {
+    const atual = document.documentElement.dataset.theme;
+    const escuro = atual ? atual === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    document.documentElement.dataset.theme = escuro ? "light" : "dark";
+  }
+  else if (acao === "novo-lead") abrirModal(modalLead(null));
+  else if (acao === "editar-lead") abrirModal(modalLead(leadDe(id)));
+  else if (acao === "novo-cliente") abrirModal(modalCliente(null));
+  else if (acao === "editar-cliente") abrirModal(modalCliente(clienteDe(id)));
+  else if (acao === "limpar-filtros") { filtrosVendas = { q: "", responsavel: "", temperatura: "" }; render(); }
+  else if (acao === "limpar-clientes") { filtrosClientes = { q: "", status: "" }; ir("#/clientes"); }
+  else if (acao === "trocar-usuario") { S.usuarioId = id; salvar(); render(); toast(`Agora você é ${usuarioDe(id).nome}`); }
+  else if (acao === "concluir-atividade") {
+    const a = S.atividades.find((x) => x.id === id);
+    if (a) { a.concluidaEm = new Date().toISOString(); registrar("lead", a.leadId, "lead.atividade_concluida", { titulo: a.titulo }); salvar(); render(); toast("Atividade concluída"); }
+  }
+  else if (acao === "excluir-lead") {
+    if (!confirm("Enviar este lead para a lixeira?")) return;
+    const l = leadDe(id);
+    l.excluidoEm = new Date().toISOString();
+    registrar("lead", l.id, "lead.excluido");
+    salvar(); ir("#/vendas"); toast("Lead enviado para a lixeira");
+  }
+  else if (acao === "excluir-cliente") {
+    if (!confirm("Enviar este cliente para a lixeira?")) return;
+    const c = clienteDe(id);
+    c.excluidoEm = new Date().toISOString();
+    salvar(); ir("#/clientes"); toast("Cliente enviado para a lixeira");
+  }
+  else if (acao === "aba-cliente") { abaCliente = alvo.dataset.aba; render(); }
+
+  /* ------------------------------------------------------------ operacional */
+  else if (acao === "nova-demanda") abrirModal(modalDemanda(null));
+  else if (acao === "editar-demanda") abrirModal(modalDemanda(demandaDe(id)));
+  else if (acao === "limpar-op") { filtrosOp = { cliente: "", responsavel: "", q: "" }; ir("#/operacional"); }
+  else if (acao === "excluir-demanda") {
+    if (!confirm("Excluir esta demanda?")) return;
+    demandaDe(id).excluidoEm = new Date().toISOString();
+    salvar(); fecharModal(); render(); toast("Demanda excluída");
+  }
+  else if (acao === "concluir-demanda") {
+    const d = demandaDe(id);
+    moverDemanda(d.id, "concluida", null);
+  }
+
+  /* ------------------------------------------------------------- aprovações */
+  else if (acao === "nova-aprovacao") abrirModal(modalAprovacao());
+  else if (acao === "reenviar-aprovacao") {
+    const a = S.aprovacoes.find((x) => x.id === id);
+    a.status = "pendente"; a.enviadoEm = new Date().toISOString(); a.respondidoEm = null;
+    salvar(); render(); toast("Reenviado para aprovação");
+  }
+
+  /* -------------------------------------------------------------- financeiro */
+  else if (acao === "receber") {
+    const b = S.cobrancas.find((x) => x.id === id);
+    b.pagoEm = hojeISO();
+    registrar("cliente", b.clienteId, "financeiro.recebido", { valor: b.valor, competencia: b.competencia });
+    salvar(); render(); toast(`Recebido — ${moedaExata.format(b.valor)}`);
+  }
+  else if (acao === "desfazer-recebimento") {
+    const b = S.cobrancas.find((x) => x.id === id);
+    b.pagoEm = null;
+    salvar(); render(); toast("Recebimento desfeito");
+  }
+  else if (acao === "nova-despesa") abrirModal(modalDespesa());
+  else if (acao === "pagar-despesa") {
+    S.despesas.find((x) => x.id === id).pagoEm = hojeISO();
+    salvar(); render(); toast("Despesa paga");
+  }
+
+  /* ------------------------------------------------------ estratégia e apoio */
+  else if (acao === "editar-estrategia") abrirModal(modalEstrategia(id));
+  else if (acao === "novo-arquivo") abrirModal(modalArquivo());
+  else if (acao === "nova-senha") abrirModal(modalSenha(null));
+  else if (acao === "editar-senha") abrirModal(modalSenha(S.senhas.find((x) => x.id === id)));
+  else if (acao === "excluir-senha") {
+    if (!confirm("Apagar este acesso?")) return;
+    S.senhas = S.senhas.filter((x) => x.id !== id);
+    salvar(); fecharModal(); render(); toast("Acesso apagado");
+  }
+  else if (acao === "revelar") {
+    // Revelar é um evento, não um detalhe de interface: no sistema real
+    // fica no histórico com quem olhou e quando.
+    if (revelados.has(id)) revelados.delete(id);
+    else { revelados.add(id); registrar("senha", id, "senha.revelada"); salvar(); }
+    render();
+  }
+  else if (acao === "copiar-senha") {
+    const s = S.senhas.find((x) => x.id === id);
+    const escrever = navigator.clipboard && navigator.clipboard.writeText
+      ? navigator.clipboard.writeText(s.segredo) : Promise.reject();
+    escrever.then(() => toast("Senha copiada")).catch(() => toast("O navegador não deixou copiar aqui"));
+    registrar("senha", id, "senha.copiada");
+    salvar();
+  }
+});
+
+/* ---------------------------------------------------------------- submits */
+document.addEventListener("submit", (e) => {
+  const form = e.target;
+  const tipo = form.dataset.form;
+  if (!tipo) return;
+  e.preventDefault();
+  const d = Object.fromEntries(new FormData(form).entries());
+
+  if (tipo === "filtros-vendas") { filtrosVendas = { q: d.q || "", responsavel: d.responsavel || "", temperatura: d.temperatura || "" }; render(); return; }
+  if (tipo === "filtros-clientes") { filtrosClientes = { q: d.q || "", status: d.status || "" }; render(); return; }
+  if (tipo === "filtros-op") { filtrosOp = { q: d.q || "", cliente: d.cliente || "", responsavel: d.responsavel || "" }; render(); return; }
+  if (tipo === "filtros-arquivos") { clienteArquivos = d.cliente || ""; render(); return; }
+  if (tipo === "mes-financeiro") { mesFinanceiro = d.mes; render(); return; }
+  if (tipo === "cliente-trafego") { clienteTrafego = d.cliente; render(); return; }
+
+  if (tipo === "salvar-lead") return salvarLead(form, d);
+  if (tipo === "salvar-cliente") return salvarCliente(form, d);
+  if (tipo === "nova-atividade") return novaAtividade(form, d);
+  if (tipo === "converter") return converter(form, d);
+  if (tipo === "motivo-perda") return motivoPerda(form, d);
+  if (tipo === "salvar-demanda") return salvarDemanda(form, d);
+  if (tipo === "nova-aprovacao") return novaAprovacao(form, d);
+  if (tipo === "responder-aprovacao") return responderAprovacao(form, e.submitter);
+  if (tipo === "salvar-senha") return salvarSenha(form, d);
+  if (tipo === "salvar-arquivo") return salvarArquivo(form, d);
+  if (tipo === "salvar-despesa") return salvarDespesa(form, d);
+  if (tipo === "salvar-estrategia") return salvarEstrategia(form, d);
+});
+
+/** Aceita "2.500,90" e "2500.90" — as duas formas que alguém digita de verdade. */
+function numero(txt) {
+  if (!txt) return null;
+  const n = Number(String(txt).replace(/\s/g, "").replace(/\.(?=\d{3}\b)/g, "").replace(",", "."));
+  return Number.isFinite(n) ? n : null;
+}
+
+function erroNoForm(form, mensagem) {
+  const caixa = form.querySelector(".erro-form");
+  if (caixa) caixa.innerHTML = `<p class="aviso-erro">${esc(mensagem)}</p>`;
+  else toast(mensagem);
+}
+
+function salvarLead(form, d) {
+  const nome = (d.nome || "").trim();
+  if (!nome) return erroNoForm(form, "O nome é obrigatório.");
+
+  const telefone = normalizarTelefone(d.telefone);
+  if (!telefone) return erroNoForm(form, "Telefone não reconhecido. Use DDD + número — por exemplo (44) 99888-7777.");
+
+  const editandoId = form.dataset.lead;
+  const valor = d.valorEstimado ? Number(String(d.valorEstimado).replace(/\./g, "").replace(",", ".")) : null;
+
+  if (editandoId) {
+    const l = leadDe(editandoId);
+    const ct = contatoDe(l.contatoId);
+    ct.nome = nome; ct.telefone = telefone; ct.email = d.email || null;
+    Object.assign(l, {
+      empresa: d.empresa || null, cidade: d.cidade || null, origem: d.origem || null,
+      servico: d.servico || null, valorEstimado: Number.isFinite(valor) ? valor : null,
+      temperatura: d.temperatura || null, responsavelId: d.responsavelId || S.usuarioId,
+    });
+    registrar("lead", l.id, "lead.editado");
+    salvar(); fecharModal(); render(); toast("Alterações salvas");
+    return;
+  }
+
+  // Contato existente pelo telefone, ou um novo. É a âncora de identidade:
+  // se essa pessoa já falou com a agência, o lead nasce ligado ao histórico.
+  let ct = S.contatos.find((c) => c.telefone === telefone);
+  const reaproveitado = Boolean(ct);
+  if (!ct) { ct = { id: uid(), nome, telefone, email: d.email || null }; S.contatos.push(ct); }
+
+  const naColuna = leadsVivos().filter((l) => l.etapaId === "e1").sort((a, b) => a.ordem - b.ordem);
+  const l = {
+    id: uid(), contatoId: ct.id, etapaId: "e1",
+    ordem: aoInicio(naColuna.length ? naColuna[0].ordem : null),
+    empresa: d.empresa || null, cidade: d.cidade || null, origem: d.origem || null,
+    servico: d.servico || null, valorEstimado: Number.isFinite(valor) ? valor : null,
+    temperatura: d.temperatura || null, responsavelId: d.responsavelId || S.usuarioId,
+    observacoes: null, proximaAcao: null, proximoContatoEm: null,
+    motivoPerda: null, fechadoEm: null, perdidoEm: null, clienteId: null,
+    criadoEm: new Date().toISOString(),
+  };
+  S.leads.push(l);
+  registrar("lead", l.id, "lead.criado", { contatoReaproveitado: reaproveitado });
+
+  salvar(); fecharModal(); ir(`#/lead/${l.id}`);
+  toast(reaproveitado ? "Lead criado — o contato já existia, histórico aproveitado" : "Lead criado");
+}
+
+function salvarCliente(form, d) {
+  const nome = (d.nome || "").trim();
+  if (!nome) return erroNoForm(form, "O nome do cliente é obrigatório.");
+
+  const telefone = d.telefone ? normalizarTelefone(d.telefone) : null;
+  if (d.telefone && !telefone) return erroNoForm(form, "Telefone não reconhecido. Use DDD + número.");
+
+  const editandoId = form.dataset.cliente;
+  const campos = {
+    nome, segmento: d.segmento || null, telefone, cidade: d.cidade || null,
+    status: d.status, saude: d.saude, responsavelId: d.responsavelId || null,
+    observacoes: d.observacoes || "", atualizadoEm: new Date().toISOString(),
+  };
+
+  if (editandoId) {
+    const c = clienteDe(editandoId);
+    Object.assign(c, campos);
+    registrar("cliente", c.id, "cliente.editado");
+    salvar(); fecharModal(); render(); toast("Alterações salvas");
+    return;
+  }
+
+  const c = { id: uid(), ...campos, estado: null, contatoId: null, criadoEm: new Date().toISOString() };
+  S.clientes.push(c);
+  registrar("cliente", c.id, "cliente.criado", { nome });
+  salvar(); fecharModal(); ir(`#/cliente/${c.id}`); toast("Cliente criado");
+}
+
+function novaAtividade(form, d) {
+  const leadId = form.dataset.lead;
+  const titulo = (d.titulo || "").trim();
+  if (!titulo) return toast("Descreva a atividade.");
+
+  const agendada = d.agendadaPara ? new Date(d.agendadaPara).toISOString() : null;
+  S.atividades.push({
+    id: uid(), leadId, tipo: d.tipo, titulo,
+    responsavelId: S.usuarioId, agendadaPara: agendada, concluidaEm: null,
+    criadoEm: new Date().toISOString(),
+  });
+
+  // Agendar é definir o próximo contato do lead. Sem isso, o painel mostraria
+  // "sem retorno" para quem tem reunião marcada.
+  if (agendada) {
+    const l = leadDe(leadId);
+    l.proximoContatoEm = agendada.slice(0, 10);
+    l.proximaAcao = titulo;
+  }
+
+  registrar("lead", leadId, "lead.atividade_criada", { titulo });
+  salvar(); render(); toast("Atividade registrada");
+}
+
+function converter(form, d) {
+  const l = leadDe(form.dataset.lead);
+  if (!l || l.clienteId) return;
+
+  const ct = contatoDe(l.contatoId);
+  const nome = (d.nomeCliente || "").trim() || l.empresa || ct.nome;
+
+  const c = {
+    id: uid(), nome, segmento: null, telefone: ct.telefone,
+    cidade: l.cidade || null, estado: null, status: "onboarding", saude: "verde",
+    responsavelId: l.responsavelId, contatoId: l.contatoId,
+    observacoes: l.observacoes || "",
+    criadoEm: new Date().toISOString(), atualizadoEm: new Date().toISOString(),
+  };
+  S.clientes.push(c);
+
+  const ganho = ETAPAS.find((x) => x.tipo === "ganho");
+  l.clienteId = c.id;
+  l.fechadoEm = new Date().toISOString();
+  l.perdidoEm = null;
+  if (ganho) l.etapaId = ganho.id;
+
+  registrar("lead", l.id, "lead.convertido", { cliente: nome, clienteId: c.id });
+  registrar("cliente", c.id, "cliente.criado", { nome, origem: "onboarding", leadId: l.id });
+
+  salvar(); ir(`#/cliente/${c.id}`);
+  toast("Virou cliente — o contato e o histórico continuam os mesmos");
+}
+
+function motivoPerda(form, d) {
+  const l = leadDe(form.dataset.lead);
+  l.motivoPerda = d.motivo || null;
+  registrar("lead", l.id, "lead.perdido", { motivo: d.motivo || null });
+  salvar(); render(); toast("Motivo registrado");
+}
+
+function salvarDemanda(form, d) {
+  const titulo = (d.titulo || "").trim();
+  if (!titulo) return erroNoForm(form, "Descreva o que precisa ser feito.");
+  if (!d.clienteId) return erroNoForm(form, "Escolha o cliente.");
+
+  const campos = {
+    titulo, clienteId: d.clienteId, tipo: d.tipo, responsavelId: d.responsavelId,
+    prioridade: d.prioridade, prazo: d.prazo || null, descricao: d.descricao || null,
+  };
+  const editandoId = form.dataset.id;
+
+  if (editandoId) {
+    const atual = demandaDe(editandoId);
+    const mudouFase = atual.fase !== d.fase;
+    Object.assign(atual, campos);
+    registrar("demanda", atual.id, "demanda.editada");
+    salvar(); fecharModal();
+    // A fase passa pelo mesmo caminho do arrasto: é lá que mora a regra de
+    // concluir e a de abrir aprovação. Duplicá-la aqui seria criar duas verdades.
+    if (mudouFase) moverDemanda(atual.id, d.fase, null);
+    else { render(); toast("Demanda salva"); }
+    return;
+  }
+
+  const naFase = demandasVivas().filter((x) => x.fase === d.fase).sort((a, b) => a.ordem - b.ordem);
+  const nova = {
+    id: uid(), ...campos, fase: "backlog",
+    ordem: aoInicio(naFase.length ? naFase[0].ordem : null),
+    criadoEm: new Date().toISOString(), concluidaEm: null,
+  };
+  S.demandas.push(nova);
+  registrar("demanda", nova.id, "demanda.criada", { titulo });
+  salvar(); fecharModal();
+  if (d.fase !== "backlog") moverDemanda(nova.id, d.fase, null);
+  else { ir("#/operacional"); toast("Demanda criada"); }
+}
+
+function novaAprovacao(form, d) {
+  const titulo = (d.titulo || "").trim();
+  if (!titulo) return erroNoForm(form, "Descreva o que está sendo enviado.");
+
+  S.aprovacoes.push({
+    id: uid(), clienteId: d.clienteId, demandaId: null, titulo, tipo: d.tipo,
+    status: "pendente", enviadoEm: new Date().toISOString(), respondidoEm: null, comentario: null,
+  });
+  salvar(); fecharModal(); ir("#/aprovacoes"); toast("Enviado para aprovação");
+}
+
+function responderAprovacao(form, botao) {
+  const a = S.aprovacoes.find((x) => x.id === form.dataset.id);
+  const decisao = botao && botao.value;
+  const comentario = (new FormData(form).get("comentario") || "").trim();
+
+  if (decisao === "ajuste" && !comentario) {
+    return erroNoForm(form, "Escreva o que o cliente pediu — sem isso ninguém sabe o que refazer.");
+  }
+
+  a.status = decisao;
+  a.comentario = comentario || null;
+  a.respondidoEm = new Date().toISOString();
+
+  // Aprovar fecha a demanda que gerou o pedido; pedir ajuste devolve para a
+  // fila de quem faz, com o comentário virando o detalhe da tarefa.
+  if (a.demandaId) {
+    const d = demandaDe(a.demandaId);
+    if (d) {
+      if (decisao === "aprovado") moverDemanda(d.id, "concluida", null);
+      else {
+        d.fase = "fazendo";
+        d.descricao = comentario;
+        registrar("demanda", d.id, "demanda.ajuste_pedido", { comentario });
+      }
+    }
+  }
+
+  registrar("cliente", a.clienteId, decisao === "aprovado" ? "aprovacao.aprovada" : "aprovacao.ajuste", { titulo: a.titulo });
+  salvar(); render();
+  toast(decisao === "aprovado" ? "Aprovação registrada" : "Ajuste registrado — voltou para “Fazendo”");
+}
+
+function salvarSenha(form, d) {
+  if (!d.servico || !d.usuario || !d.segredo) return erroNoForm(form, "Serviço, usuário e senha são obrigatórios.");
+
+  const campos = {
+    clienteId: d.clienteId, servico: d.servico.trim(), usuario: d.usuario.trim(),
+    segredo: d.segredo, url: d.url || null, atualizadoEm: new Date().toISOString(),
+  };
+  const editandoId = form.dataset.id;
+
+  if (editandoId) Object.assign(S.senhas.find((x) => x.id === editandoId), campos);
+  else S.senhas.push({ id: uid(), ...campos });
+
+  salvar(); fecharModal(); render(); toast("Acesso guardado");
+}
+
+function salvarArquivo(form, d) {
+  const nome = (d.nome || "").trim();
+  if (!nome) return erroNoForm(form, "Dê um nome ao arquivo.");
+
+  const mb = numero(d.mb);
+  S.arquivos.push({
+    id: uid(), clienteId: d.clienteId, nome, tipo: d.tipo,
+    tamanho: Math.round((mb || 1) * 1048576), criadoEm: new Date().toISOString(),
+  });
+  salvar(); fecharModal(); render(); toast("Arquivo registrado");
+}
+
+function salvarDespesa(form, d) {
+  const valor = numero(d.valor);
+  if (!d.descricao || !d.descricao.trim()) return erroNoForm(form, "Descreva a despesa.");
+  if (valor === null || valor <= 0) return erroNoForm(form, "Informe um valor — por exemplo 480 ou 1.250,90.");
+
+  S.despesas.push({
+    id: uid(), descricao: d.descricao.trim(), categoria: d.categoria,
+    valor, vencimento: d.vencimento, pagoEm: null, recorrente: false,
+  });
+  // Salta para a competência do lançamento: senão a despesa some da tela,
+  // e quem lançou acha que não gravou.
+  mesFinanceiro = d.vencimento.slice(0, 7);
+  salvar(); fecharModal(); render(); toast("Despesa lançada");
+}
+
+function salvarEstrategia(form, d) {
+  const clienteId = form.dataset.id;
+  const objetivo = (d.objetivo || "").trim();
+  if (!objetivo) return erroNoForm(form, "Escreva ao menos o objetivo.");
+
+  const campos = {
+    objetivo, publico: (d.publico || "").trim(), canais: (d.canais || "").trim(),
+    verbaMensal: numero(d.verbaMensal), atualizadoEm: new Date().toISOString(),
+  };
+  const atual = S.estrategias.find((x) => x.clienteId === clienteId);
+  if (atual) Object.assign(atual, campos);
+  else S.estrategias.push({ id: uid(), clienteId, ...campos });
+
+  registrar("cliente", clienteId, "estrategia.atualizada");
+  salvar(); fecharModal(); render(); toast("Estratégia salva");
+}
+
+/* --------------------------------------------------------------- atalhos */
+document.addEventListener("keydown", (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); buscaAberta ? fecharBusca() : abrirBusca(); }
+  if (e.key === "Escape") { if (buscaAberta) fecharBusca(); else fecharModal(); }
+});
+
+window.addEventListener("hashchange", render);
+render();
+</script>
