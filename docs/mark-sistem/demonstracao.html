@@ -258,6 +258,44 @@
   .dia__nome { font-weight: 600; text-transform: capitalize; }
   .dia--hoje .dia__nome { color: var(--acento-forte); }
 
+  /* ---------- caixa de entrada do WhatsApp ---------- */
+  .caixa { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); border: 1px solid var(--border); border-radius: var(--raio-card); background: var(--card); overflow: hidden; min-height: 520px; }
+  .caixa__lista { border-right: 1px solid var(--border); overflow-y: auto; max-height: 70vh; }
+  .caixa__item { display: block; width: 100%; text-align: left; border: none; border-bottom: 1px solid var(--border-2); background: none; font: inherit; color: inherit; padding: 12px 14px; cursor: pointer; }
+  .caixa__item:hover { background: var(--card-2); }
+  .caixa__item[aria-current="true"] { background: var(--acento-suave); }
+  .caixa__topo { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+  .caixa__nome { font-weight: 600; }
+  .caixa__previa { color: var(--ink-3); font-size: 12.5px; margin: 3px 0 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .caixa__painel { display: flex; flex-direction: column; min-width: 0; }
+  .caixa__cabeca { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .caixa__fio { flex: 1; overflow-y: auto; max-height: 52vh; padding: 16px; display: flex; flex-direction: column; gap: 8px; background: var(--surface); }
+  .bolha { max-width: min(78%, 460px); padding: 8px 12px; border-radius: 12px; font-size: 13.5px; box-shadow: var(--elev-1); overflow-wrap: anywhere; }
+  .bolha--recebida { align-self: flex-start; background: var(--card); border: 1px solid var(--border); border-bottom-left-radius: 3px; }
+  .bolha--enviada { align-self: flex-end; background: var(--acento); color: var(--acento-texto); border-bottom-right-radius: 3px; }
+  .bolha__hora { display: block; font-size: 10.5px; opacity: .75; margin-top: 3px; text-align: right; }
+  .caixa__responder { border-top: 1px solid var(--border); padding: 12px 16px; display: flex; gap: 8px; align-items: flex-end; }
+  .caixa__responder textarea { flex: 1; min-height: 38px; max-height: 120px; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--raio); background: var(--card); color: var(--ink); font: inherit; resize: vertical; }
+  @media (max-width: 860px) { .caixa { grid-template-columns: 1fr; } .caixa__lista { border-right: none; border-bottom: 1px solid var(--border); max-height: 240px; } }
+
+  /* ---------- mural e wiki ---------- */
+  .mural-item { border-top: 1px solid var(--border-2); padding: 16px; }
+  .mural-item:first-child { border-top: none; }
+  .mural-item__cabeca { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; margin-bottom: 6px; }
+  .mural-item__titulo { font-weight: 650; font-size: 15px; margin: 0; }
+  .mural-item__texto { margin: 0; white-space: pre-wrap; }
+  .comentario { border-left: 2px solid var(--border); padding: 6px 0 6px 12px; margin-top: 10px; font-size: 13px; }
+  .fatia { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+  .fatia__cartao { display: block; text-decoration: none; color: inherit; background: var(--card); border: 1px solid var(--border); border-radius: var(--raio-card); padding: 16px; transition: border-color 150ms ease-out; cursor: pointer; }
+  .fatia__cartao:hover { border-color: var(--acento); }
+  .prosa { white-space: pre-wrap; line-height: 1.65; }
+
+  /* ---------- nota de satisfação ---------- */
+  .notas { display: flex; gap: 4px; flex-wrap: wrap; }
+  .nota { width: 34px; height: 34px; border-radius: var(--raio); border: 1px solid var(--border); background: var(--card); font: inherit; font-variant-numeric: tabular-nums; cursor: pointer; color: var(--ink-2); }
+  .nota:hover { border-color: var(--acento); color: var(--acento-forte); }
+  .medalha { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; font-weight: 650; font-variant-numeric: tabular-nums; color: var(--acento-texto); flex: none; }
+
   @media (prefers-reduced-motion: reduce) { * { transition-duration: .01ms !important; animation-duration: .01ms !important; } }
 </style>
 
@@ -370,7 +408,7 @@ function esc(s) {
 }
 
 /* ------------------------------------------------------------------ estado */
-const CHAVE = "mark-sistem-demo-v2";
+const CHAVE = "mark-sistem-demo-v3";
 
 const ETAPAS = [
   { id: "e1", nome: "Lead novo", tipo: "aberta" },
@@ -423,6 +461,15 @@ const PRIORIDADES = { alta: "Alta", media: "Média", baixa: "Baixa" };
 
 const STATUS_APROVACAO = { pendente: "Aguardando", aprovado: "Aprovado", ajuste: "Pedido de ajuste" };
 
+const STATUS_PROPOSTA = {
+  rascunho: "Rascunho", enviada: "Enviada", aceita: "Aceita", recusada: "Recusada", expirada: "Expirada",
+};
+
+const CATEGORIAS_WIKI = {
+  processo: "Processo", padrao: "Padrão de entrega", comercial: "Comercial",
+  ferramenta: "Ferramenta", onboarding: "Onboarding",
+};
+
 const CATEGORIAS_DESPESA = {
   ferramentas: "Ferramentas", equipe: "Equipe", impostos: "Impostos",
   estrutura: "Estrutura", midia: "Mídia", outro: "Outro",
@@ -435,9 +482,13 @@ const CATEGORIAS_DESPESA = {
  */
 const PAPEIS = {
   Proprietário: ["*"],
-  Comercial: ["vendas.*", "clientes.ler", "agenda.*", "operacional.ler", "arquivos.ler"],
-  "Gestor de Tráfego": ["clientes.*", "operacional.*", "trafego.*", "estrategia.*", "agenda.*", "arquivos.*", "cofre.ler", "aprovacoes.*", "vendas.ler", "financeiro.ler"],
-  Criação: ["operacional.*", "clientes.ler", "arquivos.*", "agenda.*", "aprovacoes.ler"],
+  Comercial: ["vendas.*", "propostas.*", "whatsapp.*", "clientes.ler", "agenda.*",
+    "operacional.ler", "arquivos.ler", "mural.*", "wiki.ler"],
+  "Gestor de Tráfego": ["clientes.*", "operacional.*", "trafego.*", "estrategia.*", "agenda.*",
+    "arquivos.*", "cofre.ler", "aprovacoes.*", "vendas.ler", "financeiro.ler", "whatsapp.*",
+    "propostas.ler", "mural.*", "wiki.*", "pesquisa.*"],
+  Criação: ["operacional.*", "clientes.ler", "arquivos.*", "agenda.*", "aprovacoes.ler",
+    "mural.*", "wiki.ler"],
 };
 
 function concede(permissoes, alvo) {
@@ -476,6 +527,9 @@ function dadosIniciais() {
     c("Marcos Gouveia", "44 99721-0043"),
     c("Helena Carvalho", "44 99884-1129"),
     c("Bruno Home", "44 99612-7754"),
+    // Escreveu no WhatsApp e não é lead nem cliente ainda. É o caso que a
+    // caixa de entrada precisa saber tratar sem obrigar ninguém a recadastrar.
+    c("Vanessa Prado", "44 99306-5521"),
   ];
 
   const acha = (n) => contatos.find((x) => x.nome === n).id;
@@ -623,10 +677,126 @@ function dadosIniciais() {
     }
   });
 
+  /* ------------------------------------------------------------- WhatsApp */
+  // A conversa aponta para o contato, não para o lead nem para o cliente. É o
+  // que faz o histórico atravessar a conversão sem ninguém copiar nada.
+  const conversas = [], mensagens = [];
+  const conversa = (nomeContato, itens, extra = {}) => {
+    const c = { id: uid(), contatoId: acha(nomeContato), canal: "whatsapp",
+      status: "aberta", responsavelId: "u1", ultimaEm: null, naoLidas: 0, ...extra };
+    itens.forEach(([direcao, texto, quandoDias]) => {
+      const criadoEm = dias(quandoDias);
+      mensagens.push({ id: uid(), conversaId: c.id, direcao, texto, criadoEm,
+        autorId: direcao === "enviada" ? c.responsavelId : null });
+      c.ultimaEm = criadoEm;
+    });
+    c.naoLidas = c.status !== "resolvida" && itens[itens.length - 1][0] === "recebida" ? 1 : 0;
+    conversas.push(c);
+    return c;
+  };
+
+  conversa("Rafael Munhoz", [
+    ["recebida", "Boa tarde! Vi o trabalho de vocês na clínica do Dr. Cauê. Fazem para consultório odontológico?", -3.2],
+    ["enviada", "Boa tarde, Rafael! Fazemos sim. Você já anuncia hoje ou seria começar do zero?", -3.1],
+    ["recebida", "Já tentei impulsionar sozinho, mas não veio nada. Queria entender o plano de tráfego.", -3.05],
+    ["enviada", "Perfeito. Consigo te mandar uma proposta hoje ainda. Qual o melhor horário para uma ligação de 15 minutos?", -0.4],
+    ["recebida", "Depois das 18h eu consigo falar.", -0.2],
+  ], { responsavelId: "u1" });
+
+  conversa("Garagem 3", [
+    ["recebida", "Fechou o diagnóstico presencial? Amanhã 14h está de pé?", -1.1],
+    ["enviada", "Está de pé sim! Chego às 14h na oficina.", -1.0],
+  ], { responsavelId: "u1" });
+
+  conversa("Helena Carvalho", [
+    ["enviada", "Helena, subimos o criativo novo de agosto. Assim que você aprovar eu coloco no ar.", -2.2],
+    ["recebida", "Vi aqui. A foto principal não ficou boa, dá para trocar? E o preço podia estar maior.", -2.0],
+  ], { responsavelId: "u3" });
+
+  conversa("Marcos Gouveia", [
+    ["enviada", "Bom dia, Marcos! Relatório de julho está pronto, te mando por aqui.", -20],
+    ["recebida", "Recebi, obrigado. Ficou bom o resultado.", -19.9],
+  ], { responsavelId: "u3", status: "resolvida" });
+
+  conversa("Vanessa Prado", [
+    ["recebida", "Boa noite! Vocês atendem loja de roupa feminina? Vi o Instagram de vocês.", -0.6],
+    ["recebida", "É uma loja pequena, tenho medo de investir e não dar certo.", -0.55],
+  ], { responsavelId: "u2" });
+
+  conversa("Studio Bonatto", [
+    ["recebida", "Oi, quanto vocês cobram para cuidar do Instagram?", -2.1],
+  ], { responsavelId: "u2" });
+
+  /* ------------------------------------------------------------- propostas */
+  const munhoz = leads.find((x) => x.empresa === "Munhoz Odontologia");
+  const propostas = [
+    { id: uid(), leadId: garagem.id, clienteId: null, titulo: "Gestão completa — Garagem 3",
+      valor: 6500, status: "enviada", enviadoEm: dias(-4), respondidoEm: null,
+      validade: soData(6), criadoEm: dias(-5),
+      itens: [
+        { descricao: "Gestão de tráfego (Meta + Google)", valor: 3500 },
+        { descricao: "Social media — 12 posts/mês", valor: 2000 },
+        { descricao: "Produção de criativos", valor: 1000 },
+      ] },
+    { id: uid(), leadId: munhoz.id, clienteId: null, titulo: "Tráfego + social — Munhoz Odontologia",
+      valor: 3500, status: "rascunho", enviadoEm: null, respondidoEm: null,
+      validade: null, criadoEm: dias(-1),
+      itens: [
+        { descricao: "Gestão de tráfego", valor: 2200 },
+        { descricao: "Social media — 8 posts/mês", valor: 1300 },
+      ] },
+    { id: uid(), leadId: leads.find((x) => x.contatoId === acha("Franciele Bill")).id, clienteId: null,
+      titulo: "Social media — Franciele Bill", valor: 3200, status: "aceita",
+      enviadoEm: dias(-8), respondidoEm: dias(-5), validade: soData(-1), criadoEm: dias(-9),
+      itens: [{ descricao: "Social media completo", valor: 3200 }] },
+  ];
+
+  /* ----------------------------------------------------------- mural e wiki */
+  const avisos = [
+    { id: uid(), autorId: "u1", fixado: true, criadoEm: dias(-6),
+      titulo: "Regra nova: proposta só sai depois do diagnóstico",
+      texto: "Parou de valer mandar proposta na primeira conversa. Diagnóstico primeiro — nem que seja de 20 minutos por chamada. Foi o que mudou a taxa de fechamento nos últimos dois meses.",
+      comentarios: [
+        { id: uid(), autorId: "u2", criadoEm: dias(-5.8), texto: "Concordo. Os que fecharam vieram todos de diagnóstico." },
+      ] },
+    { id: uid(), autorId: "u3", fixado: false, criadoEm: dias(-2),
+      titulo: "Meta liberou o formato novo de anúncio de catálogo",
+      texto: "Testei na Óticas Gouveia e o custo por resultado caiu quase 20%. Vou levar para Casa Carvalho e Bom pra Home também.",
+      comentarios: [] },
+    { id: uid(), autorId: "u4", fixado: false, criadoEm: dias(-0.3),
+      titulo: "Banco de fotos do ensaio da Kellin está no drive",
+      texto: "Separei as 40 melhores por categoria. Quem for montar post, usa a pasta “selecionadas”.",
+      comentarios: [] },
+  ];
+
+  const wiki = [
+    { id: uid(), categoria: "processo", autorId: "u1", atualizadoEm: dias(-30),
+      titulo: "Como a agência recebe um cliente novo",
+      conteudo: "1. Assinatura do contrato e registro do cliente no sistema.\n2. Reunião de onboarding de 1 hora, com o responsável de tráfego junto.\n3. Coleta de acessos — tudo vai para o cofre, nunca por WhatsApp.\n4. Estratégia escrita antes de qualquer campanha subir.\n5. Primeira entrega em até 10 dias corridos." },
+    { id: uid(), categoria: "padrao", autorId: "u4", atualizadoEm: dias(-14),
+      titulo: "Padrão de criativo para tráfego",
+      conteudo: "Formato: 1080×1350 para feed, 1080×1920 para stories.\nA oferta tem que ser legível a 3 segundos de distância no celular.\nLogo do cliente sempre no canto, nunca no meio.\nTexto na imagem: no máximo 6 palavras." },
+    { id: uid(), categoria: "comercial", autorId: "u2", atualizadoEm: dias(-9),
+      titulo: "O que perguntar no diagnóstico",
+      conteudo: "— Quanto vale um cliente novo para você?\n— Quantos você consegue atender por mês sem quebrar a operação?\n— O que já tentou e não funcionou?\n— Quem responde o WhatsApp hoje, e em quanto tempo?\n\nA última pergunta derruba mais venda do que preço." },
+    { id: uid(), categoria: "ferramenta", autorId: "u3", atualizadoEm: dias(-45),
+      titulo: "Meta Business — dar acesso sem entregar a senha",
+      conteudo: "Nunca peça a senha do Facebook do cliente. Peça para ele adicionar a agência como parceira pelo Business Manager, com o ID da Marktiva. Assim o acesso é revogável e não passa por ninguém." },
+  ];
+
+  /* -------------------------------------------------------------- pesquisa */
+  const pesquisas = [
+    { id: uid(), clienteId: cl("Óticas Gouveia"), enviadoEm: dias(-25), respondidoEm: dias(-24), nota: 10, comentario: "Atendimento rápido e resultado aparecendo. Só elogios." },
+    { id: uid(), clienteId: cl("Bom pra Home"), enviadoEm: dias(-25), respondidoEm: dias(-23), nota: 9, comentario: "Muito bom. Queria só relatório um pouco mais simples de ler." },
+    { id: uid(), clienteId: cl("Casa Carvalho"), enviadoEm: dias(-25), respondidoEm: dias(-22), nota: 6, comentario: "Demora para responder quando peço ajuste no criativo." },
+    { id: uid(), clienteId: cl("Kellin Obana"), enviadoEm: dias(-4), respondidoEm: null, nota: null, comentario: null },
+  ];
+
   return {
     contatos, clientes, leads, atividades, eventos,
     demandas, aprovacoes, contratos, cobrancas, despesas,
     senhas, arquivos, estrategias, trafego,
+    conversas, mensagens, propostas, avisos, wiki, pesquisas,
     usuarioId: "u1",
   };
 }
@@ -681,6 +851,33 @@ const aprovacoesPendentes = () => S.aprovacoes.filter((a) => a.status === "pende
 /** Só o que já venceu conta como inadimplência; o que vence depois é a receber. */
 const vencidas = () => emAberto().filter((b) => b.vencimento < hojeISO());
 
+const conversaDe = (id) => S.conversas.find((c) => c.id === id);
+const propostaDe = (id) => S.propostas.find((p) => p.id === id);
+const artigoDe = (id) => S.wiki.find((a) => a.id === id);
+const mensagensDe = (id) => S.mensagens.filter((m) => m.conversaId === id)
+  .sort((a, b) => a.criadoEm.localeCompare(b.criadoEm));
+const conversasAbertas = () => S.conversas.filter((c) => c.status === "aberta" && c.naoLidas > 0);
+
+/** O que este contato é hoje — a conversa não sabe, e não precisa saber. */
+function quemE(contatoId) {
+  const cliente = S.clientes.find((c) => c.contatoId === contatoId && !c.excluidoEm);
+  if (cliente) return { tipo: "Cliente", nome: cliente.nome, href: `#/cliente/${cliente.id}` };
+  const lead = leadsVivos().find((l) => l.contatoId === contatoId);
+  if (lead) return { tipo: "Lead", nome: etapaDe(lead.etapaId).nome, href: `#/lead/${lead.id}` };
+  return null;
+}
+
+const respondidas = () => S.pesquisas.filter((p) => p.nota !== null);
+
+/** NPS: promotores menos detratores, em pontos percentuais. */
+function nps() {
+  const r = respondidas();
+  if (!r.length) return null;
+  const prom = r.filter((x) => x.nota >= 9).length;
+  const detr = r.filter((x) => x.nota <= 6).length;
+  return Math.round(((prom - detr) / r.length) * 100);
+}
+
 const tamanho = (bytes) => {
   if (bytes < 1024) return bytes + " B";
   if (bytes < 1048576) return Math.round(bytes / 1024) + " KB";
@@ -725,6 +922,12 @@ const ICONES = {
   alvo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg>',
   grafico: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16" stroke-linecap="round"/><path d="m7.5 15 3.5-4.5 3 2.5L20 7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   engrenagem: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.4M12 18.8v2.4M21.2 12h-2.4M5.2 12H2.8M18.5 5.5l-1.7 1.7M7.2 16.8l-1.7 1.7M18.5 18.5l-1.7-1.7M7.2 7.2 5.5 5.5" stroke-linecap="round"/></svg>',
+  balao: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.5 11.5a8 8 0 0 1-11.7 7.1L4 20l1.4-4.6A8 8 0 1 1 20.5 11.5Z" stroke-linejoin="round"/></svg>',
+  documento: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13.5 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.5L13.5 3Z" stroke-linejoin="round"/><path d="M13.5 3v5.5H19M8.5 13h7M8.5 16.5h4.5" stroke-linecap="round"/></svg>',
+  mural: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M12 18v3M8 8h8M8 12h5" stroke-linecap="round"/></svg>',
+  livro: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19v15H6.5A2.5 2.5 0 0 0 4 20.5v-15Z" stroke-linejoin="round"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H19v3H6.5A2.5 2.5 0 0 1 4 20.5Z" stroke-linejoin="round"/></svg>',
+  estrela: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3.5 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9L12 16.9l-5.3 2.8 1.1-5.9-4.3-4.1 5.9-.8L12 3.5Z" stroke-linejoin="round"/></svg>',
+  lixeira: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6.5h16M9.5 6.5V4.5h5v2M6.5 6.5 7.5 20a1.5 1.5 0 0 0 1.5 1.4h6a1.5 1.5 0 0 0 1.5-1.4l1-13.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 };
 
 /**
@@ -734,7 +937,9 @@ const ICONES = {
 const MENU = [
   { grupo: null, itens: [{ href: "#/painel", rotulo: "Painel", icone: "painel", perm: null }] },
   { grupo: "Comercial", itens: [
+    { href: "#/whatsapp", rotulo: "WhatsApp", icone: "balao", perm: "whatsapp.ler" },
     { href: "#/vendas", rotulo: "Pipeline", icone: "funil", perm: "vendas.ler" },
+    { href: "#/propostas", rotulo: "Propostas", icone: "documento", perm: "propostas.ler" },
     { href: "#/agenda", rotulo: "Agenda", icone: "calendario", perm: "agenda.ler" },
   ] },
   { grupo: "Entrega", itens: [
@@ -746,10 +951,16 @@ const MENU = [
     { href: "#/clientes", rotulo: "Clientes", icone: "predio", perm: "clientes.ler" },
     { href: "#/estrategias", rotulo: "Estratégias", icone: "alvo", perm: "estrategia.ler" },
     { href: "#/financeiro", rotulo: "Financeiro", icone: "dinheiro", perm: "financeiro.ler" },
+    { href: "#/pesquisa", rotulo: "Satisfação", icone: "estrela", perm: "pesquisa.ler" },
+  ] },
+  { grupo: "Time", itens: [
+    { href: "#/mural", rotulo: "Mural", icone: "mural", perm: "mural.ler" },
+    { href: "#/wiki", rotulo: "Wiki", icone: "livro", perm: "wiki.ler" },
   ] },
   { grupo: "Apoio", itens: [
     { href: "#/arquivos", rotulo: "Arquivos", icone: "pasta", perm: "arquivos.ler" },
     { href: "#/cofre", rotulo: "Senhas e acessos", icone: "cadeado", perm: "cofre.ler" },
+    { href: "#/lixeira", rotulo: "Lixeira", icone: "lixeira", perm: null },
     { href: "#/config", rotulo: "Configurações", icone: "engrenagem", perm: null },
   ] },
 ];
@@ -761,6 +972,9 @@ const GUARDAS = [
   ["#/trafego", "trafego.ler"], ["#/clientes", "clientes.ler"], ["#/cliente/", "clientes.ler"],
   ["#/estrategias", "estrategia.ler"], ["#/financeiro", "financeiro.ler"],
   ["#/arquivos", "arquivos.ler"], ["#/cofre", "cofre.ler"],
+  ["#/whatsapp", "whatsapp.ler"], ["#/propostas", "propostas.ler"], ["#/proposta/", "propostas.ler"],
+  ["#/mural", "mural.ler"], ["#/wiki", "wiki.ler"], ["#/artigo/", "wiki.ler"],
+  ["#/pesquisa", "pesquisa.ler"],
 ];
 
 function casca(conteudo) {
@@ -773,8 +987,9 @@ function casca(conteudo) {
     return `
       ${g.grupo ? `<div class="nav__grupo">${g.grupo}</div>` : ""}
       ${itens.map((i) => {
-        const aviso = i.href === "#/aprovacoes" && aprovacoesPendentes().length
-          ? `<span class="pino">${aprovacoesPendentes().length}</span>` : "";
+        const conta = i.href === "#/aprovacoes" ? aprovacoesPendentes().length
+          : i.href === "#/whatsapp" ? conversasAbertas().length : 0;
+        const aviso = conta ? `<span class="pino">${conta}</span>` : "";
         return `
         <a class="nav__item" href="${i.href}" ${rota.startsWith(i.href) ? 'aria-current="page"' : ""}>
           ${ICONES[i.icone]}<span>${i.rotulo}</span>${aviso}
@@ -878,6 +1093,8 @@ function telaPainel() {
         ${ind("Sem retorno", inteiro.format(semRetorno.length), "#/vendas", semRetorno.length ? "risco" : null, semRetorno.length ? "A data de retorno já passou" : null)}
         ${ind("Fechados", inteiro.format(fechados.length), "#/vendas")}
         ${ind("Valor em aberto", moeda.format(valorAberto), "#/vendas")}
+        ${pode("whatsapp.ler") ? ind("Esperando resposta", inteiro.format(conversasAbertas().length), "#/whatsapp", conversasAbertas().length ? "atencao" : null, "No WhatsApp") : ""}
+        ${pode("propostas.ler") ? ind("Propostas na rua", moeda.format(S.propostas.filter((p) => p.status === "enviada").reduce((s, p) => s + p.valor, 0)), "#/propostas") : ""}
       </div>
     </section>` : ""}
 
@@ -890,6 +1107,7 @@ function telaPainel() {
         ${ind("Precisam de atenção", inteiro.format(cli.filter((c) => c.saude === "amarelo").length), "#/clientes", cli.some((c) => c.saude === "amarelo") ? "atencao" : null)}
         ${ind("Em risco", inteiro.format(cli.filter((c) => c.saude === "vermelho").length), "#/clientes", cli.some((c) => c.saude === "vermelho") ? "risco" : null)}
         ${ind("Inadimplentes", inteiro.format(cli.filter((c) => c.status === "inadimplente").length), "#/clientes?status=inadimplente")}
+        ${pode("pesquisa.ler") && nps() !== null ? ind("NPS", String(nps()), "#/pesquisa", nps() < 0 ? "risco" : nps() < 50 ? "atencao" : null, "Satisfação dos clientes") : ""}
       </div>
     </section>` : ""}
 
@@ -1017,6 +1235,11 @@ function telaLead(id) {
   const perdido = Boolean(l.perdidoEm);
   const atividades = S.atividades.filter((a) => a.leadId === l.id && !a.excluidoEm)
     .sort((a, b) => b.criadoEm.localeCompare(a.criadoEm));
+  // A conversa é do contato, então ela está aqui sem ninguém ter ligado nada.
+  const conversaDoContato = pode("whatsapp.ler")
+    ? S.conversas.find((c) => c.contatoId === l.contatoId) : null;
+  const propostas = S.propostas.filter((p) => p.leadId === l.id)
+    .sort((a, b) => b.criadoEm.localeCompare(a.criadoEm));
 
   const dado = (rotulo, valor) =>
     `<div><div class="dado__rotulo">${rotulo}</div><div class="dado__valor">${valor || "—"}</div></div>`;
@@ -1034,6 +1257,7 @@ function telaLead(id) {
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <a class="btn btn--discreto" href="#/vendas">Voltar ao quadro</a>
+        ${conversaDoContato ? `<button class="btn" data-acao="abrir-conversa-de" data-id="${conversaDoContato.id}">Ver conversa</button>` : ""}
         ${zap ? `<a class="btn btn--acento" href="${zap}" target="_blank" rel="noreferrer">Abrir no WhatsApp</a>` : ""}
       </div>
     </div>
@@ -1108,6 +1332,21 @@ function telaLead(id) {
       </div>
 
       <div style="display:grid;gap:16px;align-content:start">
+        ${pode("propostas.ler") ? `
+          <div class="cartao">
+            <div class="cartao__cabeca"><strong>Propostas</strong>
+              ${!perdido && (pode("propostas.editar") || pode("propostas.*"))
+                ? `<button class="btn btn--pequeno" data-acao="nova-proposta" data-lead="${l.id}">Gerar</button>` : ""}</div>
+            <div class="cartao__corpo">
+              ${propostas.length === 0 ? '<p class="pagina__sub" style="margin:0">Nenhuma proposta ainda.</p>' : `
+                <ul class="lista-seca">${propostas.map((p) => `
+                  <li><div style="min-width:0">
+                    <a class="link-acento" href="#/proposta/${p.id}" style="font-weight:550">${esc(p.titulo)}</a>
+                    <div class="pagina__sub num">${moedaExata.format(p.valor)}</div>
+                  </div>${seloProposta(p.status)}</li>`).join("")}</ul>`}
+            </div>
+          </div>` : ""}
+
         ${!perdido && !l.clienteId ? `
           <div class="cartao">
             <div class="cartao__cabeca"><strong>Fechou?</strong></div>
@@ -1191,6 +1430,10 @@ function descreverEvento(e) {
     case "estrategia.atualizada": return "Estratégia atualizada";
     case "senha.revelada": return "Senha revelada";
     case "senha.copiada": return "Senha copiada";
+    case "proposta.criada": return `Proposta criada: ${esc(e.dados.titulo)}`;
+    case "proposta.aceita": return `Proposta aceita — ${moedaExata.format(e.dados.valor)}`;
+    case "proposta.recusada": return "Proposta recusada";
+    case "pesquisa.respondida": return `Pesquisa respondida — nota ${e.dados.nota}`;
     default: return esc(e.tipo);
   }
 }
@@ -1279,6 +1522,8 @@ function telaCliente(id) {
   ].filter((a) => !a.perm || pode(a.perm));
 
   const atual = abas.some((a) => a.id === abaCliente) ? abaCliente : "geral";
+  const conversaCliente = pode("whatsapp.ler") && c.contatoId
+    ? S.conversas.find((x) => x.contatoId === c.contatoId) : null;
 
   return `
     <div class="pagina__cabeca">
@@ -1289,7 +1534,8 @@ function telaCliente(id) {
         </div></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <a class="btn btn--discreto" href="#/clientes">Voltar</a>
-        ${linkWhatsApp(c.telefone) ? `<a class="btn" href="${linkWhatsApp(c.telefone)}" target="_blank" rel="noreferrer">WhatsApp</a>` : ""}
+        ${conversaCliente ? `<button class="btn" data-acao="abrir-conversa-de" data-id="${conversaCliente.id}">Ver conversa</button>`
+          : linkWhatsApp(c.telefone) ? `<a class="btn" href="${linkWhatsApp(c.telefone)}" target="_blank" rel="noreferrer">WhatsApp</a>` : ""}
         ${pode("clientes.editar") ? `<button class="btn btn--acento" data-acao="editar-cliente" data-id="${c.id}">Editar</button>` : ""}
       </div>
     </div>
@@ -1316,6 +1562,7 @@ function abaGeral(c) {
   const abertas = demandasVivas().filter((d) => d.clienteId === c.id && d.fase !== "concluida");
   const contrato = S.contratos.find((k) => k.clienteId === c.id);
   const pendentes = S.aprovacoes.filter((a) => a.clienteId === c.id && a.status === "pendente");
+  const pesquisa = S.pesquisas.find((p) => p.clienteId === c.id);
   const atrasadas = emAberto().filter((b) => b.clienteId === c.id && b.vencimento < hojeISO());
 
   return `
@@ -1327,6 +1574,9 @@ function abaGeral(c) {
       ${pode("aprovacoes.ler") ? `<div class="indicador"><p class="indicador__rotulo">Esperando o cliente</p><p class="indicador__valor">${pendentes.length}</p></div>` : ""}
       ${pode("financeiro.ler") ? `<div class="indicador"><p class="indicador__rotulo">Em atraso</p>
         <p class="indicador__valor"${atrasadas.length ? ' style="color:var(--crit)"' : ""}>${moeda.format(atrasadas.reduce((s, b) => s + b.valor, 0))}</p></div>` : ""}
+      ${pode("pesquisa.ler") && pesquisa && pesquisa.nota !== null ? `<div class="indicador"><p class="indicador__rotulo">Satisfação</p>
+        <p class="indicador__valor">${pesquisa.nota}<span style="font-size:14px;color:var(--ink-3)">/10</span></p>
+        <p class="indicador__nota">respondida ${quando(pesquisa.respondidoEm)}</p></div>` : ""}
     </div>
 
     <div class="duas-colunas">
@@ -2156,6 +2406,412 @@ function telaConfig() {
     </div>`;
 }
 
+/* ---------------------------------------------------------- tela: WhatsApp */
+let conversaAberta = null;
+
+function telaWhats() {
+  const lista = [...S.conversas].sort((a, b) => (b.ultimaEm || "").localeCompare(a.ultimaEm || ""));
+  if (!lista.length) return vazio("Sem conversas", "Nenhuma conversa registrada ainda.");
+
+  const alvo = lista.find((c) => c.id === conversaAberta) || lista[0];
+  if (alvo.naoLidas) { alvo.naoLidas = 0; salvar(); }
+  const ct = contatoDe(alvo.contatoId);
+  const eleE = quemE(alvo.contatoId);
+  const fio = mensagensDe(alvo.id);
+
+  return `
+    <div class="pagina__cabeca">
+      <div><h1 class="pagina__titulo">WhatsApp</h1>
+        <p class="pagina__sub">${conversasAbertas().length} conversa(s) esperando resposta</p></div>
+    </div>
+
+    <div class="caixa">
+      <div class="caixa__lista">
+        ${lista.map((c) => {
+          const p = contatoDe(c.contatoId);
+          const ultima = mensagensDe(c.id).slice(-1)[0];
+          const papel = quemE(c.contatoId);
+          return `
+            <button type="button" class="caixa__item" aria-current="${c.id === alvo.id}"
+                    data-acao="abrir-conversa" data-id="${c.id}">
+              <div class="caixa__topo">
+                <span class="caixa__nome">${esc(p.nome)}</span>
+                <span class="pagina__sub">${c.ultimaEm ? quando(c.ultimaEm) : ""}</span>
+              </div>
+              <p class="caixa__previa">${ultima ? esc(ultima.texto) : "—"}</p>
+              <div style="display:flex;gap:6px;margin-top:6px;align-items:center;flex-wrap:wrap">
+                ${papel ? `<span class="selo" style="font-size:11px">${papel.tipo}</span>`
+                  : '<span class="selo selo--ambar" style="font-size:11px">sem cadastro</span>'}
+                ${c.naoLidas ? '<span class="pino" style="margin:0">1</span>' : ""}
+                ${c.status === "resolvida" ? '<span class="selo selo--verde" style="font-size:11px">resolvida</span>' : ""}
+              </div>
+            </button>`;
+        }).join("")}
+      </div>
+
+      <div class="caixa__painel">
+        <div class="caixa__cabeca">
+          <div style="min-width:0">
+            <strong>${esc(ct.nome)}</strong>
+            <div class="pagina__sub num">${formatarTelefone(ct.telefone)}
+              ${eleE ? ` · <a class="link-acento" href="${eleE.href}">${eleE.tipo}: ${esc(eleE.nome)}</a>` : ""}</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            ${!eleE && pode("vendas.criar") ? `<button class="btn btn--pequeno btn--acento" data-acao="lead-da-conversa" data-id="${alvo.id}">Virar lead</button>` : ""}
+            <button class="btn btn--pequeno" data-acao="resolver-conversa" data-id="${alvo.id}">
+              ${alvo.status === "resolvida" ? "Reabrir" : "Marcar resolvida"}</button>
+          </div>
+        </div>
+
+        <div class="caixa__fio" id="fio">
+          ${fio.map((m) => `
+            <div class="bolha bolha--${m.direcao}">${esc(m.texto)}
+              <span class="bolha__hora">${fmtDataHora.format(new Date(m.criadoEm))}</span></div>`).join("")}
+        </div>
+
+        ${pode("whatsapp.responder") || pode("whatsapp.*") ? `
+        <form class="caixa__responder" data-form="responder-whats" data-id="${alvo.id}">
+          <textarea name="texto" placeholder="Escreva a resposta" aria-label="Resposta"></textarea>
+          <button class="btn btn--acento" type="submit">Enviar</button>
+        </form>` : ""}
+      </div>
+    </div>
+
+    <div class="caixa-aviso" style="margin-top:16px">
+      A conversa pertence ao <strong>contato</strong> — não ao lead nem ao cliente. É por isso que
+      transformar um lead em cliente não perde nada: os dois apontam para a mesma pessoa, e o fio
+      continua o mesmo. A ligação com a API oficial da Meta fica para a nossa próxima conversa;
+      o modelo de dados aqui já é o que ela vai preencher.
+    </div>`;
+}
+
+/* -------------------------------------------------------- tela: propostas */
+function telaPropostas() {
+  const lista = [...S.propostas].sort((a, b) => b.criadoEm.localeCompare(a.criadoEm));
+  const enviadas = lista.filter((p) => p.status === "enviada");
+  const aceitas = lista.filter((p) => p.status === "aceita");
+  const valorEnviado = enviadas.reduce((s, p) => s + p.valor, 0);
+  const taxa = lista.filter((p) => p.status !== "rascunho").length
+    ? Math.round((aceitas.length / lista.filter((p) => p.status !== "rascunho").length) * 100) : 0;
+
+  return `
+    <div class="pagina__cabeca">
+      <div><h1 class="pagina__titulo">Propostas</h1>
+        <p class="pagina__sub">Enviar move o lead para “Proposta enviada”; aceitar fecha o negócio</p></div>
+      ${pode("propostas.editar") || pode("propostas.*") ? '<button class="btn btn--acento" data-acao="nova-proposta">Nova proposta</button>' : ""}
+    </div>
+
+    <div class="indicadores" style="margin-bottom:18px">
+      <div class="indicador"><p class="indicador__rotulo">Na rua</p><p class="indicador__valor">${enviadas.length}</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Valor na rua</p><p class="indicador__valor">${moeda.format(valorEnviado)}</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Aceitas</p><p class="indicador__valor">${aceitas.length}</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Taxa de aceite</p><p class="indicador__valor">${taxa}%</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Rascunhos</p><p class="indicador__valor">${lista.filter((p) => p.status === "rascunho").length}</p></div>
+    </div>
+
+    <div class="cartao">
+      ${lista.length === 0 ? '<div class="estado"><h2 class="estado__titulo">Nenhuma proposta</h2><p class="estado__texto">Abra um lead e gere a primeira.</p></div>' : `
+      <div class="rolagem"><table>
+        <thead><tr><th>Proposta</th><th>Lead</th><th>Valor</th><th>Situação</th><th>Validade</th><th></th></tr></thead>
+        <tbody>${lista.map((p) => {
+          const l = leadDe(p.leadId);
+          const venceu = p.status === "enviada" && p.validade && p.validade < hojeISO();
+          return `<tr>
+            <td><a href="#/proposta/${p.id}">${esc(p.titulo)}</a>
+              <div class="pagina__sub">${p.itens.length} item(ns)</div></td>
+            <td>${l ? `<a href="#/lead/${l.id}">${esc(contatoDe(l.contatoId).nome)}</a>` : '<span class="pagina__sub">—</span>'}</td>
+            <td class="num">${moedaExata.format(p.valor)}</td>
+            <td>${seloProposta(venceu ? "expirada" : p.status)}</td>
+            <td class="num">${p.validade ? fmtData.format(new Date(p.validade + "T12:00:00")) : "—"}</td>
+            <td style="text-align:right"><a class="btn btn--discreto btn--pequeno" href="#/proposta/${p.id}">Abrir</a></td>
+          </tr>`;
+        }).join("")}</tbody>
+      </table></div>`}
+    </div>`;
+}
+
+function seloProposta(s) {
+  const classe = s === "aceita" ? "selo--verde"
+    : s === "recusada" || s === "expirada" ? "selo--vermelho"
+    : s === "enviada" ? "selo--ambar" : "";
+  return `<span class="selo ${classe}">${STATUS_PROPOSTA[s]}</span>`;
+}
+
+function telaProposta(id) {
+  const p = propostaDe(id);
+  if (!p) return vazio("Proposta não encontrada", "Ela pode ter sido excluída.");
+
+  const l = leadDe(p.leadId);
+  const ct = l ? contatoDe(l.contatoId) : null;
+  const soma = p.itens.reduce((s, i) => s + i.valor, 0);
+  const podeMexer = pode("propostas.editar") || pode("propostas.*");
+
+  return `
+    <div class="pagina__cabeca">
+      <div><h1 class="pagina__titulo">${esc(p.titulo)}</h1>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          ${seloProposta(p.status)}
+          ${ct ? `<a class="pagina__sub link-acento" href="#/lead/${l.id}">${esc(ct.nome)}</a>` : ""}
+          ${p.enviadoEm ? `<span class="pagina__sub">enviada ${quando(p.enviadoEm)}</span>` : ""}
+        </div></div>
+      <a class="btn btn--discreto" href="#/propostas">Voltar</a>
+    </div>
+
+    <div class="duas-colunas">
+      <div class="cartao" style="align-self:start">
+        <div class="cartao__cabeca"><strong>O que está incluído</strong></div>
+        <div class="rolagem"><table>
+          <thead><tr><th>Item</th><th style="text-align:right">Valor mensal</th></tr></thead>
+          <tbody>${p.itens.map((i) => `
+            <tr><td>${esc(i.descricao)}</td><td class="num" style="text-align:right">${moedaExata.format(i.valor)}</td></tr>`).join("")}
+            <tr><td><strong>Total</strong></td><td class="num" style="text-align:right"><strong>${moedaExata.format(soma)}</strong></td></tr>
+          </tbody>
+        </table></div>
+        ${podeMexer ? `<div class="cartao__corpo" style="border-top:1px solid var(--border-2)">
+          <form data-form="item-proposta" data-id="${p.id}" style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+            <label class="campo" style="flex:1;min-width:200px"><span>Adicionar item</span>
+              <input name="descricao" placeholder="Produção de criativos"></label>
+            <label class="campo" style="width:140px"><span>Valor</span>
+              <input name="valor" inputmode="decimal" placeholder="1000"></label>
+            <button class="btn" type="submit">Somar</button>
+          </form>
+        </div>` : ""}
+      </div>
+
+      <div style="display:grid;gap:16px;align-content:start">
+        <div class="cartao">
+          <div class="cartao__cabeca"><strong>Situação</strong></div>
+          <div class="cartao__corpo" style="display:grid;gap:10px">
+            ${p.status === "rascunho" && podeMexer ? `
+              <p class="pagina__sub" style="margin:0">Enviar registra a data, define validade de 7 dias e move o lead para “Proposta enviada”.</p>
+              <button class="btn btn--acento" data-acao="enviar-proposta" data-id="${p.id}">Marcar como enviada</button>` : ""}
+            ${p.status === "enviada" && podeMexer ? `
+              <p class="pagina__sub" style="margin:0">Aceitar fecha o lead e já oferece a ficha do cliente.</p>
+              <button class="btn btn--acento" data-acao="aceitar-proposta" data-id="${p.id}">Cliente aceitou</button>
+              <button class="btn btn--risco" data-acao="recusar-proposta" data-id="${p.id}">Cliente recusou</button>` : ""}
+            ${p.status === "aceita" ? `<p style="margin:0;color:var(--good)">Aceita em ${fmtData.format(new Date(p.respondidoEm))}.</p>
+              ${l && l.clienteId ? `<a class="btn" href="#/cliente/${l.clienteId}">Abrir ficha do cliente</a>` : ""}` : ""}
+            ${p.status === "recusada" ? `<p style="margin:0;color:var(--crit)">Recusada em ${fmtData.format(new Date(p.respondidoEm))}.</p>` : ""}
+          </div>
+        </div>
+
+        <div class="cartao">
+          <div class="cartao__cabeca"><strong>Dados</strong></div>
+          <div class="cartao__corpo grade-2">
+            <div><div class="dado__rotulo">Criada em</div><div class="dado__valor num">${fmtData.format(new Date(p.criadoEm))}</div></div>
+            <div><div class="dado__rotulo">Validade</div><div class="dado__valor num">${p.validade ? fmtData.format(new Date(p.validade + "T12:00:00")) : "—"}</div></div>
+            <div><div class="dado__rotulo">Total</div><div class="dado__valor num">${moedaExata.format(soma)}</div></div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ------------------------------------------------------------- tela: mural */
+function telaMural() {
+  const lista = [...S.avisos].sort((a, b) =>
+    (b.fixado ? 1 : 0) - (a.fixado ? 1 : 0) || b.criadoEm.localeCompare(a.criadoEm));
+
+  return `
+    <div class="pagina__cabeca">
+      <div><h1 class="pagina__titulo">Mural</h1>
+        <p class="pagina__sub">O que a equipe precisa saber, sem virar grupo de WhatsApp</p></div>
+      ${pode("mural.editar") || pode("mural.*") ? '<button class="btn btn--acento" data-acao="novo-aviso">Escrever</button>' : ""}
+    </div>
+
+    <div class="cartao">
+      ${lista.length === 0 ? '<div class="estado"><p class="estado__texto" style="margin:0">Mural vazio.</p></div>' : lista.map((a) => {
+        const autor = usuarioDe(a.autorId);
+        return `
+          <article class="mural-item">
+            <div class="mural-item__cabeca">
+              ${a.fixado ? '<span class="selo selo--ambar">fixado</span>' : ""}
+              <h2 class="mural-item__titulo">${esc(a.titulo)}</h2>
+              <span class="pagina__sub">${esc(autor ? autor.nome : "")} · ${quando(a.criadoEm)}</span>
+              ${pode("mural.editar") || pode("mural.*")
+                ? `<button class="btn btn--discreto btn--pequeno" style="margin-left:auto" data-acao="fixar-aviso" data-id="${a.id}">${a.fixado ? "Desafixar" : "Fixar"}</button>` : ""}
+            </div>
+            <p class="mural-item__texto">${esc(a.texto)}</p>
+
+            ${a.comentarios.map((c) => {
+              const q = usuarioDe(c.autorId);
+              return `<div class="comentario"><strong>${esc(q ? q.nome : "")}</strong>
+                <span class="pagina__sub">· ${quando(c.criadoEm)}</span>
+                <p style="margin:2px 0 0">${esc(c.texto)}</p></div>`;
+            }).join("")}
+
+            <form data-form="comentar" data-id="${a.id}" style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+              <input name="texto" placeholder="Comentar" aria-label="Comentário"
+                     style="flex:1;min-width:200px;height:34px;padding:0 10px;border:1px solid var(--border);border-radius:var(--raio);background:var(--card);color:var(--ink);font:inherit">
+              <button class="btn btn--pequeno" type="submit">Enviar</button>
+            </form>
+          </article>`;
+      }).join("")}
+    </div>`;
+}
+
+/* -------------------------------------------------------------- tela: wiki */
+let categoriaWiki = "";
+
+function telaWiki() {
+  const lista = S.wiki
+    .filter((a) => !categoriaWiki || a.categoria === categoriaWiki)
+    .sort((a, b) => b.atualizadoEm.localeCompare(a.atualizadoEm));
+
+  return `
+    <div class="pagina__cabeca">
+      <div><h1 class="pagina__titulo">Wiki</h1>
+        <p class="pagina__sub">Como a agência faz as coisas — para não depender de quem lembra</p></div>
+      ${pode("wiki.editar") || pode("wiki.*") ? '<button class="btn btn--acento" data-acao="novo-artigo">Escrever artigo</button>' : ""}
+    </div>
+
+    <form class="filtros" data-form="filtros-wiki">
+      <label class="campo" style="min-width:220px"><span>Categoria</span>
+        <select name="categoria"><option value="">Todas</option>
+          ${Object.entries(CATEGORIAS_WIKI).map(([v, r]) => `<option value="${v}"${categoriaWiki === v ? " selected" : ""}>${r}</option>`).join("")}
+        </select></label>
+      <button class="btn" type="submit">Filtrar</button>
+    </form>
+
+    ${lista.length === 0 ? vazio("Nada aqui", "Nenhum artigo nesta categoria.") : `
+      <div class="fatia">${lista.map((a) => {
+        const autor = usuarioDe(a.autorId);
+        return `
+          <a class="fatia__cartao" href="#/artigo/${a.id}">
+            <span class="selo" style="font-size:11px">${CATEGORIAS_WIKI[a.categoria] || esc(a.categoria)}</span>
+            <h2 style="font-size:15px;margin:10px 0 6px">${esc(a.titulo)}</h2>
+            <p class="pagina__sub" style="margin:0">${esc(a.conteudo.slice(0, 90))}…</p>
+            <p class="pagina__sub" style="margin:10px 0 0">${esc(autor ? autor.nome : "")} · ${quando(a.atualizadoEm)}</p>
+          </a>`;
+      }).join("")}</div>`}`;
+}
+
+function telaArtigo(id) {
+  const a = artigoDe(id);
+  if (!a) return vazio("Artigo não encontrado", "Ele pode ter sido apagado.");
+  const autor = usuarioDe(a.autorId);
+
+  return `
+    <div class="pagina__cabeca">
+      <div><h1 class="pagina__titulo">${esc(a.titulo)}</h1>
+        <p class="pagina__sub">${CATEGORIAS_WIKI[a.categoria] || esc(a.categoria)} · ${esc(autor ? autor.nome : "")} · atualizado ${quando(a.atualizadoEm)}</p></div>
+      <div style="display:flex;gap:8px">
+        <a class="btn btn--discreto" href="#/wiki">Voltar</a>
+        ${pode("wiki.editar") || pode("wiki.*") ? `<button class="btn" data-acao="editar-artigo" data-id="${a.id}">Editar</button>` : ""}
+      </div>
+    </div>
+
+    <div class="cartao"><div class="cartao__corpo prosa">${esc(a.conteudo)}</div></div>`;
+}
+
+/* ---------------------------------------------------------- tela: pesquisa */
+function telaPesquisa() {
+  const respondeu = respondidas();
+  const media = respondeu.length ? respondeu.reduce((s, p) => s + p.nota, 0) / respondeu.length : 0;
+  const pontuacao = nps();
+  const pendentes = S.pesquisas.filter((p) => p.nota === null);
+  const semPesquisa = clientesVivos().filter((c) => !S.pesquisas.some((p) => p.clienteId === c.id));
+
+  const cor = (n) => n >= 9 ? "var(--good)" : n >= 7 ? "var(--warn)" : "var(--crit)";
+
+  return `
+    <div class="pagina__cabeca">
+      <div><h1 class="pagina__titulo">Satisfação</h1>
+        <p class="pagina__sub">Nota de 0 a 10. Nota baixa muda a saúde do cliente sozinha.</p></div>
+      ${semPesquisa.length && (pode("pesquisa.editar") || pode("pesquisa.*"))
+        ? '<button class="btn btn--acento" data-acao="enviar-pesquisa">Enviar pesquisa</button>' : ""}
+    </div>
+
+    <div class="indicadores" style="margin-bottom:18px">
+      <div class="indicador"><p class="indicador__rotulo">NPS</p>
+        <p class="indicador__valor"${pontuacao !== null ? ` style="color:${pontuacao >= 50 ? "var(--good)" : pontuacao >= 0 ? "var(--warn)" : "var(--crit)"}"` : ""}>${pontuacao === null ? "—" : pontuacao}</p>
+        <p class="indicador__nota">promotores menos detratores</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Nota média</p><p class="indicador__valor">${respondeu.length ? media.toFixed(1).replace(".", ",") : "—"}</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Respondidas</p><p class="indicador__valor">${respondeu.length}</p><p class="indicador__nota">de ${S.pesquisas.length} enviadas</p></div>
+      <div class="indicador"><p class="indicador__rotulo">Detratores</p>
+        <p class="indicador__valor"${respondeu.some((x) => x.nota <= 6) ? ' style="color:var(--crit)"' : ""}>${respondeu.filter((x) => x.nota <= 6).length}</p>
+        <p class="indicador__nota">nota 6 ou menos</p></div>
+    </div>
+
+    ${pendentes.length ? `
+    <div class="cartao" style="margin-bottom:16px">
+      <div class="cartao__cabeca"><strong>Aguardando resposta</strong><span class="pagina__sub">${pendentes.length}</span></div>
+      <div class="cartao__corpo" style="display:grid;gap:16px">
+        ${pendentes.map((p) => `
+          <div>
+            <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+              <strong>${esc(nomeCliente(p.clienteId))}</strong>
+              <span class="pagina__sub">enviada ${quando(p.enviadoEm)}</span>
+            </div>
+            <p class="pagina__sub" style="margin:0 0 8px">Registrar a resposta que o cliente deu:</p>
+            <div class="notas">
+              ${Array.from({ length: 11 }, (_, n) => `<button type="button" class="nota" data-acao="responder-pesquisa" data-id="${p.id}" data-nota="${n}">${n}</button>`).join("")}
+            </div>
+          </div>`).join("")}
+      </div>
+    </div>` : ""}
+
+    <div class="cartao">
+      <div class="cartao__cabeca"><strong>Respostas</strong></div>
+      ${respondeu.length === 0 ? '<div class="estado"><p class="estado__texto" style="margin:0">Nenhuma resposta ainda.</p></div>' : `
+      <div class="cartao__corpo" style="display:grid;gap:16px">
+        ${respondeu.sort((a, b) => b.respondidoEm.localeCompare(a.respondidoEm)).map((p) => `
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <span class="medalha" style="background:${cor(p.nota)}">${p.nota}</span>
+            <div style="min-width:0">
+              <a class="link-acento" href="#/cliente/${p.clienteId}" style="font-weight:600">${esc(nomeCliente(p.clienteId))}</a>
+              <span class="pagina__sub"> · ${quando(p.respondidoEm)}</span>
+              ${p.comentario ? `<p style="margin:4px 0 0">${esc(p.comentario)}</p>` : '<p class="pagina__sub" style="margin:4px 0 0">Sem comentário.</p>'}
+            </div>
+          </div>`).join("")}
+      </div>`}
+    </div>`;
+}
+
+/* ----------------------------------------------------------- tela: lixeira */
+function telaLixeira() {
+  const itens = [
+    ...S.leads.filter((l) => l.excluidoEm).map((l) => ({
+      tipo: "Lead", nome: contatoDe(l.contatoId).nome, quandoIso: l.excluidoEm, id: l.id, alvo: "lead" })),
+    ...S.clientes.filter((c) => c.excluidoEm).map((c) => ({
+      tipo: "Cliente", nome: c.nome, quandoIso: c.excluidoEm, id: c.id, alvo: "cliente" })),
+    ...S.demandas.filter((d) => d.excluidoEm).map((d) => ({
+      tipo: "Demanda", nome: d.titulo, quandoIso: d.excluidoEm, id: d.id, alvo: "demanda" })),
+  ].sort((a, b) => b.quandoIso.localeCompare(a.quandoIso));
+
+  return `
+    <div class="pagina__cabeca">
+      <div><h1 class="pagina__titulo">Lixeira</h1>
+        <p class="pagina__sub">Nada aqui foi apagado de verdade — some das listas e volta inteiro</p></div>
+    </div>
+
+    <div class="cartao">
+      ${itens.length === 0 ? `
+        <div class="estado">
+          <h2 class="estado__titulo">Lixeira vazia</h2>
+          <p class="estado__texto">Quando você mandar um lead, cliente ou demanda para cá, ele aparece nesta lista com o botão de restaurar.</p>
+        </div>` : `
+        <div class="rolagem"><table>
+          <thead><tr><th>Item</th><th>Tipo</th><th>Removido</th><th></th></tr></thead>
+          <tbody>${itens.map((i) => `
+            <tr>
+              <td><strong>${esc(i.nome)}</strong></td>
+              <td class="pagina__sub">${i.tipo}</td>
+              <td class="pagina__sub">${quando(i.quandoIso)}</td>
+              <td style="text-align:right">
+                <button class="btn btn--pequeno" data-acao="restaurar" data-alvo="${i.alvo}" data-id="${i.id}">Restaurar</button>
+              </td>
+            </tr>`).join("")}</tbody>
+        </table></div>`}
+    </div>
+
+    <div class="caixa-aviso" style="margin-top:16px">
+      Exclusão no MARK SISTEM é uma data preenchida, não um <code>DELETE</code>. O dado sai de
+      todas as listas porque elas perguntam por <code>excluido_em IS NULL</code>, e volta inteiro
+      quando alguém restaura — com o histórico junto.
+    </div>`;
+}
+
 function vazio(titulo, texto) {
   return `<div class="cartao"><div class="estado">
     <h2 class="estado__titulo">${esc(titulo)}</h2>
@@ -2434,6 +3090,99 @@ function modalEstrategia(clienteId) {
     </form>`;
 }
 
+function modalProposta(leadId) {
+  const abertos = leadsVivos().filter((l) => !l.perdidoEm);
+  return `
+    <form data-form="salvar-proposta">
+      <div class="modal__cabeca"><div><h2>Nova proposta</h2>
+        <p class="pagina__sub">Nasce como rascunho. Enviar é um segundo passo, de propósito.</p></div></div>
+      <div class="modal__corpo">
+        <div class="erro-form"></div>
+        <label class="campo" style="margin-bottom:14px"><span>Título</span>
+          <input name="titulo" required autofocus placeholder="Gestão completa — Nome do cliente"></label>
+        <label class="campo" style="margin-bottom:14px"><span>Para qual lead</span>
+          <select name="leadId" required>
+            ${abertos.map((l) => `<option value="${l.id}"${l.id === leadId ? " selected" : ""}>${esc(contatoDe(l.contatoId).nome)}${l.empresa ? " — " + esc(l.empresa) : ""}</option>`).join("")}
+          </select></label>
+        <div class="grade-2">
+          <label class="campo"><span>Primeiro item</span>
+            <input name="descricao" required placeholder="Gestão de tráfego"></label>
+          <label class="campo"><span>Valor mensal</span>
+            <input name="valor" required inputmode="decimal" placeholder="2500"></label>
+        </div>
+      </div>
+      <div class="modal__pe">
+        <button class="btn" type="button" data-acao="fechar-modal">Cancelar</button>
+        <button class="btn btn--acento" type="submit">Criar rascunho</button>
+      </div>
+    </form>`;
+}
+
+function modalAviso() {
+  return `
+    <form data-form="salvar-aviso">
+      <div class="modal__cabeca"><div><h2>Escrever no mural</h2>
+        <p class="pagina__sub">Fica registrado e comentável — diferente de mensagem em grupo.</p></div></div>
+      <div class="modal__corpo">
+        <div class="erro-form"></div>
+        <label class="campo" style="margin-bottom:14px"><span>Título</span>
+          <input name="titulo" required autofocus maxlength="120"></label>
+        <label class="campo" style="margin-bottom:14px"><span>Texto</span>
+          <textarea name="texto" rows="5" required></textarea></label>
+        <label style="display:flex;gap:8px;align-items:center">
+          <input type="checkbox" name="fixado" style="width:auto;height:auto">
+          <span>Fixar no topo</span></label>
+      </div>
+      <div class="modal__pe">
+        <button class="btn" type="button" data-acao="fechar-modal">Cancelar</button>
+        <button class="btn btn--acento" type="submit">Publicar</button>
+      </div>
+    </form>`;
+}
+
+function modalArtigo(a) {
+  return `
+    <form data-form="salvar-artigo" ${a ? `data-id="${a.id}"` : ""}>
+      <div class="modal__cabeca"><div><h2>${a ? "Editar artigo" : "Novo artigo"}</h2>
+        <p class="pagina__sub">O que a agência sabe fazer, escrito para quem chegou ontem.</p></div></div>
+      <div class="modal__corpo">
+        <div class="erro-form"></div>
+        <div class="grade-2" style="margin-bottom:14px">
+          <label class="campo"><span>Título</span>
+            <input name="titulo" value="${esc(a ? a.titulo : "")}" required autofocus maxlength="140"></label>
+          <label class="campo"><span>Categoria</span>
+            <select name="categoria">${Object.entries(CATEGORIAS_WIKI).map(([v, r]) => `<option value="${v}"${a && a.categoria === v ? " selected" : ""}>${r}</option>`).join("")}</select></label>
+        </div>
+        <label class="campo"><span>Conteúdo</span>
+          <textarea name="conteudo" rows="10" required>${esc(a ? a.conteudo : "")}</textarea></label>
+      </div>
+      <div class="modal__pe">
+        <button class="btn" type="button" data-acao="fechar-modal">Cancelar</button>
+        <button class="btn btn--acento" type="submit">Salvar</button>
+      </div>
+    </form>`;
+}
+
+function modalPesquisa() {
+  const sem = clientesVivos().filter((c) => !S.pesquisas.some((p) => p.clienteId === c.id));
+  return `
+    <form data-form="salvar-pesquisa">
+      <div class="modal__cabeca"><div><h2>Enviar pesquisa</h2>
+        <p class="pagina__sub">Uma pergunta só: de 0 a 10, quanto ele indicaria a agência.</p></div></div>
+      <div class="modal__corpo">
+        <div class="erro-form"></div>
+        <label class="campo"><span>Cliente</span>
+          <select name="clienteId" required>
+            ${sem.map((c) => `<option value="${c.id}">${esc(c.nome)}</option>`).join("")}
+          </select></label>
+      </div>
+      <div class="modal__pe">
+        <button class="btn" type="button" data-acao="fechar-modal">Cancelar</button>
+        <button class="btn btn--acento" type="submit">Enviar</button>
+      </div>
+    </form>`;
+}
+
 /* ------------------------------------------------------------------- busca */
 let buscaAberta = false, buscaResultados = [], buscaSel = 0;
 
@@ -2459,6 +3208,18 @@ function buscar(termo) {
   if (pode("operacional.ler")) demandasVivas().forEach((d) => {
     const s = similaridade(d.titulo, alvo);
     if (s > 0.3) achados.push({ tipo: "Demanda", titulo: d.titulo, sub: nomeCliente(d.clienteId), href: "#/operacional", s });
+  });
+
+  if (pode("propostas.ler")) S.propostas.forEach((p) => {
+    const s = similaridade(p.titulo, alvo);
+    if (s > 0.3) achados.push({ tipo: "Proposta", titulo: p.titulo, sub: moeda.format(p.valor), href: `#/proposta/${p.id}`, s });
+  });
+
+  if (pode("wiki.ler")) S.wiki.forEach((a) => {
+    // O corpo do artigo também conta: quem procura "cofre" quer achar a regra
+    // de acesso, não um artigo com essa palavra no título.
+    const s = Math.max(similaridade(a.titulo, alvo), semAcento(a.conteudo).includes(semAcento(alvo)) ? 0.6 : 0);
+    if (s > 0.3) achados.push({ tipo: "Wiki", titulo: a.titulo, sub: CATEGORIAS_WIKI[a.categoria] || a.categoria, href: `#/artigo/${a.id}`, s });
   });
 
   return achados.sort((a, b) => b.s - a.s).slice(0, 8);
@@ -2542,12 +3303,23 @@ function render() {
   else if (rota.startsWith("#/estrategias")) conteudo = telaEstrategias();
   else if (rota.startsWith("#/arquivos")) conteudo = telaArquivos();
   else if (rota.startsWith("#/cofre")) conteudo = telaCofre();
+  else if (rota.startsWith("#/whatsapp")) conteudo = telaWhats();
+  else if (rota.startsWith("#/propostas")) conteudo = telaPropostas();
+  else if (rota.startsWith("#/proposta/")) conteudo = telaProposta(rota.slice(11).split("?")[0]);
+  else if (rota.startsWith("#/mural")) conteudo = telaMural();
+  else if (rota.startsWith("#/wiki")) conteudo = telaWiki();
+  else if (rota.startsWith("#/artigo/")) conteudo = telaArtigo(rota.slice(9).split("?")[0]);
+  else if (rota.startsWith("#/pesquisa")) conteudo = telaPesquisa();
+  else if (rota.startsWith("#/lixeira")) conteudo = telaLixeira();
   else if (rota.startsWith("#/config") || rota.startsWith("#/equipe")) conteudo = telaConfig();
   else conteudo = telaPainel();
 
   document.getElementById("raiz").innerHTML = casca(conteudo);
   if (rota.startsWith("#/vendas")) ligarArrasto();
   if (rota.startsWith("#/operacional")) ligarArrastoDemandas();
+  // A conversa abre no fim, como qualquer aplicativo de mensagem faria.
+  const fio = document.getElementById("fio");
+  if (fio) fio.scrollTop = fio.scrollHeight;
   window.scrollTo(0, 0);
 }
 
@@ -2780,6 +3552,113 @@ document.addEventListener("click", (e) => {
     else { revelados.add(id); registrar("senha", id, "senha.revelada"); salvar(); }
     render();
   }
+  /* --------------------------------------------------------------- WhatsApp */
+  else if (acao === "abrir-conversa-de") { conversaAberta = id; const c = conversaDe(id); if (c.naoLidas) c.naoLidas = 0; salvar(); ir("#/whatsapp"); }
+  else if (acao === "abrir-conversa") {
+    conversaAberta = id;
+    const c = conversaDe(id);
+    if (c.naoLidas) { c.naoLidas = 0; salvar(); }
+    render();
+  }
+  else if (acao === "resolver-conversa") {
+    const c = conversaDe(id);
+    c.status = c.status === "resolvida" ? "aberta" : "resolvida";
+    salvar(); render();
+    toast(c.status === "resolvida" ? "Conversa resolvida" : "Conversa reaberta");
+  }
+  else if (acao === "lead-da-conversa") {
+    // O contato já existe: o lead nasce apontando para ele, e o fio de conversa
+    // aparece na ficha sem ninguém importar nada.
+    const c = conversaDe(id);
+    const naColuna = leadsVivos().filter((l) => l.etapaId === "e1").sort((a, b) => a.ordem - b.ordem);
+    const l = {
+      id: uid(), contatoId: c.contatoId, etapaId: "e1",
+      ordem: aoInicio(naColuna.length ? naColuna[0].ordem : null),
+      empresa: null, cidade: null, origem: "WhatsApp", servico: null, valorEstimado: null,
+      temperatura: null, responsavelId: S.usuarioId, observacoes: null, proximaAcao: null,
+      proximoContatoEm: null, motivoPerda: null, fechadoEm: null, perdidoEm: null,
+      clienteId: null, criadoEm: new Date().toISOString(),
+    };
+    S.leads.push(l);
+    registrar("lead", l.id, "lead.criado", { contatoReaproveitado: true, origem: "whatsapp" });
+    salvar(); ir(`#/lead/${l.id}`);
+    toast("Lead criado a partir da conversa — o histórico veio junto");
+  }
+
+  /* -------------------------------------------------------------- propostas */
+  else if (acao === "nova-proposta") abrirModal(modalProposta(alvo.dataset.lead || null));
+  else if (acao === "enviar-proposta") {
+    const p = propostaDe(id);
+    p.status = "enviada";
+    p.enviadoEm = new Date().toISOString();
+    p.validade = soData(7);
+    // Mandar a proposta é o que move o lead de etapa. Pedir os dois gestos
+    // garantiria que um dia o quadro ficasse mentindo.
+    const l = leadDe(p.leadId);
+    if (l && !l.fechadoEm && !l.perdidoEm) moverLead(l.id, "e5", null);
+    else { salvar(); render(); }
+    toast("Proposta enviada — lead movido para “Proposta enviada”");
+  }
+  else if (acao === "aceitar-proposta") {
+    const p = propostaDe(id);
+    p.status = "aceita";
+    p.respondidoEm = new Date().toISOString();
+    const l = leadDe(p.leadId);
+    if (l) {
+      const ganho = ETAPAS.find((x) => x.tipo === "ganho");
+      l.valorEstimado = p.valor;
+      registrar("lead", l.id, "proposta.aceita", { valor: p.valor });
+      moverLead(l.id, ganho.id, null);
+    } else { salvar(); render(); }
+    toast("Proposta aceita — o lead fechou");
+  }
+  else if (acao === "recusar-proposta") {
+    const p = propostaDe(id);
+    p.status = "recusada";
+    p.respondidoEm = new Date().toISOString();
+    registrar("lead", p.leadId, "proposta.recusada");
+    salvar(); render(); toast("Recusa registrada");
+  }
+
+  /* ------------------------------------------------------------ mural e wiki */
+  else if (acao === "novo-aviso") abrirModal(modalAviso());
+  else if (acao === "fixar-aviso") {
+    const a = S.avisos.find((x) => x.id === id);
+    a.fixado = !a.fixado;
+    salvar(); render();
+  }
+  else if (acao === "novo-artigo") abrirModal(modalArtigo(null));
+  else if (acao === "editar-artigo") abrirModal(modalArtigo(artigoDe(id)));
+
+  /* --------------------------------------------------------------- pesquisa */
+  else if (acao === "enviar-pesquisa") abrirModal(modalPesquisa());
+  else if (acao === "responder-pesquisa") {
+    const p = S.pesquisas.find((x) => x.id === id);
+    p.nota = Number(alvo.dataset.nota);
+    p.respondidoEm = new Date().toISOString();
+
+    // A nota não fica só num relatório: ela muda a saúde do cliente. Um número
+    // que não move nada é um número que ninguém olha.
+    const c = clienteDe(p.clienteId);
+    if (c) {
+      c.saude = p.nota <= 6 ? "vermelho" : p.nota <= 8 ? "amarelo" : "verde";
+      c.atualizadoEm = new Date().toISOString();
+      registrar("cliente", c.id, "pesquisa.respondida", { nota: p.nota });
+    }
+    salvar(); render();
+    toast(`Nota ${p.nota} registrada — saúde do cliente ajustada`);
+  }
+
+  /* ---------------------------------------------------------------- lixeira */
+  else if (acao === "restaurar") {
+    const mapa = { lead: leadDe, cliente: clienteDe, demanda: demandaDe };
+    const item = mapa[alvo.dataset.alvo](id);
+    if (item) {
+      delete item.excluidoEm;
+      salvar(); render(); toast("Restaurado — voltou inteiro para as listas");
+    }
+  }
+
   else if (acao === "copiar-senha") {
     const s = S.senhas.find((x) => x.id === id);
     const escrever = navigator.clipboard && navigator.clipboard.writeText
@@ -2817,6 +3696,14 @@ document.addEventListener("submit", (e) => {
   if (tipo === "salvar-arquivo") return salvarArquivo(form, d);
   if (tipo === "salvar-despesa") return salvarDespesa(form, d);
   if (tipo === "salvar-estrategia") return salvarEstrategia(form, d);
+  if (tipo === "filtros-wiki") { categoriaWiki = d.categoria || ""; render(); return; }
+  if (tipo === "responder-whats") return responderWhats(form, d);
+  if (tipo === "salvar-proposta") return salvarProposta(form, d);
+  if (tipo === "item-proposta") return itemProposta(form, d);
+  if (tipo === "comentar") return comentar(form, d);
+  if (tipo === "salvar-aviso") return salvarAviso(form, d);
+  if (tipo === "salvar-artigo") return salvarArtigo(form, d);
+  if (tipo === "salvar-pesquisa") return salvarPesquisa(form, d);
 });
 
 /** Aceita "2.500,90" e "2500.90" — as duas formas que alguém digita de verdade. */
@@ -3105,6 +3992,99 @@ function salvarEstrategia(form, d) {
 
   registrar("cliente", clienteId, "estrategia.atualizada");
   salvar(); fecharModal(); render(); toast("Estratégia salva");
+}
+
+function responderWhats(form, d) {
+  const texto = (d.texto || "").trim();
+  if (!texto) return;
+
+  const c = conversaDe(form.dataset.id);
+  const agora = new Date().toISOString();
+  S.mensagens.push({ id: uid(), conversaId: c.id, direcao: "enviada", texto, criadoEm: agora, autorId: S.usuarioId });
+  c.ultimaEm = agora;
+  c.naoLidas = 0;
+  // Responder é assumir a conversa: quem escreveu vira o responsável.
+  c.responsavelId = S.usuarioId;
+
+  salvar(); render();
+}
+
+function salvarProposta(form, d) {
+  const titulo = (d.titulo || "").trim();
+  const valor = numero(d.valor);
+  if (!titulo) return erroNoForm(form, "Dê um título à proposta.");
+  if (!d.leadId) return erroNoForm(form, "Escolha o lead.");
+  if (valor === null || valor <= 0) return erroNoForm(form, "Informe o valor do primeiro item.");
+
+  const p = {
+    id: uid(), leadId: d.leadId, clienteId: null, titulo, valor,
+    status: "rascunho", enviadoEm: null, respondidoEm: null, validade: null,
+    criadoEm: new Date().toISOString(),
+    itens: [{ descricao: (d.descricao || "").trim() || titulo, valor }],
+  };
+  S.propostas.push(p);
+  registrar("lead", d.leadId, "proposta.criada", { titulo });
+  salvar(); fecharModal(); ir(`#/proposta/${p.id}`); toast("Rascunho criado");
+}
+
+function itemProposta(form, d) {
+  const descricao = (d.descricao || "").trim();
+  const valor = numero(d.valor);
+  if (!descricao || valor === null || valor <= 0) return toast("Descreva o item e informe o valor.");
+
+  const p = propostaDe(form.dataset.id);
+  p.itens.push({ descricao, valor });
+  // O total é a soma dos itens, sempre. Guardar um valor à parte seria criar
+  // duas verdades sobre o mesmo número.
+  p.valor = p.itens.reduce((s, i) => s + i.valor, 0);
+  salvar(); render(); toast("Item somado");
+}
+
+function comentar(form, d) {
+  const texto = (d.texto || "").trim();
+  if (!texto) return;
+  const a = S.avisos.find((x) => x.id === form.dataset.id);
+  a.comentarios.push({ id: uid(), autorId: S.usuarioId, texto, criadoEm: new Date().toISOString() });
+  salvar(); render();
+}
+
+function salvarAviso(form, d) {
+  const titulo = (d.titulo || "").trim();
+  const texto = (d.texto || "").trim();
+  if (!titulo || !texto) return erroNoForm(form, "Título e texto são obrigatórios.");
+
+  S.avisos.push({
+    id: uid(), autorId: S.usuarioId, titulo, texto,
+    fixado: Boolean(d.fixado), criadoEm: new Date().toISOString(), comentarios: [],
+  });
+  salvar(); fecharModal(); ir("#/mural"); toast("Publicado no mural");
+}
+
+function salvarArtigo(form, d) {
+  const titulo = (d.titulo || "").trim();
+  const conteudo = (d.conteudo || "").trim();
+  if (!titulo || !conteudo) return erroNoForm(form, "Título e conteúdo são obrigatórios.");
+
+  const campos = { titulo, categoria: d.categoria, conteudo, atualizadoEm: new Date().toISOString() };
+  const editandoId = form.dataset.id;
+
+  if (editandoId) {
+    Object.assign(artigoDe(editandoId), campos);
+    salvar(); fecharModal(); render(); toast("Artigo salvo");
+    return;
+  }
+  const a = { id: uid(), autorId: S.usuarioId, ...campos };
+  S.wiki.push(a);
+  salvar(); fecharModal(); ir(`#/artigo/${a.id}`); toast("Artigo publicado");
+}
+
+function salvarPesquisa(form, d) {
+  if (!d.clienteId) return erroNoForm(form, "Escolha o cliente.");
+  S.pesquisas.push({
+    id: uid(), clienteId: d.clienteId, enviadoEm: new Date().toISOString(),
+    respondidoEm: null, nota: null, comentario: null,
+  });
+  salvar(); fecharModal(); render(); toast("Pesquisa enviada");
 }
 
 /* --------------------------------------------------------------- atalhos */

@@ -22,7 +22,8 @@ vez em JavaScript; lá, na regra **e** de novo no banco, com Row Level Security.
 cd docs/mark-sistem/testes
 node servidor.mjs &          # serve a demonstração em http://127.0.0.1:8099
 node fumaca.mjs              # fluxo comercial: lead → atividade → cliente
-node fumaca2.mjs             # os outros módulos, permissões e celular
+node fumaca2.mjs             # entrega, agenda, financeiro, tráfego, cofre, permissões
+node fumaca3.mjs             # WhatsApp, propostas, mural, wiki, satisfação, lixeira
 ```
 
 `servidor.mjs` lê o HTML uma vez, ao subir — depois de editar a demonstração,

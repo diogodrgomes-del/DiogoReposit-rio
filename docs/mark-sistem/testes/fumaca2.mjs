@@ -33,7 +33,7 @@ await reg("tem as quatro seções", async () => {
   const t = (await p.locator(".secao-rotulo").allInnerTexts()).map((x) => x.toLowerCase());
   return ["comercial", "clientes", "entrega", "financeiro"].every((s) => t.some((x) => x.includes(s)));
 });
-await reg("menu traz os 12 módulos", async () => (await p.locator(".nav__item").count()) === 12);
+await reg("menu traz os 18 módulos", async () => (await p.locator(".nav__item").count()) === 18);
 await reg("aprovações pendentes aparecem no menu", async () =>
   (await p.locator('a[href="#/aprovacoes"] .pino').innerText()) === "2");
 
@@ -233,7 +233,7 @@ console.log("\nPERMISSÕES");
 await irPara("#/config");
 await p.locator('tr:has-text("Criação") [data-acao="trocar-usuario"]').click();
 await p.waitForTimeout(300);
-await reg("trocar de pessoa reduz o menu", async () => (await p.locator(".nav__item").count()) < 12);
+await reg("trocar de pessoa reduz o menu", async () => (await p.locator(".nav__item").count()) < 18);
 await reg("financeiro some do menu da Criação", async () =>
   (await p.locator('a[href="#/financeiro"]').count()) === 0);
 
