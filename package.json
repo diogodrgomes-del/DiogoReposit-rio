@@ -1,28 +1,50 @@
 {
-  "name": "marktiva-dashboard",
+  "name": "mark-sistem",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "senha": "node scripts/gerar-senha.mjs"
+    "senha": "node scripts/gerar-senha.mjs",
+    "typecheck": "tsc --noEmit",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:studio": "prisma studio",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:reset": "prisma migrate reset --force",
+    "verificar": "node scripts/verificar-fontes.mjs",
+    "check": "npm run verificar && npm run typecheck"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@neondatabase/serverless": "^1.1.0",
+    "@prisma/client": "^6.19.3",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.4.0",
     "jose": "^5.9.6",
+    "lucide-react": "^1.30.0",
     "next": "^15.5.22",
     "pg": "^8.22.0",
+    "prisma": "^6.19.3",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "recharts": "^3.10.1"
+    "recharts": "^3.10.1",
+    "tailwind-merge": "^3.6.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^22.10.5",
     "@types/pg": "^8.20.0",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
+    "playwright": "^1.62.1",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.11",
     "typescript": "^5.7.3"
   }
 }

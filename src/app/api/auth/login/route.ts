@@ -1,101 +1,87 @@
 import { NextResponse } from "next/server";
-import {
-  COOKIE,
-  MAX_IDADE_COOKIE,
-  conferirSenha,
-  criarSessao,
-  temSessionSecret,
-  totalUsuarios,
-} from "@/lib/auth";
-import { bloqueado, limparFalhas, origem, registrarFalha } from "@/lib/limite";
+import { z } from "zod";
+import { prisma } from "@/lib/db";
+import { conferirSenha, hashSenha, precisaRehash } from "@/lib/auth/senha";
+import { COOKIE, MAX_IDADE_COOKIE, criarSessao } from "@/lib/auth/sessao";
+import { bloqueado, registrarFalha, limparFalhas } from "@/lib/limite";
 
 export const runtime = "nodejs";
 
-/** Atraso fixo: uma resposta rápida não pode denunciar usuário inexistente. */
-const ATRASO_MS = 400;
+const Corpo = z.object({
+  email: z.string().min(1).max(200),
+  senha: z.string().min(1).max(200),
+});
 
 export async function POST(req: Request) {
-  const inicio = Date.now();
-  let usuario = "";
-  let senha = "";
-
-  try {
-    const corpo = await req.json();
-    usuario = String(corpo?.usuario ?? "").trim();
-    senha = String(corpo?.senha ?? "");
-  } catch {
-    return NextResponse.json({ erro: "Requisição inválida." }, { status: 400 });
+  const dados = Corpo.safeParse(await req.json().catch(() => null));
+  if (!dados.success) {
+    return NextResponse.json({ erro: "Dados inválidos." }, { status: 400 });
   }
 
-  if (!usuario || !senha) {
-    return NextResponse.json(
-      { erro: "Informe usuário e senha." },
-      { status: 400 }
-    );
-  }
+  const email = dados.data.email.trim().toLowerCase();
+  const ip =
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "desconhecido";
 
-  // Servidor sem nenhum usuário cadastrado recusaria toda tentativa como
-  // "senha incorreta", culpando quem digitou por um erro de configuração.
-  if (totalUsuarios() === 0) {
+  const chave = `${ip}:${email}`;
+  const esperar = bloqueado(chave);
+  if (esperar > 0) {
     return NextResponse.json(
-      {
-        erro:
-          "Nenhum usuário cadastrado no servidor. Verifique a variável DASH_USERS " +
-          "e faça um novo deploy — variáveis novas só valem no próximo build.",
-      },
-      { status: 503 }
-    );
-  }
-  if (!temSessionSecret()) {
-    return NextResponse.json(
-      {
-        erro:
-          "SESSION_SECRET ausente ou com menos de 32 caracteres. Cadastre e refaça o deploy.",
-      },
-      { status: 503 }
-    );
-  }
-
-  const chave = origem(req);
-  const espera = bloqueado(chave);
-  if (espera > 0) {
-    return NextResponse.json(
-      {
-        erro: `Muitas tentativas. Aguarde ${Math.ceil(espera / 60)} minuto(s) e tente de novo.`,
-      },
+      { erro: `Muitas tentativas. Tente de novo em ${esperar}s.` },
       { status: 429 }
     );
   }
 
-  let ok = false;
-  try {
-    ok = await conferirSenha(usuario, senha);
-  } catch (e) {
-    console.error("Falha ao conferir senha:", (e as Error).message);
-    return NextResponse.json(
-      { erro: "Servidor sem configuração de acesso. Verifique DASH_USERS e SESSION_SECRET." },
-      { status: 500 }
-    );
-  }
+  const usuario = await prisma.user.findUnique({
+    where: { email },
+    include: { memberships: { where: { ativo: true }, take: 1 } },
+  });
 
-  const resta = ATRASO_MS - (Date.now() - inicio);
-  if (resta > 0) await new Promise((r) => setTimeout(r, resta));
+  // Confere sempre, mesmo sem usuário: o tempo de resposta não deve denunciar
+  // quais e-mails existem na base.
+  const ok = await conferirSenha(dados.data.senha, usuario?.senhaHash);
 
-  if (!ok) {
+  if (!ok || !usuario || !usuario.ativo) {
     registrarFalha(chave);
     return NextResponse.json(
-      { erro: "Usuário ou senha incorretos." },
+      { erro: "E-mail ou senha incorretos." },
       { status: 401 }
     );
   }
 
+  if (usuario.memberships.length === 0) {
+    return NextResponse.json(
+      { erro: "Sua conta não está vinculada a nenhuma organização." },
+      { status: 403 }
+    );
+  }
+
   limparFalhas(chave);
-  const token = await criarSessao(usuario);
-  const res = NextResponse.json({ ok: true, usuario });
+
+  // Hash antigo (menos iterações) sobe para o padrão atual sem a pessoa
+  // trocar de senha. É como as contas migradas de DASH_USERS se atualizam.
+  if (precisaRehash(usuario.senhaHash)) {
+    await prisma.user.update({
+      where: { id: usuario.id },
+      data: { senhaHash: await hashSenha(dados.data.senha) },
+    });
+  }
+
+  await prisma.user.update({
+    where: { id: usuario.id },
+    data: { ultimoLoginEm: new Date() },
+  });
+
+  const token = await criarSessao(
+    usuario.id,
+    ip,
+    req.headers.get("user-agent") ?? undefined
+  );
+
+  const res = NextResponse.json({ ok: true });
   res.cookies.set(COOKIE, token, {
     httpOnly: true,
-    sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
     path: "/",
     maxAge: MAX_IDADE_COOKIE,
   });

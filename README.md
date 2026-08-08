@@ -1,201 +1,151 @@
-# Marktiva — Painel de Campanhas
+# MARK SISTEM
 
-Painel web das campanhas do Meta Ads para uma carteira de clientes, com login,
-filtros de período iguais aos do Gerenciador de Anúncios, atualização automática
-e exportação em PDF.
+Sistema operacional interno da Agência Marktiva: comercial, clientes, produção,
+agenda, financeiro e tráfego numa plataforma só.
 
-A métrica central é **conversa iniciada por mensagem** e o **custo por conversa** —
-o que decide para onde vai a verba. Cliques e impressões aparecem como apoio.
-
----
-
-## O que tem
-
-- **Duas visões**: carteira (todos os clientes lado a lado, do custo por conversa
-  mais baixo ao mais alto) e cliente (o painel completo de um deles).
-- **Login por usuário e senha**, com sessão assinada em cookie `HttpOnly` de 12 h.
-- **Períodos**: hoje, ontem, 7 / 14 / 28 / 30 / 90 dias, este mês, mês passado,
-  este ano, máximo e intervalo personalizado.
-- **Seletor de cliente e de conta**: cada cliente tem token próprio, e o painel
-  descobre sozinho as contas atribuídas a cada um. Atribuiu uma conta nova no
-  Business Manager? Ela aparece sem mexer no código.
-- **Atualização automática** a cada 60 s, com botão para desligar.
-- **PDF** pelo botão “Gerar PDF”, com layout próprio de impressão.
-- **Tema claro e escuro**, acompanhando o sistema, com alternância manual.
-- Paleta validada para daltonismo (deuteranopia, protanopia e tritanopia).
+**Stack:** Next.js 15 (App Router) · React 19 · TypeScript · PostgreSQL 16 ·
+Prisma 6 · Tailwind 4
 
 ---
 
-## Subir na Vercel
+## Rodar em 5 minutos
 
-### 1. Enviar para o GitHub
-
-```bash
-git push -u origin <sua-branch>
-```
-
-### 2. Importar na Vercel
-
-Em [vercel.com/new](https://vercel.com/new), importe o repositório. A Vercel
-detecta Next.js sozinha — **não precisa configurar Root Directory nem build
-command**.
-
-### 3. Cadastrar as variáveis de ambiente
-
-Em **Settings → Environment Variables**, marcando Production, Preview e
-Development nas três:
-
-| Variável | O que é |
-|---|---|
-| `META_TOKENS` | Um cliente por linha: `Nome = TOKEN` |
-| `SESSION_SECRET` | Chave que assina a sessão (mínimo 32 caracteres) |
-| `DASH_USERS` | Usuários e senhas do painel |
-
-**Formato do `META_TOKENS`** — cole tudo num campo só; a Vercel aceita várias
-linhas:
-
-```
-Marktiva = EAAaAQyGYHBU...
-Bom pra home = EAAZCj6Mbo0E...
-Casa Carvalho = EAAbxTAZA1Mf...
-Óticas Gouveia = EAATuJuhHKOc...
-```
-
-O nome pode ter acento e espaço — é o que aparece na tela. O identificador usado
-na URL é derivado dele sem acentos (`Óticas Gouveia` → `oticas-gouveia`).
-
-**Gerar o `SESSION_SECRET`:**
-
-```bash
-node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
-```
-
-**Gerar cada usuário:**
-
-```bash
-npm run senha -- diogo
-```
-
-O comando pede a senha sem exibi-la e devolve uma linha pronta. Para mais de um
-usuário, junte as linhas com vírgula:
-
-```
-DASH_USERS=diogo:pbkdf2.210000.xxx.yyy,equipe:pbkdf2.210000.aaa.bbb
-```
-
-A senha em si nunca é guardada — só o hash PBKDF2-SHA256 com 210 mil iterações e
-sal aleatório por usuário.
-
-### 4. Deploy
-
-Clique em Deploy. Cada `git push` na branch dispara um deploy novo.
-
----
-
-## Rodar no seu computador
+Precisa de **Node 20+** e **PostgreSQL 16+**.
 
 ```bash
 npm install
-cp .env.example .env.local   # preencha as três variáveis
-npm run dev                  # http://localhost:3000
+cp .env.example .env          # preencha DATABASE_URL e DIRECT_URL
+npm run db:deploy             # cria as tabelas
+npm run db:seed               # organização, pipelines, listas e seu usuário
+npm run dev                   # http://localhost:3000
+```
+
+O seed pergunta a senha do proprietário no terminal. Para criar dados de
+exemplo (clientes, leads, demandas, lançamentos), rode com `SEED_EXEMPLOS=1`.
+
+**Postgres local rápido, com Docker:**
+
+```bash
+docker run -d --name mark-db -p 5432:5432 \
+  -e POSTGRES_USER=mark -e POSTGRES_PASSWORD=mark -e POSTGRES_DB=marksistem \
+  postgres:16
+# DATABASE_URL="postgresql://mark:mark@127.0.0.1:5432/marksistem"
 ```
 
 ---
 
-## Onde o token fica
+## O que já funciona
 
-Os tokens são lidos **apenas no servidor**, dentro das rotas de API. Nenhum é
-enviado ao navegador, nenhum aparece no JavaScript da página, e todos são removidos
-das mensagens de erro antes de virarem log.
+| Módulo | Estado |
+|---|---|
+| **Autenticação** | login, sessão em banco (revogável), limite de tentativas, re-autenticação para áreas sensíveis |
+| **Permissões** | 11 papéis, ~45 permissões, escopo por cliente, exceções caso a caso |
+| **Painel Geral** | 12 indicadores agregados no banco, cada card leva à lista já filtrada |
+| **CRM de Vendas** | pipeline kanban com arrastar e soltar, cadastro em 2 campos, ficha com salvamento automático, atividades, motivos de perda |
+| **Onboarding** | lead ganho vira cliente + contrato + projeto + estratégia + primeira mensalidade, numa transação |
+| **Clientes** | lista com filtros, ficha editável em linha, status, saúde, contrato, histórico |
+| **Estratégias** | ficha por cliente com salvamento automático |
+| **Demandas** | kanban, tipos, prioridades, checklist, comentários, filtros por cliente e responsável |
+| **Agenda** | calendário mensal, eventos, gravações com status próprio, participantes |
+| **Financeiro** | receitas, despesas, contas a pagar/receber, baixa total e parcial, dashboard |
+| **Financeiro pessoal** | escopo separado, exclusivo do proprietário, com re-autenticação |
+| **Notificações** | central com filtro por permissão na entrega |
+| **Busca global** | ⌘K, sem acento, filtrada por permissão na consulta |
+| **Auditoria** | histórico automático de toda ação relevante |
+| **Tráfego** | painel de campanhas do Meta Ads (o sistema anterior, portado) |
 
-A rota `/api/clientes` devolve só `id` e `nome` de cada cliente — nunca o token.
-É isso que permite o seletor de clientes existir no navegador sem expor nada.
-
-Por isso nenhuma variável usa o prefixo `NEXT_PUBLIC_` — esse prefixo publicaria o
-valor no pacote que vai para o navegador.
-
-O middleware bloqueia toda rota que não seja `/login`: sem sessão válida, a API de
-métricas nem chega a ser executada.
-
----
-
-## Sobre “tempo real”
-
-Os dados vêm da Graph API a cada consulta, sem cache. Mas a Meta não é instantânea:
-métricas de entrega costumam levar alguns minutos para consolidar, e conversas
-iniciadas usam janela de atribuição de 7 dias. Os números de hoje ainda vão subir
-ao longo do dia — isso é comportamento da plataforma, igual ao Gerenciador.
-
-### Uma ressalva sobre o painel de profundidade
-
-“Conversa iniciada” (`messaging_conversation_started_7d`) tem janela de atribuição
-de 7 dias. As métricas de profundidade (1ª resposta, 2ª, 3ª e 5ª mensagem) não têm
-janela: contam eventos ocorridos no período, inclusive de conversas iniciadas
-antes dele.
-
-Como as bases de contagem são diferentes, **não formam um funil** — em períodos
-curtos a “5ª mensagem” pode passar do total de conversas iniciadas. Por isso o
-painel mostra números absolutos, com as barras escaladas pelo maior valor, e não
-percentuais encaixados.
+**Ainda não construído:** WhatsApp, aprovações, arquivos, wiki, pesquisa,
+comunicação interna, convite de usuários por e-mail. Ver
+[roadmap](docs/arquitetura/10-roadmap-e-mvp.md).
 
 ---
 
-## Gerar o PDF
+## Comandos
 
-O botão “Gerar PDF” abre a impressão do navegador com um layout dedicado: sem
-menus nem filtros, tema claro, indicadores em linha única, tabela inteira sem
-rolagem e quebra de página antes da lista de campanhas.
-
-Escolha **Salvar como PDF** no destino. O texto sai vetorial — selecionável e
-nítido em qualquer zoom.
-
-- **iPhone / iPad**: botão de compartilhar → Imprimir → pinçar para abrir → compartilhar → Salvar em Arquivos.
-- **Android**: menu do Chrome → Compartilhar → Imprimir → Salvar como PDF.
-- **Computador**: a caixa de impressão já abre; escolha “Salvar como PDF”.
-
-Marque “Gráficos de segundo plano” nas opções de impressão para as cores saírem.
+| Comando | O que faz |
+|---|---|
+| `npm run dev` | servidor de desenvolvimento |
+| `npm run build` | build de produção (gera o Prisma Client antes) |
+| `npm start` | servidor de produção |
+| `npm run check` | verifica bytes de controle + typecheck |
+| `npm run typecheck` | só o TypeScript |
+| `npm run db:migrate` | cria uma migration nova a partir do schema |
+| `npm run db:deploy` | aplica as migrations pendentes (produção) |
+| `npm run db:seed` | popula organização, pipelines, listas e usuário |
+| `npm run db:studio` | navegador visual do banco |
+| `npm run db:reset` | **apaga tudo** e recria do zero |
+| `node scripts/e2e.mjs` | verificação end-to-end no navegador (20 checagens) |
 
 ---
 
-## Se algo der errado
+## Verificação
 
-**“Nenhuma conta de anúncios acessível por este token”** — o token é válido, mas
-nenhuma conta foi atribuída ao usuário do sistema. No Business Manager:
-Configurações do Negócio → Usuários do sistema → selecione o usuário → Adicionar
-ativos → Contas de anúncios → permissão **Ver desempenho**.
+`scripts/e2e.mjs` sobe um Chromium e percorre os fluxos que quebram caro:
+login, criação de lead, duplicata por telefone, conversão em cliente, demanda
+com checklist e comentário, evento na agenda, lançamento e baixa financeira,
+busca sem acento, e as barreiras de permissão.
 
-**“Servidor sem configuração de acesso”** — falta `DASH_USERS` ou `SESSION_SECRET`
-na Vercel. Depois de cadastrar, faça um redeploy: variáveis novas só valem no
-próximo build.
+```bash
+npm run build && npm start &
+node scripts/e2e.mjs http://localhost:3000
+```
 
-**Login sempre recusado, com as variáveis certas** — confira se o valor de
-`DASH_USERS` foi colado inteiro. O hash não contém `$` justamente para sobreviver
-a ferramentas que expandem variáveis, mas um copiar-e-colar truncado quebra do
-mesmo jeito.
+`npm run check` roda antes de qualquer commit. O verificador de bytes existe
+porque um NUL invisível já entrou num literal de string uma vez, e o sintoma
+apareceu longe da causa — a busca respondia 500 só para termos sem dígito,
+enquanto TypeScript, lint e build passavam.
+
+---
+
+## Segurança
+
+- Senhas em **PBKDF2-SHA256, 600 mil iterações**, sal por usuário, comparação em
+  tempo constante. Contas migradas do painel antigo sobem para o padrão atual
+  no primeiro login, sem ninguém trocar de senha.
+- **Sessão em banco**, não JWT sem estado: dá para derrubar o acesso de alguém
+  na hora.
+- Toda escrita passa por `can()` **no servidor**. A interface esconde; o
+  servidor nega.
+- O escopo de cliente entra no `where` da consulta — o banco nunca devolve a
+  linha de um cliente que a pessoa não pode ver.
+- Área financeira responde **404** para quem não tem acesso, não 403: um 403
+  confirma que a página existe.
+- Auditoria de toda ação relevante, com campos sensíveis redigidos.
+
+Detalhes em [docs/arquitetura/06-seguranca.md](docs/arquitetura/06-seguranca.md).
+
+---
+
+## Deploy
+
+Ver [docs/deploy.md](docs/deploy.md). Resumo: Vercel + Postgres gerenciado
+(Neon), `npm run db:deploy` na primeira subida, variáveis de ambiente conforme
+`.env.example`.
+
+---
+
+## Arquitetura
+
+O projeto foi desenhado antes de ser escrito. Os documentos em
+[`docs/arquitetura/`](docs/arquitetura/README.md) explicam as decisões e o
+motivo de cada uma — inclusive as que ainda não foram implementadas (WhatsApp,
+worker separado, multi-tenant ativo).
+
+Onde o código diverge do documento, e por quê:
+
+| Documento | Implementado | Motivo |
+|---|---|---|
+| Auth.js v5 | autenticação própria (`jose` + PBKDF2) | não há login social por enquanto; Auth.js seria uma dependência a mais sem resolver nada que já não esteja resolvido. A troca continua barata: a interface é `getAtor()` |
+| Argon2id | PBKDF2-SHA256 600k | Argon2 no Node exige binário nativo, causa número um de build quebrado em serverless. PBKDF2 pelo Web Crypto não tem dependência e atende ao OWASP |
+| Monorepo, dois processos | app único | o worker só é necessário quando o WhatsApp entrar (fase 5). Dividir antes seria complexidade sem uso |
+| Schemas separados no banco | schema único | o isolamento que vale é o do código (`financeiro/` só é alcançável pelas suas funções). Separar fisicamente vira hardening depois |
+| `search_index` + tsvector | `sem_acento()` + trigrama nas tabelas | resolve bem nesta escala e não precisa manter índice sincronizado. A tabela dedicada entra quando o volume pedir |
 
 ---
 
 ## Scripts em Python
 
-Na raiz há três utilitários avulsos, independentes do painel, usados para a
-análise que originou este projeto:
-
-| Arquivo | Para quê |
-|---|---|
-| `verificar_meta.py` | Testa o token e lista as contas acessíveis |
-| `historico_meta.py` | Exporta o histórico completo em CSV |
-| `metricas_gestao.py` | Exporta o funil de mensagens e o custo por conversa |
-
-Todos leem o token de `META_ACCESS_TOKEN` (um cliente por vez) e nunca o imprimem.
-
----
-
-## Stack
-
-Next.js 15 (App Router) · React 19 · TypeScript · Recharts · jose
-
-Sem banco de dados. O painel lê a Graph API a cada requisição e não guarda nada:
-as métricas vivem na Meta, e usuários e tokens ficam em variáveis de ambiente.
-Um Postgres aqui só acrescentaria custo, latência e mais um lugar de onde vazar
-credencial. Ele passaria a fazer sentido se você quisesse cadastrar clientes por
-tela, em vez de por variável.
+Na raiz há três utilitários avulsos, independentes do sistema, usados na análise
+que originou o projeto: `verificar_meta.py`, `historico_meta.py` e
+`metricas_gestao.py`. Todos leem o token de `META_ACCESS_TOKEN` e nunca o
+imprimem.

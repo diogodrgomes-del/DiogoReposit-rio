@@ -25,7 +25,7 @@ function perguntarSenha(rotulo) {
     const aoDigitar = (buf) => {
       const c = buf.toString("utf8");
       // Ctrl-C / Ctrl-D encerram sem deixar o terminal mudo.
-      if (c === "" || c === "") {
+      if (c === "\u0003" || c === "\u0004") {
         stdout.write("\n");
         rl.close();
         exit(1);

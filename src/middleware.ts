@@ -1,27 +1,31 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { COOKIE, lerSessao } from "@/lib/auth";
+import { COOKIE } from "@/lib/auth/sessao";
 
 /**
- * Protege tudo que nao seja a tela de login, o endpoint de login e os
- * estaticos. Sem sessao valida, o painel nunca chega a ser renderizado — e o
- * token da Meta, que so existe no servidor, nunca e consultado.
+ * Primeira barreira, barata: sem cookie de sessão nada além de /login é servido.
+ *
+ * A validação de verdade (sessão existe, não foi revogada, não expirou, usuário
+ * ainda ativo) acontece no layout autenticado, que roda no runtime Node e
+ * alcança o banco. O middleware roda no Edge e não deve consultar Postgres a
+ * cada requisição de página — inclusive as de arquivo estático.
+ *
+ * Ou seja: aqui é o filtro grosso, e a autorização real está em getAtor() +
+ * can(), no servidor, em toda leitura e em toda escrita.
  */
-export async function middleware(req: NextRequest) {
+export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   const livre =
     pathname === "/login" ||
-    pathname === "/api/auth/login" ||
-    // Diagnóstico de configuração: precisa responder sem sessão, porque é
-    // usado justamente quando o login não funciona. Não expõe valor algum.
+    pathname.startsWith("/api/auth/") ||
     pathname === "/api/saude" ||
     pathname.startsWith("/_next") ||
-    pathname === "/favicon.ico";
+    pathname === "/favicon.ico" ||
+    pathname === "/icon.svg";
 
   if (livre) return NextResponse.next();
 
-  const usuario = await lerSessao(req.cookies.get(COOKIE)?.value);
-  if (usuario) return NextResponse.next();
+  if (req.cookies.get(COOKIE)?.value) return NextResponse.next();
 
   if (pathname.startsWith("/api/")) {
     return NextResponse.json({ erro: "Sessão expirada." }, { status: 401 });

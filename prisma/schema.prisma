@@ -1,0 +1,1081 @@
+// MARK SISTEM — modelo de dados
+//
+// Convenções (ver docs/arquitetura/04-banco-de-dados.md):
+//   - toda tabela de domínio tem organizationId, criadoEm, atualizadoEm
+//   - exclusão lógica em deletadoEm; listagens filtram por deletadoEm: null
+//   - dinheiro sempre em centavos, inteiro, com sufixo Cents. Nunca float.
+//   - posicao (Float) ordena cards de kanban: arrastar grava a média entre
+//     os vizinhos e atualiza UMA linha, não a coluna inteira.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─────────────────────────────────────────────────────────── organização
+
+model Organization {
+  id        String   @id @default(uuid(7))
+  nome      String
+  slug      String   @unique
+  fuso      String   @default("America/Sao_Paulo")
+  ativo     Boolean  @default(true)
+  criadoEm  DateTime @default(now()) @map("criado_em")
+
+  memberships   Membership[]
+  clients       Client[]
+  contacts      Contact[]
+  pipelines     Pipeline[]
+  leads         Lead[]
+  activities    Activity[]
+  proposals     Proposal[]
+  demands       Demand[]
+  projects      Project[]
+  events        Event[]
+  files         FileObject[]
+  credentials   Credential[]
+  finEntries    FinEntry[]
+  finCategories FinCategory[]
+  adAccounts    AdAccount[]
+  notifications Notification[]
+  auditLogs     AuditLog[]
+  tags          Tag[]
+  plans         Plan[]
+  demandTypes   DemandType[]
+  leadOrigins   LeadOrigin[]
+  lossReasons   LossReason[]
+  comments      Comment[]
+  outbox        Outbox[]
+
+  @@map("organizations")
+}
+
+enum Papel {
+  PROPRIETARIO
+  ADMIN
+  GESTOR
+  COMERCIAL
+  FINANCEIRO
+  TRAFEGO
+  SOCIAL
+  DESIGNER
+  EDITOR
+  FILMMAKER
+  COLABORADOR
+}
+
+model User {
+  id                String    @id @default(uuid(7))
+  email             String    @unique
+  nome              String
+  senhaHash         String    @map("senha_hash")
+  ativo             Boolean   @default(true)
+  ultimoLoginEm     DateTime? @map("ultimo_login_em")
+  criadoEm          DateTime  @default(now()) @map("criado_em")
+
+  memberships       Membership[]
+  sessions          Session[]
+  leadsResponsavel  Lead[]           @relation("LeadResponsavel")
+  demandasResp      Demand[]         @relation("DemandaResponsavel")
+  clientesResp      Client[]         @relation("ClienteResponsavel")
+  atividades        Activity[]
+  comentarios       Comment[]
+  notificacoes      Notification[]
+  auditLogs         AuditLog[]
+  eventParticipants EventParticipant[]
+  credentialAccess  CredentialAccessLog[]
+  timeEntries       TimeEntry[]
+  subtasks          Subtask[]
+  finEntriesPessoal FinEntry[]       @relation("FinEntryDono")
+  uploads           FileObject[]
+
+  @@map("users")
+}
+
+model Membership {
+  id             String   @id @default(uuid(7))
+  organizationId String   @map("organization_id")
+  userId         String   @map("user_id")
+  papel          Papel
+  cargo          String?
+  ativo          Boolean  @default(true)
+  criadoEm       DateTime @default(now()) @map("criado_em")
+
+  organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  grants       PermissionGrant[]
+  clientes     ClientAssignment[]
+
+  @@unique([organizationId, userId])
+  @@index([organizationId, ativo])
+  @@map("memberships")
+}
+
+enum EfeitoGrant {
+  ALLOW
+  DENY
+}
+
+/// Exceção pontual ao papel: dá ou tira uma permissão sem inventar papel novo.
+model PermissionGrant {
+  id           String      @id @default(uuid(7))
+  membershipId String      @map("membership_id")
+  permissao    String
+  efeito       EfeitoGrant
+
+  membership Membership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+
+  @@unique([membershipId, permissao])
+  @@map("permission_grants")
+}
+
+/// Escopo por cliente: sem nenhuma linha aqui, papéis restritos não veem cliente algum.
+model ClientAssignment {
+  id           String @id @default(uuid(7))
+  membershipId String @map("membership_id")
+  clientId     String @map("client_id")
+
+  membership Membership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+  client     Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@unique([membershipId, clientId])
+  @@index([clientId])
+  @@map("client_assignments")
+}
+
+/// Sessão em banco, não JWT sem estado: é o que permite derrubar acesso na hora.
+model Session {
+  id                String    @id @default(uuid(7))
+  userId            String    @map("user_id")
+  tokenHash         String    @unique @map("token_hash")
+  ip                String?
+  userAgent         String?   @map("user_agent")
+  criadaEm          DateTime  @default(now()) @map("criada_em")
+  expiraEm          DateTime  @map("expira_em")
+  ultimaAtividadeEm DateTime  @default(now()) @map("ultima_atividade_em")
+  revogadaEm        DateTime? @map("revogada_em")
+  stepUpEm          DateTime? @map("step_up_em")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revogadaEm])
+  @@map("sessions")
+}
+
+// ─────────────────────────────────────────────────────────── contatos e clientes
+
+/// Pessoa. Lead, cliente e conversa de WhatsApp apontam todos para cá — é o que
+/// faz o telefone ser reconhecido sem duplicar cadastro.
+model Contact {
+  id             String    @id @default(uuid(7))
+  organizationId String    @map("organization_id")
+  nome           String
+  telefone       String?
+  email          String?
+  instagram      String?
+  empresa        String?
+  cidade         String?
+  uf             String?
+  fotoUrl        String?   @map("foto_url")
+  optOutEm       DateTime? @map("opt_out_em")
+  criadoEm       DateTime  @default(now()) @map("criado_em")
+  atualizadoEm   DateTime  @updatedAt @map("atualizado_em")
+  deletadoEm     DateTime? @map("deletado_em")
+
+  organization Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  leads        Lead[]
+  clientes     ClientContact[]
+
+  @@unique([organizationId, telefone])
+  @@index([organizationId, nome])
+  @@map("contacts")
+}
+
+enum StatusCliente {
+  ATIVO
+  ONBOARDING
+  PAUSADO
+  INADIMPLENTE
+  EM_RISCO
+  CANCELADO
+  ENCERRADO
+}
+
+enum Saude {
+  VERDE
+  AMARELO
+  VERMELHO
+}
+
+model Client {
+  id             String        @id @default(uuid(7))
+  organizationId String        @map("organization_id")
+  razaoSocial    String        @map("razao_social")
+  nomeFantasia   String?       @map("nome_fantasia")
+  cnpj           String?
+  segmento       String?
+  telefone       String?
+  whatsapp       String?
+  email          String?
+  cidade         String?
+  uf             String?
+  endereco       String?
+  instagram      String?
+  facebook       String?
+  tiktok         String?
+  site           String?
+  gmnUrl         String?       @map("gmn_url")
+  status         StatusCliente @default(ONBOARDING)
+  saude          Saude         @default(VERDE)
+  responsavelId  String?       @map("responsavel_id")
+  entrouEm       DateTime?     @map("entrou_em")
+  encerradoEm    DateTime?     @map("encerrado_em")
+  observacoes    String?
+  criadoEm       DateTime      @default(now()) @map("criado_em")
+  atualizadoEm   DateTime      @updatedAt @map("atualizado_em")
+  deletadoEm     DateTime?     @map("deletado_em")
+
+  organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  responsavel  User?              @relation("ClienteResponsavel", fields: [responsavelId], references: [id])
+  contatos     ClientContact[]
+  contratos    Contract[]
+  leads        Lead[]
+  demandas     Demand[]
+  projetos     Project[]
+  eventos      Event[]
+  arquivos     FileObject[]
+  credenciais  Credential[]
+  finEntries   FinEntry[]
+  adAccounts   AdAccount[]
+  estrategia   ClientStrategy?
+  atribuicoes  ClientAssignment[]
+  atividades   Activity[]
+  propostas    Proposal[]
+  trafficNotes TrafficNote[]
+
+  @@index([organizationId, status])
+  @@index([organizationId, razaoSocial])
+  @@map("clients")
+}
+
+enum PapelContato {
+  PRINCIPAL
+  FINANCEIRO
+  MARKETING
+  OUTRO
+}
+
+model ClientContact {
+  id        String       @id @default(uuid(7))
+  clientId  String       @map("client_id")
+  contactId String       @map("contact_id")
+  papel     PapelContato @default(PRINCIPAL)
+
+  client  Client  @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  contact Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@unique([clientId, contactId])
+  @@map("client_contacts")
+}
+
+model Plan {
+  id             String   @id @default(uuid(7))
+  organizationId String   @map("organization_id")
+  nome           String
+  valorBaseCents Int      @default(0) @map("valor_base_cents")
+  descricao      String?
+  ativo          Boolean  @default(true)
+  criadoEm       DateTime @default(now()) @map("criado_em")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  contratos    Contract[]
+  propostas    Proposal[]
+
+  @@map("plans")
+}
+
+enum StatusContrato {
+  ATIVO
+  PAUSADO
+  ENCERRADO
+}
+
+model Contract {
+  id               String         @id @default(uuid(7))
+  organizationId   String         @map("organization_id")
+  clientId         String         @map("client_id")
+  planoId          String?        @map("plano_id")
+  valorMensalCents Int            @default(0) @map("valor_mensal_cents")
+  inicioEm         DateTime       @map("inicio_em")
+  diaVencimento    Int            @default(10) @map("dia_vencimento")
+  prazoMeses       Int?           @map("prazo_meses")
+  renovaEm         DateTime?      @map("renova_em")
+  status           StatusContrato @default(ATIVO)
+  observacoes      String?
+  criadoEm         DateTime       @default(now()) @map("criado_em")
+  atualizadoEm     DateTime       @updatedAt @map("atualizado_em")
+  deletadoEm       DateTime?      @map("deletado_em")
+
+  client     Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  plano      Plan?      @relation(fields: [planoId], references: [id])
+  finEntries FinEntry[]
+
+  @@index([organizationId, clientId])
+  @@map("contracts")
+}
+
+/// Campos muito consultados são colunas; a cauda longa vive em camposExtras.
+model ClientStrategy {
+  id                 String   @id @default(uuid(7))
+  organizationId     String   @map("organization_id")
+  clientId           String   @unique @map("client_id")
+  objetivoPrincipal  String?  @map("objetivo_principal")
+  posicionamento     String?
+  publicoAlvo        String?  @map("publico_alvo")
+  persona            String?
+  tomDeVoz           String?  @map("tom_de_voz")
+  regioes            String[] @default([])
+  diferenciais       String[] @default([])
+  concorrentes       String[] @default([])
+  palavrasPermitidas String[] @default([]) @map("palavras_permitidas")
+  palavrasProibidas  String[] @default([]) @map("palavras_proibidas")
+  pilaresConteudo    String[] @default([]) @map("pilares_conteudo")
+  objecoes           String[] @default([])
+  dores              String[] @default([])
+  desejos            String[] @default([])
+  camposExtras       Json     @default("{}") @map("campos_extras")
+  atualizadoEm       DateTime @updatedAt @map("atualizado_em")
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("client_strategies")
+}
+
+// ─────────────────────────────────────────────────────────── CRM de vendas
+
+enum TipoPipeline {
+  VENDAS
+  OPERACIONAL
+}
+
+enum TipoEtapa {
+  ABERTO
+  GANHO
+  PERDIDO
+}
+
+model Pipeline {
+  id             String       @id @default(uuid(7))
+  organizationId String       @map("organization_id")
+  nome           String
+  tipo           TipoPipeline
+  padrao         Boolean      @default(false)
+
+  organization Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  etapas       PipelineStage[]
+  leads        Lead[]
+  demandas     Demand[]
+
+  @@index([organizationId, tipo])
+  @@map("pipelines")
+}
+
+model PipelineStage {
+  id         String    @id @default(uuid(7))
+  pipelineId String    @map("pipeline_id")
+  nome       String
+  ordem      Int
+  cor        String    @default("cinza")
+  tipo       TipoEtapa @default(ABERTO)
+
+  pipeline Pipeline @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+  leads    Lead[]
+  demandas Demand[]
+
+  @@index([pipelineId, ordem])
+  @@map("pipeline_stages")
+}
+
+model LeadOrigin {
+  id             String  @id @default(uuid(7))
+  organizationId String  @map("organization_id")
+  nome           String
+  ativo          Boolean @default(true)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  leads        Lead[]
+
+  @@map("lead_origins")
+}
+
+model LossReason {
+  id             String  @id @default(uuid(7))
+  organizationId String  @map("organization_id")
+  nome           String
+  ordem          Int     @default(0)
+  ativo          Boolean @default(true)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  leads        Lead[]
+
+  @@map("loss_reasons")
+}
+
+enum Temperatura {
+  FRIO
+  MORNO
+  QUENTE
+}
+
+model Lead {
+  id                 String       @id @default(uuid(7))
+  organizationId     String       @map("organization_id")
+  contactId          String       @map("contact_id")
+  pipelineId         String       @map("pipeline_id")
+  stageId            String       @map("stage_id")
+  responsavelId      String?      @map("responsavel_id")
+  clientId           String?      @map("client_id")
+  titulo             String?
+  valorEstimadoCents Int          @default(0) @map("valor_estimado_cents")
+  origemId           String?      @map("origem_id")
+  temperatura        Temperatura?
+  servicoInteresse   String?      @map("servico_interesse")
+  proximaAcao        String?      @map("proxima_acao")
+  proximaAcaoEm      DateTime?    @map("proxima_acao_em")
+  observacoes        String?
+  posicao            Float        @default(0)
+  entrouNoEstagioEm  DateTime     @default(now()) @map("entrou_no_estagio_em")
+  ganhoEm            DateTime?    @map("ganho_em")
+  perdidoEm          DateTime?    @map("perdido_em")
+  motivoPerdaId      String?      @map("motivo_perda_id")
+  criadoEm           DateTime     @default(now()) @map("criado_em")
+  atualizadoEm       DateTime     @updatedAt @map("atualizado_em")
+  deletadoEm         DateTime?    @map("deletado_em")
+
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  contact      Contact       @relation(fields: [contactId], references: [id])
+  pipeline     Pipeline      @relation(fields: [pipelineId], references: [id])
+  stage        PipelineStage @relation(fields: [stageId], references: [id])
+  responsavel  User?         @relation("LeadResponsavel", fields: [responsavelId], references: [id])
+  client       Client?       @relation(fields: [clientId], references: [id])
+  origem       LeadOrigin?   @relation(fields: [origemId], references: [id])
+  motivoPerda  LossReason?   @relation(fields: [motivoPerdaId], references: [id])
+  atividades   Activity[]
+  propostas    Proposal[]
+
+  @@index([organizationId, stageId, posicao])
+  @@index([organizationId, responsavelId])
+  @@index([organizationId, proximaAcaoEm])
+  @@map("leads")
+}
+
+enum TipoAtividade {
+  LIGACAO
+  REUNIAO
+  FOLLOWUP
+  MENSAGEM
+  VISITA
+  APRESENTACAO
+  PROPOSTA
+  TAREFA
+}
+
+model Activity {
+  id             String        @id @default(uuid(7))
+  organizationId String        @map("organization_id")
+  tipo           TipoAtividade
+  titulo         String
+  descricao      String?
+  leadId         String?       @map("lead_id")
+  clientId       String?       @map("client_id")
+  demandId       String?       @map("demand_id")
+  responsavelId  String?       @map("responsavel_id")
+  iniciaEm       DateTime?     @map("inicia_em")
+  duracaoMin     Int?          @map("duracao_min")
+  concluidaEm    DateTime?     @map("concluida_em")
+  criadoEm       DateTime      @default(now()) @map("criado_em")
+  deletadoEm     DateTime?     @map("deletado_em")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  lead         Lead?        @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  client       Client?      @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  demand       Demand?      @relation(fields: [demandId], references: [id], onDelete: Cascade)
+  responsavel  User?        @relation(fields: [responsavelId], references: [id])
+
+  @@index([organizationId, responsavelId, iniciaEm])
+  @@index([leadId])
+  @@map("activities")
+}
+
+enum StatusProposta {
+  RASCUNHO
+  ENVIADA
+  VISUALIZADA
+  AGUARDANDO
+  NEGOCIACAO
+  APROVADA
+  RECUSADA
+  VENCIDA
+}
+
+model Proposal {
+  id             String         @id @default(uuid(7))
+  organizationId String         @map("organization_id")
+  numero         Int
+  leadId         String?        @map("lead_id")
+  clientId       String?        @map("client_id")
+  planoId        String?        @map("plano_id")
+  titulo         String
+  valorCents     Int            @default(0) @map("valor_cents")
+  descontoCents  Int            @default(0) @map("desconto_cents")
+  validadeEm     DateTime?      @map("validade_em")
+  status         StatusProposta @default(RASCUNHO)
+  enviadaEm      DateTime?      @map("enviada_em")
+  decididaEm     DateTime?      @map("decidida_em")
+  observacoes    String?
+  criadoEm       DateTime       @default(now()) @map("criado_em")
+  atualizadoEm   DateTime       @updatedAt @map("atualizado_em")
+  deletadoEm     DateTime?      @map("deletado_em")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  lead         Lead?        @relation(fields: [leadId], references: [id])
+  client       Client?      @relation(fields: [clientId], references: [id])
+  plano        Plan?        @relation(fields: [planoId], references: [id])
+
+  @@unique([organizationId, numero])
+  @@index([organizationId, status])
+  @@map("proposals")
+}
+
+// ─────────────────────────────────────────────────────────── operacional
+
+model Project {
+  id             String    @id @default(uuid(7))
+  organizationId String    @map("organization_id")
+  clientId       String?   @map("client_id")
+  nome           String
+  descricao      String?
+  criadoEm       DateTime  @default(now()) @map("criado_em")
+  deletadoEm     DateTime? @map("deletado_em")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  client       Client?      @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  demandas     Demand[]
+
+  @@map("projects")
+}
+
+model DemandType {
+  id             String  @id @default(uuid(7))
+  organizationId String  @map("organization_id")
+  nome           String
+  cor            String  @default("cinza")
+  ativo          Boolean @default(true)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  demandas     Demand[]
+
+  @@map("demand_types")
+}
+
+enum Prioridade {
+  BAIXA
+  NORMAL
+  ALTA
+  URGENTE
+}
+
+model Demand {
+  id                String     @id @default(uuid(7))
+  organizationId    String     @map("organization_id")
+  titulo            String
+  descricao         String?
+  clientId          String?    @map("client_id")
+  projectId         String?    @map("project_id")
+  pipelineId        String     @map("pipeline_id")
+  stageId           String     @map("stage_id")
+  tipoId            String?    @map("tipo_id")
+  prioridade        Prioridade @default(NORMAL)
+  responsavelId     String?    @map("responsavel_id")
+  aprovadorId       String?    @map("aprovador_id")
+  prazoEm           DateTime?  @map("prazo_em")
+  iniciadaEm        DateTime?  @map("iniciada_em")
+  concluidaEm       DateTime?  @map("concluida_em")
+  tempoEstimadoMin  Int?       @map("tempo_estimado_min")
+  posicao           Float      @default(0)
+  entrouNoEstagioEm DateTime   @default(now()) @map("entrou_no_estagio_em")
+  arquivadaEm       DateTime?  @map("arquivada_em")
+  criadoEm          DateTime   @default(now()) @map("criado_em")
+  atualizadoEm      DateTime   @updatedAt @map("atualizado_em")
+  deletadoEm        DateTime?  @map("deletado_em")
+
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  client       Client?       @relation(fields: [clientId], references: [id])
+  project      Project?      @relation(fields: [projectId], references: [id])
+  pipeline     Pipeline      @relation(fields: [pipelineId], references: [id])
+  stage        PipelineStage @relation(fields: [stageId], references: [id])
+  tipo         DemandType?   @relation(fields: [tipoId], references: [id])
+  responsavel  User?         @relation("DemandaResponsavel", fields: [responsavelId], references: [id])
+  subtarefas   Subtask[]
+  tempos       TimeEntry[]
+  atividades   Activity[]
+  arquivos     FileObject[]
+
+  @@index([organizationId, stageId, posicao])
+  @@index([organizationId, responsavelId, prazoEm])
+  @@index([organizationId, clientId])
+  @@map("demands")
+}
+
+/// Checklist e subtarefa são a mesma coisa: item sem responsável e sem prazo
+/// é renderizado como checkbox simples.
+model Subtask {
+  id            String    @id @default(uuid(7))
+  demandId      String    @map("demand_id")
+  titulo        String
+  responsavelId String?   @map("responsavel_id")
+  prazoEm       DateTime? @map("prazo_em")
+  concluidaEm   DateTime? @map("concluida_em")
+  concluidaPor  String?   @map("concluida_por")
+  ordem         Int       @default(0)
+
+  demand      Demand @relation(fields: [demandId], references: [id], onDelete: Cascade)
+  responsavel User?  @relation(fields: [responsavelId], references: [id])
+
+  @@index([demandId, ordem])
+  @@map("subtasks")
+}
+
+model TimeEntry {
+  id         String    @id @default(uuid(7))
+  demandId   String    @map("demand_id")
+  userId     String    @map("user_id")
+  inicioEm   DateTime  @map("inicio_em")
+  fimEm      DateTime? @map("fim_em")
+  minutos    Int       @default(0)
+  manual     Boolean   @default(false)
+  observacao String?
+
+  demand Demand @relation(fields: [demandId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([demandId])
+  @@index([userId, inicioEm])
+  @@map("time_entries")
+}
+
+/// Polimórfico: o mesmo recurso vale para lead, cliente, demanda e evento.
+model Comment {
+  id             String    @id @default(uuid(7))
+  organizationId String    @map("organization_id")
+  entidadeTipo   String    @map("entidade_tipo")
+  entidadeId     String    @map("entidade_id")
+  autorId        String    @map("autor_id")
+  corpo          String
+  resolvidoEm    DateTime? @map("resolvido_em")
+  criadoEm       DateTime  @default(now()) @map("criado_em")
+  deletadoEm     DateTime? @map("deletado_em")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  autor        User         @relation(fields: [autorId], references: [id])
+
+  @@index([organizationId, entidadeTipo, entidadeId, criadoEm])
+  @@map("comments")
+}
+
+model Tag {
+  id             String @id @default(uuid(7))
+  organizationId String @map("organization_id")
+  nome           String
+  cor            String @default("cinza")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  taggings     Tagging[]
+
+  @@unique([organizationId, nome])
+  @@map("tags")
+}
+
+model Tagging {
+  id           String @id @default(uuid(7))
+  tagId        String @map("tag_id")
+  entidadeTipo String @map("entidade_tipo")
+  entidadeId   String @map("entidade_id")
+
+  tag Tag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([tagId, entidadeTipo, entidadeId])
+  @@index([entidadeTipo, entidadeId])
+  @@map("taggings")
+}
+
+// ─────────────────────────────────────────────────────────── agenda
+
+enum TipoEvento {
+  REUNIAO
+  GRAVACAO
+  VISITA
+  ENTREGA
+  PRODUCAO
+  CAMPANHA
+  PRAZO
+  EVENTO
+  VIAGEM
+  INTERNO
+  FOLLOWUP
+}
+
+enum StatusGravacao {
+  PLANEJADA
+  CONFIRMADA
+  AGUARDANDO_ROTEIRO
+  PRONTA
+  REALIZADA
+  CANCELADA
+  REAGENDADA
+}
+
+model Event {
+  id             String          @id @default(uuid(7))
+  organizationId String          @map("organization_id")
+  tipo           TipoEvento      @default(REUNIAO)
+  titulo         String
+  descricao      String?
+  clientId       String?         @map("client_id")
+  inicioEm       DateTime        @map("inicio_em")
+  fimEm          DateTime        @map("fim_em")
+  diaInteiro     Boolean         @default(false) @map("dia_inteiro")
+  local          String?
+  linkReuniao    String?         @map("link_reuniao")
+  statusGravacao StatusGravacao?  @map("status_gravacao")
+  equipe         String[]        @default([])
+  equipamentos   String[]        @default([])
+  canceladoEm    DateTime?       @map("cancelado_em")
+  criadoEm       DateTime        @default(now()) @map("criado_em")
+  atualizadoEm   DateTime        @updatedAt @map("atualizado_em")
+  deletadoEm     DateTime?       @map("deletado_em")
+
+  organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  client       Client?            @relation(fields: [clientId], references: [id])
+  participantes EventParticipant[]
+
+  @@index([organizationId, inicioEm])
+  @@index([organizationId, tipo, inicioEm])
+  @@map("events")
+}
+
+model EventParticipant {
+  id      String @id @default(uuid(7))
+  eventId String @map("event_id")
+  userId  String @map("user_id")
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+  @@map("event_participants")
+}
+
+// ─────────────────────────────────────────────────────────── arquivos e senhas
+
+model FileObject {
+  id             String    @id @default(uuid(7))
+  organizationId String    @map("organization_id")
+  clientId       String?   @map("client_id")
+  demandId       String?   @map("demand_id")
+  nome           String
+  storageKey     String    @unique @map("storage_key")
+  mime           String
+  tamanhoBytes   Int       @map("tamanho_bytes")
+  sha256         String?
+  uploaderId     String?   @map("uploader_id")
+  criadoEm       DateTime  @default(now()) @map("criado_em")
+  deletadoEm     DateTime? @map("deletado_em")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  client       Client?      @relation(fields: [clientId], references: [id])
+  demand       Demand?      @relation(fields: [demandId], references: [id])
+  uploader     User?        @relation(fields: [uploaderId], references: [id])
+
+  @@index([organizationId, clientId])
+  @@map("files")
+}
+
+/// Segredo cifrado com AES-256-GCM. Nunca texto puro, nunca em listagem.
+model Credential {
+  id             String    @id @default(uuid(7))
+  organizationId String    @map("organization_id")
+  clientId       String?   @map("client_id")
+  plataforma     String
+  login          String?
+  url            String?
+  segredoCipher  Bytes     @map("segredo_cipher")
+  segredoIv      Bytes     @map("segredo_iv")
+  segredoTag     Bytes     @map("segredo_tag")
+  notas          String?
+  atualizadoEm   DateTime  @updatedAt @map("atualizado_em")
+  criadoEm       DateTime  @default(now()) @map("criado_em")
+  deletadoEm     DateTime? @map("deletado_em")
+
+  organization Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  client       Client?               @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  acessos      CredentialAccessLog[]
+
+  @@index([organizationId, clientId])
+  @@map("credentials")
+}
+
+enum AcaoCredencial {
+  VER
+  COPIAR
+  CRIAR
+  EDITAR
+  EXCLUIR
+}
+
+model CredentialAccessLog {
+  id           String         @id @default(uuid(7))
+  credentialId String         @map("credential_id")
+  userId       String         @map("user_id")
+  acao         AcaoCredencial
+  ip           String?
+  em           DateTime       @default(now())
+
+  credential Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id])
+
+  @@index([credentialId, em])
+  @@map("credential_access_log")
+}
+
+// ─────────────────────────────────────────────────────────── financeiro
+
+enum EscopoFin {
+  EMPRESA
+  PESSOAL
+}
+
+enum TipoFin {
+  RECEITA
+  DESPESA
+}
+
+enum StatusFin {
+  PREVISTO
+  PENDENTE
+  PAGO
+  RECEBIDO
+  ATRASADO
+  CANCELADO
+}
+
+model FinCategory {
+  id             String    @id @default(uuid(7))
+  organizationId String    @map("organization_id")
+  nome           String
+  tipo           TipoFin
+  escopo         EscopoFin @default(EMPRESA)
+  ativo          Boolean   @default(true)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  entries      FinEntry[]
+
+  @@index([organizationId, tipo])
+  @@map("fin_categories")
+}
+
+/// Receita e despesa na mesma tabela: mesma entidade com sinal trocado.
+/// escopo PESSOAL exige ownerUserId — garantido por CHECK na migration.
+model FinEntry {
+  id             String    @id @default(uuid(7))
+  organizationId String    @map("organization_id")
+  escopo         EscopoFin @default(EMPRESA)
+  ownerUserId    String?   @map("owner_user_id")
+  tipo           TipoFin
+  descricao      String
+  clientId       String?   @map("client_id")
+  contractId     String?   @map("contract_id")
+  fornecedor     String?
+  categoryId     String?   @map("category_id")
+  valorCents     Int       @map("valor_cents")
+  valorPagoCents Int       @default(0) @map("valor_pago_cents")
+  vencimentoEm   DateTime  @map("vencimento_em")
+  competenciaEm  DateTime? @map("competencia_em")
+  quitadoEm      DateTime? @map("quitado_em")
+  status         StatusFin @default(PENDENTE)
+  formaPagamento String?   @map("forma_pagamento")
+  recorrente     Boolean   @default(false)
+  observacoes    String?
+  criadoEm       DateTime  @default(now()) @map("criado_em")
+  atualizadoEm   DateTime  @updatedAt @map("atualizado_em")
+  deletadoEm     DateTime? @map("deletado_em")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  owner        User?        @relation("FinEntryDono", fields: [ownerUserId], references: [id])
+  client       Client?      @relation(fields: [clientId], references: [id])
+  contract     Contract?    @relation(fields: [contractId], references: [id])
+  category     FinCategory? @relation(fields: [categoryId], references: [id])
+  pagamentos   FinPayment[]
+
+  @@index([organizationId, escopo, status, vencimentoEm])
+  @@index([organizationId, clientId, vencimentoEm])
+  @@map("fin_entries")
+}
+
+/// Pagamento parcial: guardar só o total pago perderia data e forma de cada parcela.
+model FinPayment {
+  id         String   @id @default(uuid(7))
+  entryId    String   @map("entry_id")
+  valorCents Int      @map("valor_cents")
+  dataEm     DateTime @map("data_em")
+  forma      String?
+  criadoEm   DateTime @default(now()) @map("criado_em")
+
+  entry FinEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+  @@index([entryId])
+  @@map("fin_payments")
+}
+
+// ─────────────────────────────────────────────────────────── tráfego
+
+enum Plataforma {
+  META
+  GOOGLE
+  TIKTOK
+}
+
+model AdAccount {
+  id             String     @id @default(uuid(7))
+  organizationId String     @map("organization_id")
+  clientId       String     @map("client_id")
+  plataforma     Plataforma @default(META)
+  externalId     String     @map("external_id")
+  nome           String
+  moeda          String     @default("BRL")
+  ativo          Boolean    @default(true)
+  ultimoSyncEm   DateTime?  @map("ultimo_sync_em")
+  criadoEm       DateTime   @default(now()) @map("criado_em")
+
+  organization Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  client       Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  metricas     AdMetricDaily[]
+
+  @@unique([organizationId, plataforma, externalId])
+  @@map("ad_accounts")
+}
+
+enum NivelMetrica {
+  CONTA
+  CAMPANHA
+  CONJUNTO
+  ANUNCIO
+}
+
+model AdMetricDaily {
+  id            String       @id @default(uuid(7))
+  adAccountId   String       @map("ad_account_id")
+  data          DateTime     @db.Date
+  nivel         NivelMetrica @default(CONTA)
+  externalId    String       @map("external_id")
+  nome          String?
+  objetivo      String?
+  status        String?
+  gastoCents    Int          @default(0) @map("gasto_cents")
+  impressoes    Int          @default(0)
+  alcance       Int          @default(0)
+  cliques       Int          @default(0)
+  cliquesLink   Int          @default(0) @map("cliques_link")
+  conversas     Int          @default(0)
+  resposta1     Int          @default(0)
+  sincronizadoEm DateTime    @default(now()) @map("sincronizado_em")
+
+  adAccount AdAccount @relation(fields: [adAccountId], references: [id], onDelete: Cascade)
+
+  @@unique([adAccountId, data, nivel, externalId])
+  @@index([adAccountId, data])
+  @@map("ad_metrics_daily")
+}
+
+model TrafficNote {
+  id             String   @id @default(uuid(7))
+  organizationId String   @map("organization_id")
+  clientId       String   @map("client_id")
+  data           DateTime @db.Date
+  tipo           String   @default("OBSERVACAO")
+  corpo          String
+  autorId        String?  @map("autor_id")
+  criadoEm       DateTime @default(now()) @map("criado_em")
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, clientId, data])
+  @@map("traffic_notes")
+}
+
+// ─────────────────────────────────────────────────────────── sistema
+
+model Notification {
+  id                String    @id @default(uuid(7))
+  organizationId    String    @map("organization_id")
+  userId            String    @map("user_id")
+  tipo              String
+  titulo            String
+  corpo             String?
+  url               String?
+  permissaoExigida  String?   @map("permissao_exigida")
+  lidaEm            DateTime? @map("lida_em")
+  arquivadaEm       DateTime? @map("arquivada_em")
+  criadoEm          DateTime  @default(now()) @map("criado_em")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, lidaEm, criadoEm])
+  @@map("notifications")
+}
+
+/// Append-only: a migration revoga UPDATE e DELETE do papel da aplicação.
+model AuditLog {
+  id             String   @id @default(uuid(7))
+  organizationId String   @map("organization_id")
+  userId         String?  @map("user_id")
+  acao           String
+  entidadeTipo   String   @map("entidade_tipo")
+  entidadeId     String   @map("entidade_id")
+  resumo         String?
+  antes          Json?
+  depois         Json?
+  ip             String?
+  em             DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User?        @relation(fields: [userId], references: [id])
+
+  @@index([organizationId, em])
+  @@index([entidadeTipo, entidadeId, em])
+  @@map("audit_logs")
+}
+
+/// Gravado na MESMA transação da mudança que o originou: ou as duas coisas
+/// acontecem, ou nenhuma. É o que impede "criou e perdeu a notificação".
+model Outbox {
+  id             String    @id @default(uuid(7))
+  organizationId String    @map("organization_id")
+  tipo           String
+  payload        Json
+  tentativas     Int       @default(0)
+  processadoEm   DateTime? @map("processado_em")
+  erro           String?
+  criadoEm       DateTime  @default(now()) @map("criado_em")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([processadoEm, criadoEm])
+  @@map("outbox")
+}
