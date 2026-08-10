@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A1F44">
+<title>Central Norte × Marktiva — Plano de Crescimento Digital</title>
+<meta name="description" content="Apresentação estratégica da Agência Marktiva para a Clínica Dentária Central Norte — Londrina/PR. Marketing, conteúdo, mídia, atendimento e comercial em uma única operação.">
+<!-- Inter é opcional: sem internet o CSS cai no stack do sistema sem quebrar nada -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%230A1F44'/%3E%3Cpath d='M30 68V32h10l10 16 10-16h10v36H60V49l-10 15-10-15v19z' fill='%232E7BFF'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<!-- ============ PROGRESSO / NAV ============ -->
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a class="brand" href="#hero" aria-label="Marktiva">
+      <span class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 40 40" width="28" height="28"><path d="M8 30V10h5.4l6.6 10.4L26.6 10H32v20h-5.6V19.4L20 29.2l-6.4-9.8V30z" fill="currentColor"/></svg>
+      </span>
+      <span class="brand__text">MARKTIVA</span>
+    </a>
+    <div class="nav__mid" aria-hidden="true">
+      <span class="dot"></span>
+      <span class="nav__client">Clínica Dentária Central Norte · Londrina/PR</span>
+    </div>
+    <a class="btn btn--nav" href="#investimento">Ver proposta</a>
+  </div>
+  <div class="nav__progress"><span id="progressBar"></span></div>
+</header>
+
+<!-- índice lateral (desktop) -->
+<nav class="rail" id="rail" aria-label="Navegação entre seções"></nav>
+
+<main>
+
+<!-- ============ 01 · HERO ============ -->
+<section class="hero" id="hero" data-rail="Início">
+  <canvas class="hero__canvas" id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero__glow" aria-hidden="true"></div>
+
+  <div class="hero__teeth" aria-hidden="true">
+    <svg viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <linearGradient id="gToothHero" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#DCE9FF"/>
+        </linearGradient>
+        <linearGradient id="gWireHero" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#2E7BFF"/><stop offset="70%" stop-color="#6AA5FF"/><stop offset="100%" stop-color="#E03131"/>
+        </linearGradient>
+      </defs>
+      <g class="hero__arch" id="heroArch"></g>
+      <path id="heroWire" class="hero__wire" fill="none" stroke="url(#gWireHero)" stroke-width="4" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <div class="container hero__content">
+    <p class="eyebrow reveal" data-d="0">Proposta estratégica · 2026</p>
+    <h1 class="hero__title reveal" data-d="1">
+      <span class="line">A CENTRAL NORTE JÁ É FORTE.</span>
+      <span class="line grad">AGORA É HORA DE TRANSFORMAR ESSA FORÇA EM CRESCIMENTO DIGITAL.</span>
+    </h1>
+    <p class="hero__lead reveal" data-d="2">
+      A Clínica Dentária Central Norte já conquistou reconhecimento, presença regional e credibilidade.
+      Agora vamos estruturar um novo canal de aquisição de pacientes através de marketing, conteúdo, mídia e estratégia comercial.
+    </p>
+    <div class="hero__actions reveal" data-d="3">
+      <a class="btn btn--primary" href="#partida">Conhecer a estratégia</a>
+      <a class="btn btn--ghost" href="#investimento">Ir para o investimento</a>
+    </div>
+    <p class="hero__sign reveal" data-d="4">Planejamento desenvolvido pela Agência Marktiva.</p>
+  </div>
+
+  <div class="hero__scroll" aria-hidden="true"><span></span></div>
+</section>
+
+<!-- ============ 02 · PONTO DE PARTIDA ============ -->
+<section class="section" id="partida" data-rail="Ponto de partida">
+  <div class="container">
+    <header class="s-head">
+      <span class="s-num reveal">01</span>
+      <h2 class="s-title reveal">VOCÊS NÃO ESTÃO<br><span class="grad">COMEÇANDO DO ZERO.</span></h2>
+      <div class="s-lead reveal" data-d="1">
+        <p>Existe algo extremamente valioso que muitas empresas passam anos tentando construir: <strong class="hl">reconhecimento</strong>.</p>
+        <p>A Central Norte já possui força na região norte de Londrina, presença em mídia tradicional, estrutura e confiança do público. Não precisamos construir uma marca do zero — precisamos transformar essa autoridade em uma máquina de crescimento digital.</p>
+      </div>
+    </header>
+
+    <div class="grid grid--3 asset-grid">
+      <article class="card card--asset reveal" style="--i:0">
+        <span class="card__ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-7-10a7 7 0 1 1 14 0c0 5.5-7 10-7 10Z"/><circle cx="12" cy="11" r="2.6"/></svg>
+        </span>
+        <h3>Força regional</h3>
+        <p>Marca conhecida e lembrada na zona norte de Londrina.</p>
+      </article>
+      <article class="card card--asset reveal" style="--i:1">
+        <span class="card__ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </span>
+        <h3>Presença em TV</h3>
+        <p>Mídia tradicional gerando lembrança e legitimidade.</p>
+      </article>
+      <article class="card card--asset reveal" style="--i:2">
+        <span class="card__ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-5 7 5v12"/><path d="M10 21v-6h4v6"/></svg>
+        </span>
+        <h3>Estrutura consolidada</h3>
+        <p>Espaço, equipamentos e equipe prontos para atender mais.</p>
+      </article>
+      <article class="card card--asset reveal" style="--i:3">
+        <span class="card__ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.2-2.9 7.6-7 9-4.1-1.4-7-4.8-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+        </span>
+        <h3>Credibilidade</h3>
+        <p>Confiança construída ao longo do tempo com pacientes reais.</p>
+      </article>
+      <article class="card card--asset reveal" style="--i:4">
+        <span class="card__ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 5.5a3.2 3.2 0 0 1 0 5M18 14.2A6.5 6.5 0 0 1 21.5 20"/></svg>
+        </span>
+        <h3>Base de pacientes</h3>
+        <p>Histórico de atendimentos, indicações e retorno.</p>
+      </article>
+      <article class="card card--asset card--accent reveal" style="--i:5">
+        <span class="card__ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 19l5-6 4 3 7-9"/><path d="M15 7h5v5"/></svg>
+        </span>
+        <h3>Potencial digital</h3>
+        <p>O ativo ainda não explorado — e é exatamente aqui que entramos.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 · OPORTUNIDADE ============ -->
+<section class="section section--tint" id="oportunidade" data-rail="A oportunidade">
+  <div class="container">
+    <header class="s-head">
+      <span class="s-num reveal">02</span>
+      <h2 class="s-title reveal">A PRÓXIMA FASE<br><span class="grad">DA CENTRAL NORTE</span></h2>
+    </header>
+
+    <div class="compare">
+      <div class="compare__col compare__col--now reveal">
+        <div class="compare__tag">Hoje</div>
+        <ul class="chips">
+          <li>TV</li><li>Indicação</li><li>Reconhecimento regional</li><li>Movimento orgânico</li><li>Presença tradicional</li>
+        </ul>
+      </div>
+
+      <div class="compare__arrow" aria-hidden="true">
+        <svg viewBox="0 0 80 80"><path class="dash" d="M6 40h58" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M58 30l14 10-14 10" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+
+      <div class="compare__col compare__col--next reveal" data-d="1">
+        <div class="compare__tag compare__tag--next">Próxima etapa</div>
+        <ul class="chips chips--next">
+          <li>Google</li><li>Instagram</li><li>Facebook</li><li>Conteúdo</li><li>WhatsApp</li>
+          <li>Remarketing</li><li>Processo comercial</li><li>Mensuração</li><li>Escala</li>
+        </ul>
+      </div>
+    </div>
+
+    <blockquote class="pull reveal">
+      O digital não deve ser apenas uma vitrine.<br>
+      <span class="grad">Ele precisa se tornar um canal de vendas.</span>
+    </blockquote>
+  </div>
+</section>
+
+<!-- ============ 04 · MAPEAMENTO ============ -->
+<section class="section" id="mapeamento" data-rail="Mapeamento">
+  <div class="container">
+    <header class="s-head">
+      <span class="s-num reveal">03</span>
+      <h2 class="s-title reveal">ANTES DE ANUNCIAR,<br><span class="grad">VAMOS ENTENDER A OPERAÇÃO.</span></h2>
+      <div class="s-lead reveal" data-d="1"><p>Campanha boa em operação desalinhada queima verba. Por isso o primeiro passo é um diagnóstico estratégico completo da clínica.</p></div>
+    </header>
+
+    <div class="scan reveal">
+      <div class="scan__beam" aria-hidden="true"></div>
+      <div class="scan__grid">
+        <div class="scan__group">
+          <h3 class="scan__gt"><i></i>Serviços & margem</h3>
+          <ul class="ticks">
+            <li>Principais procedimentos</li>
+            <li>Procedimentos de maior margem</li>
+            <li>Procedimentos prioritários</li>
+            <li>Ticket médio</li>
+          </ul>
+        </div>
+        <div class="scan__group">
+          <h3 class="scan__gt"><i></i>Mercado & público</h3>
+          <ul class="ticks">
+            <li>Perfil dos pacientes</li>
+            <li>Região atendida</li>
+            <li>Concorrência</li>
+            <li>Diferenciais da clínica</li>
+          </ul>
+        </div>
+        <div class="scan__group">
+          <h3 class="scan__gt"><i></i>Atendimento</h3>
+          <ul class="ticks">
+            <li>Processo atual do WhatsApp</li>
+            <li>Tempo médio de resposta</li>
+            <li>Como os leads são atendidos</li>
+            <li>Quem realiza o atendimento</li>
+          </ul>
+        </div>
+        <div class="scan__group">
+          <h3 class="scan__gt"><i></i>Conversão & capacidade</h3>
+          <ul class="ticks">
+            <li>Quantos leads viram avaliações</li>
+            <li>Quantas avaliações viram tratamentos</li>
+            <li>Principais objeções</li>
+            <li>Capacidade de atendimento e de escala</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <p class="note reveal">Esse diagnóstico define onde investir primeiro — e onde não faz sentido investir ainda.</p>
+  </div>
+</section>
+
+<!-- ============ 05 · ECOSSISTEMA ============ -->
+<section class="section section--dark" id="ecossistema" data-rail="Ecossistema">
+  <div class="container">
+    <header class="s-head s-head--center">
+      <span class="s-num reveal">04</span>
+      <h2 class="s-title reveal">NÃO VAMOS TRABALHAR PEÇAS ISOLADAS.<br><span class="grad-light">VAMOS CONSTRUIR UM ECOSSISTEMA.</span></h2>
+    </header>
+
+    <div class="flow" id="flow">
+      <div class="flow__line" aria-hidden="true"><span class="flow__pulse"></span></div>
+      <ol class="flow__list">
+        <li class="flow__item" style="--i:0"><span class="flow__dot"></span><span class="flow__label">Conteúdo</span><span class="flow__desc">Autoridade e desejo</span></li>
+        <li class="flow__item" style="--i:1"><span class="flow__dot"></span><span class="flow__label">Meta Ads</span><span class="flow__desc">Alcance e demanda</span></li>
+        <li class="flow__item" style="--i:2"><span class="flow__dot"></span><span class="flow__label">Google Ads</span><span class="flow__desc">Intenção de compra</span></li>
+        <li class="flow__item" style="--i:3"><span class="flow__dot"></span><span class="flow__label">WhatsApp</span><span class="flow__desc">Contato do paciente</span></li>
+        <li class="flow__item" style="--i:4"><span class="flow__dot"></span><span class="flow__label">Atendimento</span><span class="flow__desc">Resposta e condução</span></li>
+        <li class="flow__item" style="--i:5"><span class="flow__dot"></span><span class="flow__label">Avaliação</span><span class="flow__desc">Presença na cadeira</span></li>
+        <li class="flow__item" style="--i:6"><span class="flow__dot"></span><span class="flow__label">Follow-up</span><span class="flow__desc">Nada se perde</span></li>
+        <li class="flow__item" style="--i:7"><span class="flow__dot"></span><span class="flow__label">Tratamento</span><span class="flow__desc">Fechamento</span></li>
+        <li class="flow__item flow__item--end" style="--i:8"><span class="flow__dot"></span><span class="flow__label">Novo paciente</span><span class="flow__desc">Receita e indicação</span></li>
+      </ol>
+    </div>
+
+    <div class="grid grid--5 eco-notes">
+      <div class="eco reveal" style="--i:0"><strong>Conteúdo</strong><p>fortalece a autoridade.</p></div>
+      <div class="eco reveal" style="--i:1"><strong>Tráfego</strong><p>gera oportunidades.</p></div>
+      <div class="eco reveal" style="--i:2"><strong>Atendimento</strong><p>transforma oportunidades em avaliações.</p></div>
+      <div class="eco reveal" style="--i:3"><strong>Processo comercial</strong><p>aumenta a conversão.</p></div>
+      <div class="eco reveal" style="--i:4"><strong>Dados</strong><p>mostram onde aumentar o investimento.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 · GOOGLE ADS ============ -->
+<section class="section" id="google" data-rail="Google Ads">
+  <div class="container split">
+    <div class="split__text">
+      <span class="s-num reveal">05</span>
+      <h2 class="s-title reveal">ESTAR PRESENTE QUANDO<br><span class="grad">O PACIENTE ESTIVER PROCURANDO.</span></h2>
+      <p class="s-lead reveal" data-d="1">O Google trabalha <strong class="hl">intenção</strong>. Quem pesquisa “implante dentário em Londrina” não está descobrindo o serviço — está decidindo onde fazer. Nosso trabalho é fazer a Central Norte aparecer exatamente nesse momento.</p>
+
+      <ul class="feature-list">
+        <li class="reveal" style="--i:0">Estruturação de campanhas por procedimento</li>
+        <li class="reveal" style="--i:1">Pesquisa de palavras-chave</li>
+        <li class="reveal" style="--i:2">Segmentação geográfica (zona norte e Londrina)</li>
+        <li class="reveal" style="--i:3">Controle de palavras negativas</li>
+        <li class="reveal" style="--i:4">Acompanhamento de conversões</li>
+        <li class="reveal" style="--i:5">Otimizações contínuas de lances e anúncios</li>
+        <li class="reveal" style="--i:6">Análise de custo por oportunidade</li>
+      </ul>
+    </div>
+
+    <div class="split__visual">
+      <div class="serp reveal">
+        <div class="serp__bar">
+          <svg class="serp__mag" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <span class="serp__query" id="serpQuery"></span><span class="serp__caret" aria-hidden="true"></span>
+        </div>
+        <div class="serp__suggest" id="serpSuggest" aria-hidden="true"></div>
+        <div class="serp__result">
+          <div class="serp__ad">Patrocinado</div>
+          <div class="serp__title">Clínica Dentária Central Norte — Londrina/PR</div>
+          <div class="serp__url">centralnorte.com.br › agendar-avaliação</div>
+          <p class="serp__snippet">Implantes, ortodontia e estética com equipe especializada. Avaliação agendada pelo WhatsApp. Atendimento na zona norte de Londrina.</p>
+          <div class="serp__links"><span>Agendar avaliação</span><span>Implantes</span><span>Ortodontia</span></div>
+        </div>
+        <div class="serp__result serp__result--muted">
+          <div class="serp__title serp__title--muted">Outra clínica odontológica</div>
+          <div class="serp__url">outraclinica.com.br</div>
+        </div>
+      </div>
+      <p class="micro reveal">Representação ilustrativa de resultado de busca.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 07 · META ADS ============ -->
+<section class="section section--tint" id="meta" data-rail="Meta Ads">
+  <div class="container split split--rev">
+    <div class="split__text">
+      <span class="s-num reveal">06</span>
+      <h2 class="s-title reveal">NÃO ESPERAR O PACIENTE PROCURAR.<br><span class="grad">FAZER A CLÍNICA APARECER PARA ELE.</span></h2>
+      <p class="s-lead reveal" data-d="1">Instagram e Facebook criam a demanda que o Google captura. É onde a Central Norte constrói presença, prova social e desejo — todos os dias, na região certa.</p>
+      <div class="pills">
+        <span class="reveal" style="--i:0">Conteúdo</span><span class="reveal" style="--i:1">Reconhecimento</span>
+        <span class="reveal" style="--i:2">Tratamentos</span><span class="reveal" style="--i:3">Prova social</span>
+        <span class="reveal" style="--i:4">Autoridade</span><span class="reveal" style="--i:5">Remarketing</span>
+        <span class="reveal" style="--i:6">Campanhas para WhatsApp</span><span class="reveal" style="--i:7">Geração de leads</span>
+        <span class="reveal" style="--i:8">Segmentação regional</span><span class="reveal" style="--i:9">Criativos diferentes</span>
+        <span class="reveal" style="--i:10">Testes A/B</span>
+      </div>
+    </div>
+
+    <div class="split__visual">
+      <div class="phone reveal" id="phone">
+        <div class="phone__notch" aria-hidden="true"></div>
+        <div class="phone__screen">
+          <div class="feed">
+            <div class="feed__head">
+              <span class="feed__avatar" aria-hidden="true">CN</span>
+              <div><strong>centralnorte.odonto</strong><small>Patrocinado · Londrina</small></div>
+            </div>
+            <div class="feed__media feed__media--a" aria-hidden="true">
+              <span class="feed__badge">Implantes</span>
+              <div class="shine"></div>
+            </div>
+            <div class="feed__cta">Enviar mensagem no WhatsApp</div>
+          </div>
+          <div class="feed feed--b">
+            <div class="feed__head">
+              <span class="feed__avatar" aria-hidden="true">CN</span>
+              <div><strong>centralnorte.odonto</strong><small>Patrocinado · Zona Norte</small></div>
+            </div>
+            <div class="feed__media feed__media--b" aria-hidden="true">
+              <span class="feed__badge feed__badge--red">Ortodontia</span>
+              <div class="shine"></div>
+            </div>
+            <div class="feed__cta">Saiba mais</div>
+          </div>
+        </div>
+      </div>
+      <p class="micro reveal">Representação ilustrativa de anúncios em feed.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 08 · CONTEÚDO ============ -->
+<section class="section" id="conteudo" data-rail="Conteúdo">
+  <div class="container">
+    <header class="s-head">
+      <span class="s-num reveal">07</span>
+      <h2 class="s-title reveal">TRANSFORMAR CONHECIMENTO<br><span class="grad">EM AUTORIDADE.</span></h2>
+      <div class="s-lead reveal" data-d="1"><p>A Marktiva realizará <strong class="hl">gravação a cada 2 semanas</strong>, com uma manhã ou tarde fixa reservada para produção. Constância sem prejudicar a rotina clínica.</p></div>
+    </header>
+
+    <div class="weeks">
+      <div class="week reveal" style="--i:0"><span class="week__n">Semana 1</span><strong>Gravação</strong><p>Manhã ou tarde fixa na clínica.</p><span class="week__ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="13" height="12" rx="2.5"/><path d="M15 11l7-4v10l-7-4z"/></svg></span></div>
+      <div class="week reveal" style="--i:1"><span class="week__n">Semana 2</span><strong>Distribuição</strong><p>Edição, roteiro de legenda e publicação.</p><span class="week__ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M22 3L11 14"/><path d="M22 3l-7 19-4-8-8-4z"/></svg></span></div>
+      <div class="week reveal" style="--i:2"><span class="week__n">Semana 3</span><strong>Nova gravação</strong><p>Novos temas a partir do que performou.</p><span class="week__ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="13" height="12" rx="2.5"/><path d="M15 11l7-4v10l-7-4z"/></svg></span></div>
+      <div class="week reveal" style="--i:3"><span class="week__n">Semana 4</span><strong>Distribuição</strong><p>Sequência publicada e impulsionada.</p><span class="week__ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M22 3L11 14"/><path d="M22 3l-7 19-4-8-8-4z"/></svg></span></div>
+    </div>
+
+    <h3 class="mini-title reveal">Temas que vamos produzir</h3>
+    <div class="tags">
+      <span class="reveal" style="--i:0">Dúvidas</span><span class="reveal" style="--i:1">Tratamentos</span><span class="reveal" style="--i:2">Mitos</span>
+      <span class="reveal" style="--i:3">Dores</span><span class="reveal" style="--i:4">Objeções</span><span class="reveal" style="--i:5">Casos</span>
+      <span class="reveal" style="--i:6">Bastidores</span><span class="reveal" style="--i:7">Estrutura</span><span class="reveal" style="--i:8">Especialistas</span>
+      <span class="reveal" style="--i:9">Tecnologias</span><span class="reveal" style="--i:10">Implantes</span><span class="reveal" style="--i:11">Ortodontia</span>
+      <span class="reveal" style="--i:12">Estética</span><span class="reveal" style="--i:13">Prevenção</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 09 · POSTAGENS AUTOMÁTICAS ============ -->
+<section class="section section--tint" id="postagens" data-rail="Distribuição">
+  <div class="container split">
+    <div class="split__text">
+      <span class="s-num reveal">08</span>
+      <h2 class="s-title reveal">CONTEÚDO PRODUZIDO.<br><span class="grad">CONTEÚDO DISTRIBUÍDO.</span></h2>
+      <p class="s-lead reveal" data-d="1">A clínica não pode depender de lembrar de publicar todos os dias. O mês inteiro sai programado.</p>
+      <ul class="feature-list">
+        <li class="reveal" style="--i:0">Calendário de conteúdo</li>
+        <li class="reveal" style="--i:1">Organização das mídias</li>
+        <li class="reveal" style="--i:2">Programação antecipada</li>
+        <li class="reveal" style="--i:3">Postagens automáticas</li>
+        <li class="reveal" style="--i:4">Distribuição estratégica por formato</li>
+        <li class="reveal" style="--i:5">Planejamento de frequência</li>
+        <li class="reveal" style="--i:6">Acompanhamento das publicações</li>
+      </ul>
+    </div>
+    <div class="split__visual">
+      <div class="cal reveal" id="cal">
+        <div class="cal__head">
+          <strong>Calendário do mês</strong>
+          <span class="cal__status" id="calStatus">Programando…</span>
+        </div>
+        <div class="cal__dows" aria-hidden="true"><span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span></div>
+        <div class="cal__grid" id="calGrid" aria-hidden="true"></div>
+        <div class="cal__legend">
+          <span><i class="lg lg--reel"></i>Reels</span>
+          <span><i class="lg lg--post"></i>Post</span>
+          <span><i class="lg lg--story"></i>Stories</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10 · IMPLANTE ANIMADO ============ -->
+<section class="scroll-stage scroll-stage--dark" id="implante" data-rail="Implantes">
+  <div class="sticky">
+    <div class="container implant">
+      <div class="implant__text">
+        <span class="s-num s-num--light">09</span>
+        <h2 class="s-title s-title--light">PROCEDIMENTOS IMPORTANTES<br><span class="grad-light">PRECISAM DE CAMPANHAS IMPORTANTES.</span></h2>
+        <p class="s-lead s-lead--light">Um implante não é comprado por impulso. A campanha precisa trabalhar <strong>intenção</strong> e <strong>confiança</strong> ao mesmo tempo — do primeiro contato até a decisão.</p>
+        <ol class="steps" id="implantSteps">
+          <li class="step" data-i="0"><span class="step__n">01</span><div><strong>Atração</strong><p>A pessoa certa, na região certa, descobre a clínica.</p></div></li>
+          <li class="step" data-i="1"><span class="step__n">02</span><div><strong>Educação</strong><p>Conteúdo explica o procedimento e reduz o medo.</p></div></li>
+          <li class="step" data-i="2"><span class="step__n">03</span><div><strong>Confiança</strong><p>Estrutura, especialistas e casos sustentam a decisão.</p></div></li>
+          <li class="step" data-i="3"><span class="step__n">04</span><div><strong>Avaliação</strong><p>O atendimento conduz o lead até a cadeira.</p></div></li>
+          <li class="step" data-i="4"><span class="step__n">05</span><div><strong>Conversão</strong><p>Proposta apresentada, objeções tratadas, tratamento fechado.</p></div></li>
+        </ol>
+      </div>
+
+      <div class="implant__visual">
+        <svg id="implantSvg" viewBox="0 0 320 460" role="img" aria-label="Animação demonstrativa de um implante dentário">
+          <defs>
+            <linearGradient id="gEnamel" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#CFE0FA"/>
+            </linearGradient>
+            <linearGradient id="gMetal" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#7FA6D9"/><stop offset="45%" stop-color="#EAF2FF"/><stop offset="100%" stop-color="#5C86BF"/>
+            </linearGradient>
+            <linearGradient id="gBone" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1A4488"/><stop offset="100%" stop-color="#0B2247"/>
+            </linearGradient>
+            <filter id="fGlow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- osso / gengiva -->
+          <g id="impBone">
+            <path d="M18 248 Q68 230 112 244 Q160 258 208 242 Q252 228 302 248 L302 404 Q302 426 280 426 L40 426 Q18 426 18 404 Z"
+                  fill="url(#gBone)" stroke="#2E7BFF" stroke-opacity=".28" stroke-width="1.5"/>
+            <path d="M18 248 Q68 230 112 244 Q160 258 208 242 Q252 228 302 248" fill="none" stroke="#5C97FF" stroke-width="3" opacity=".65"/>
+            <g stroke="#5C97FF" stroke-opacity=".16" stroke-width="1.5" stroke-linecap="round">
+              <path d="M44 300 h34"/><path d="M52 330 h22"/><path d="M240 296 h36"/><path d="M250 326 h26"/>
+              <path d="M40 366 h30"/><path d="M244 362 h32"/>
+            </g>
+          </g>
+
+          <!-- dente original (coroa + raiz) -->
+          <g id="impOriginal">
+            <g id="impRoot">
+              <path d="M133 242 c-5 46 -7 78 -3 98 c3 16 15 15 18 -2 c3 -18 4 -58 4 -96 z" fill="#C9DBF6"/>
+              <path d="M187 242 c5 46 7 78 3 98 c-3 16 -15 15 -18 -2 c-3 -18 -4 -58 -4 -96 z" fill="#C9DBF6"/>
+            </g>
+            <g id="impCrownOrig">
+              <path d="M160 128 c34 0 53 22 53 51 c0 23 -4 43 -11 57 c-5 10 -17 14 -42 14 c-25 0 -37 -4 -42 -14 c-7 -14 -11 -34 -11 -57 c0 -29 19 -51 53 -51 z" fill="url(#gEnamel)"/>
+              <path d="M133 163 c17 -13 37 -13 54 0" fill="none" stroke="#fff" stroke-width="3.5" opacity=".75" stroke-linecap="round"/>
+            </g>
+          </g>
+
+          <!-- alvéolo (osso preparado) -->
+          <path id="impSocket" d="M134 246 c-2 46 0 76 6 92 c6 16 34 16 40 0 c6 -16 8 -46 6 -92 z"
+                fill="#071B38" opacity="0" stroke="#2E7BFF" stroke-width="1.5" stroke-opacity=".55"/>
+
+          <!-- implante (parafuso) -->
+          <g id="impScrew" opacity="0">
+            <path d="M137 248 L183 248 c0 64 -3 88 -8 106 c-4 15 -11 20 -15 20 c-4 0 -11 -5 -15 -20 c-5 -18 -8 -42 -8 -106 z" fill="url(#gMetal)"/>
+            <g stroke="#2C5FA8" stroke-width="2.6" stroke-linecap="round" opacity=".7">
+              <path d="M139 266 h42"/><path d="M139 282 h42"/><path d="M140 298 h40"/>
+              <path d="M142 314 h36"/><path d="M144 330 h32"/><path d="M148 346 h24"/>
+            </g>
+          </g>
+
+          <!-- pino / abutment -->
+          <g id="impAbutment" opacity="0">
+            <path d="M143 250 L177 250 L171 198 c-8 -7 -14 -7 -22 0 z" fill="url(#gMetal)"/>
+            <rect x="138" y="242" width="44" height="11" rx="5" fill="#A8C8F0"/>
+          </g>
+
+          <!-- coroa final -->
+          <g id="impCrownNew" opacity="0">
+            <path d="M160 122 c35 0 54 23 54 53 c0 26 -4 49 -11 65 c-5 12 -18 16 -43 16 c-25 0 -38 -4 -43 -16 c-7 -16 -11 -39 -11 -65 c0 -30 19 -53 54 -53 z" fill="url(#gEnamel)"/>
+            <path d="M133 159 c17 -14 37 -14 54 0" fill="none" stroke="#fff" stroke-width="3.5" opacity=".8" stroke-linecap="round"/>
+            <path d="M160 122 c-9 12 -9 24 0 36" fill="none" stroke="#BBD3F2" stroke-width="2" opacity=".6" stroke-linecap="round"/>
+          </g>
+
+          <g id="impSpark" opacity="0" filter="url(#fGlow)">
+            <circle cx="160" cy="186" r="92" fill="none" stroke="#2E7BFF" stroke-width="2" opacity=".55"/>
+            <circle cx="160" cy="186" r="112" fill="none" stroke="#E03131" stroke-width="1.2" opacity=".3"/>
+          </g>
+        </svg>
+        <div class="implant__caption" id="implantCaption">Atração</div>
+        <div class="stage-progress" aria-hidden="true"><span id="implantBar"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 11 · APARELHO ORTODÔNTICO ============ -->
+<section class="scroll-stage" id="alinhamento" data-rail="Alinhamento">
+  <div class="sticky">
+    <div class="container braces">
+      <header class="s-head s-head--center">
+        <span class="s-num">10</span>
+        <h2 class="s-title">MARKETING TAMBÉM É<br><span class="grad">UM PROCESSO DE ALINHAMENTO.</span></h2>
+        <p class="s-lead s-lead--center">Quando mídia, conteúdo, atendimento e comercial trabalham em direções diferentes, oportunidades são perdidas. Nosso trabalho é colocar toda a operação na mesma direção.</p>
+      </header>
+
+      <div class="braces__stage">
+        <svg id="bracesSvg" viewBox="8 62 704 180" role="img" aria-label="Animação de dentes se alinhando com aparelho ortodôntico">
+          <defs>
+            <linearGradient id="gTooth2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#D8E6FB"/>
+            </linearGradient>
+            <linearGradient id="gWire2" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#2E7BFF"/><stop offset="55%" stop-color="#4F8CFF"/><stop offset="100%" stop-color="#E03131"/>
+            </linearGradient>
+          </defs>
+          <g id="bracesTeeth"></g>
+          <path id="bracesWire" fill="none" stroke="url(#gWire2)" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <ul class="align-list" id="alignList">
+        <li data-i="0"><i></i>Marketing alinhado</li>
+        <li data-i="1"><i></i>Atendimento alinhado</li>
+        <li data-i="2"><i></i>Comercial alinhado</li>
+        <li data-i="3"><i></i>Campanhas alinhadas</li>
+        <li data-i="4"><i></i>Metas alinhadas</li>
+      </ul>
+      <div class="stage-progress stage-progress--center" aria-hidden="true"><span id="bracesBar"></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 12 · O GRANDE DIFERENCIAL ============ -->
+<section class="section section--dark" id="diferencial" data-rail="Diferencial">
+  <div class="container">
+    <header class="s-head s-head--center">
+      <span class="s-num reveal">11</span>
+      <h2 class="s-title reveal">NOSSO TRABALHO NÃO TERMINA<br><span class="grad-light">QUANDO O LEAD CHEGA.</span></h2>
+    </header>
+
+    <div class="versus">
+      <div class="versus__col versus__col--bad reveal">
+        <h3>Como muitas agências trabalham</h3>
+        <div class="chain chain--bad">
+          <span>Anúncio</span><em>→</em><span>Lead</span><em>→</em><span class="chain__end">Fim</span>
+        </div>
+        <p class="versus__note">O lead chega, e a responsabilidade acaba ali. O resultado depende da sorte do atendimento.</p>
+      </div>
+      <div class="versus__col versus__col--good reveal" data-d="1">
+        <h3>Como a Marktiva trabalha</h3>
+        <div class="chain chain--good">
+          <span>Anúncio</span><em>↓</em><span>Lead</span><em>↓</em><span>Atendimento</span><em>↓</em><span>Qualificação</span><em>↓</em><span>Avaliação</span><em>↓</em><span>Follow-up</span><em>↓</em><span class="chain__end chain__end--win">Fechamento</span>
+        </div>
+        <p class="versus__note">Acompanhamos a oportunidade até o fim da jornada — porque é lá que o faturamento acontece.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 13 · MENTORIA DE ATENDIMENTO ============ -->
+<section class="section" id="mentoria" data-rail="Atendimento">
+  <div class="container split split--rev">
+    <div class="split__text">
+      <span class="s-num reveal">12</span>
+      <h2 class="s-title reveal">CADA LEAD PRECISA<br><span class="grad">SER BEM APROVEITADO.</span></h2>
+      <p class="s-lead reveal" data-d="1">A Marktiva acompanha e orienta a equipe responsável pelos atendimentos. O objetivo não é transformar a recepção em vendedores agressivos — é ajudar a equipe a atender melhor, conduzir melhor e aproveitar melhor cada oportunidade.</p>
+      <div class="grid grid--2 mini-cards">
+        <div class="mini reveal" style="--i:0">Velocidade de resposta</div>
+        <div class="mini reveal" style="--i:1">Primeira mensagem</div>
+        <div class="mini reveal" style="--i:2">Abordagem</div>
+        <div class="mini reveal" style="--i:3">Qualificação</div>
+        <div class="mini reveal" style="--i:4">Condução para avaliação</div>
+        <div class="mini reveal" style="--i:5">Tratamento de objeções</div>
+        <div class="mini reveal" style="--i:6">Follow-up</div>
+        <div class="mini reveal" style="--i:7">Recuperação de leads</div>
+        <div class="mini reveal" style="--i:8">Recuperação de avaliações que não fecharam</div>
+        <div class="mini reveal" style="--i:9">Organização dos contatos</div>
+        <div class="mini reveal" style="--i:10">Scripts</div>
+        <div class="mini reveal" style="--i:11">Padronização</div>
+        <div class="mini reveal" style="--i:12">Melhoria contínua</div>
+      </div>
+    </div>
+
+    <div class="split__visual">
+      <div class="chat reveal" id="chat">
+        <div class="chat__head"><span class="chat__avatar" aria-hidden="true">CN</span><div><strong>Central Norte</strong><small>respondendo em minutos</small></div></div>
+        <div class="chat__body" id="chatBody"></div>
+        <div class="chat__foot" aria-hidden="true"><span>Mensagem</span><i></i></div>
+      </div>
+      <p class="micro reveal">Exemplo ilustrativo de condução de atendimento.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 14 · REUNIÕES ESTRATÉGICAS ============ -->
+<section class="section section--tint" id="reunioes" data-rail="Reuniões">
+  <div class="container">
+    <header class="s-head">
+      <span class="s-num reveal">13</span>
+      <h2 class="s-title reveal">NÃO É PUBLICAR<br><span class="grad">E SUMIR.</span></h2>
+      <div class="s-lead reveal" data-d="1"><p>Reuniões estratégicas periódicas para olhar os números juntos e decidir os próximos passos com base em evidência, não em achismo.</p></div>
+    </header>
+
+    <div class="agenda">
+      <div class="agenda__side reveal">
+        <div class="agenda__badge">Pauta da reunião</div>
+        <p>A Marktiva atua também com <strong class="hl">aconselhamento estratégico</strong> sobre marketing e atendimento.</p>
+      </div>
+      <ul class="agenda__list">
+        <li class="reveal" style="--i:0">O que funcionou</li>
+        <li class="reveal" style="--i:1">O que não funcionou</li>
+        <li class="reveal" style="--i:2">Campanhas</li>
+        <li class="reveal" style="--i:3">Leads</li>
+        <li class="reveal" style="--i:4">Atendimento</li>
+        <li class="reveal" style="--i:5">Conversões</li>
+        <li class="reveal" style="--i:6">Procedimentos</li>
+        <li class="reveal" style="--i:7">Custo por lead</li>
+        <li class="reveal" style="--i:8">Qualidade dos contatos</li>
+        <li class="reveal" style="--i:9">Conteúdos</li>
+        <li class="reveal" style="--i:10">Novas oportunidades</li>
+        <li class="reveal" style="--i:11">Próximos passos</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 15 · DADOS ============ -->
+<section class="section section--dark" id="dados" data-rail="Dados">
+  <div class="container">
+    <header class="s-head s-head--center">
+      <span class="s-num reveal">14</span>
+      <h2 class="s-title reveal">O QUE NÃO É MEDIDO<br><span class="grad-light">NÃO PODE SER ESCALADO.</span></h2>
+      <p class="s-lead s-lead--light s-lead--center reveal" data-d="1">Cada etapa da operação vira número. É assim que decidimos onde aumentar o investimento — e onde corrigir antes de gastar mais.</p>
+    </header>
+
+    <div class="dash reveal" id="dash">
+      <div class="dash__head">
+        <div><strong>Painel da operação</strong><small>Visão mensal</small></div>
+        <span class="dash__live"><i></i>Demonstração</span>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><span class="kpi__l">Investimento</span><span class="kpi__v" data-count="8500" data-prefix="R$ " data-sep="1">R$ 0</span></div>
+        <div class="kpi"><span class="kpi__l">Leads</span><span class="kpi__v" data-count="214">0</span></div>
+        <div class="kpi"><span class="kpi__l">Custo por lead</span><span class="kpi__v" data-count="39" data-prefix="R$ " data-decimals="2">R$ 0</span></div>
+        <div class="kpi"><span class="kpi__l">Avaliações</span><span class="kpi__v" data-count="96">0</span></div>
+        <div class="kpi"><span class="kpi__l">Taxa de agendamento</span><span class="kpi__v" data-count="45" data-suffix="%">0%</span></div>
+        <div class="kpi"><span class="kpi__l">Comparecimentos</span><span class="kpi__v" data-count="71">0</span></div>
+        <div class="kpi"><span class="kpi__l">Fechamentos</span><span class="kpi__v" data-count="28">0</span></div>
+        <div class="kpi kpi--hero"><span class="kpi__l">Faturamento gerado</span><span class="kpi__v" data-count="96400" data-prefix="R$ " data-sep="1">R$ 0</span></div>
+      </div>
+
+      <div class="dash__charts">
+        <div class="chart">
+          <div class="chart__t">Leads por mês</div>
+          <div class="bars" id="bars">
+            <span style="--h:38%"><i></i></span><span style="--h:52%"><i></i></span><span style="--h:47%"><i></i></span>
+            <span style="--h:66%"><i></i></span><span style="--h:78%"><i></i></span><span style="--h:92%"><i></i></span>
+          </div>
+          <div class="bars__x"><span>Mês 1</span><span>Mês 2</span><span>Mês 3</span><span>Mês 4</span><span>Mês 5</span><span>Mês 6</span></div>
+        </div>
+        <div class="chart">
+          <div class="chart__t">Funil da operação</div>
+          <div class="funnel">
+            <div class="fn" style="--w:100%"><span>Leads</span></div>
+            <div class="fn" style="--w:78%"><span>Qualificados</span></div>
+            <div class="fn" style="--w:58%"><span>Avaliações</span></div>
+            <div class="fn" style="--w:42%"><span>Comparecimentos</span></div>
+            <div class="fn fn--end" style="--w:26%"><span>Fechamentos</span></div>
+          </div>
+        </div>
+      </div>
+      <p class="dash__note">Painel meramente demonstrativo. Os números reais serão construídos com os dados da própria clínica.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 16 · COMEÇAR CERTO ============ -->
+<section class="section" id="fases" data-rail="Fases">
+  <div class="container">
+    <header class="s-head s-head--center">
+      <span class="s-num reveal">15</span>
+      <h2 class="s-title reveal">NÃO PRECISAMOS COMEÇAR GRANDE.<br><span class="grad">PRECISAMOS COMEÇAR CERTO.</span></h2>
+      <p class="s-lead s-lead--center reveal" data-d="1">O investimento em mídia será definido junto com a clínica. Podemos começar com uma verba controlada, testar campanhas, identificar os procedimentos com melhor resposta, entender o custo por oportunidade, analisar a capacidade comercial e só então aumentar o investimento gradualmente.</p>
+    </header>
+
+    <div class="phases">
+      <article class="phase reveal" style="--i:0">
+        <div class="phase__n">Fase 01</div>
+        <h3>Validar</h3>
+        <ul>
+          <li>Verba controlada</li>
+          <li>Testes de campanha</li>
+          <li>Primeiros dados reais</li>
+        </ul>
+        <div class="phase__meter"><span style="--p:35%"></span></div>
+      </article>
+      <div class="phase__arrow" aria-hidden="true">→</div>
+      <article class="phase reveal" style="--i:1">
+        <div class="phase__n">Fase 02</div>
+        <h3>Otimizar</h3>
+        <ul>
+          <li>Procedimentos vencedores</li>
+          <li>Custo por oportunidade</li>
+          <li>Ajuste de atendimento</li>
+        </ul>
+        <div class="phase__meter"><span style="--p:65%"></span></div>
+      </article>
+      <div class="phase__arrow" aria-hidden="true">→</div>
+      <article class="phase phase--hi reveal" style="--i:2">
+        <div class="phase__n">Fase 03</div>
+        <h3>Escalar</h3>
+        <ul>
+          <li>Aumento gradual de verba</li>
+          <li>Novas campanhas e públicos</li>
+          <li>Crescimento com previsibilidade</li>
+        </ul>
+        <div class="phase__meter"><span style="--p:100%"></span></div>
+      </article>
+    </div>
+
+    <blockquote class="pull pull--sm reveal">
+      Primeiro encontramos o que funciona.<br><span class="grad">Depois colocamos mais força.</span>
+    </blockquote>
+  </div>
+</section>
+
+<!-- ============ 17 · ENTREGAS ============ -->
+<section class="section section--tint" id="entregas" data-rail="Entregas">
+  <div class="container">
+    <header class="s-head">
+      <span class="s-num reveal">16</span>
+      <h2 class="s-title reveal">O QUE A MARKTIVA<br><span class="grad">ASSUME NESSA OPERAÇÃO.</span></h2>
+    </header>
+
+    <div class="deliv" id="deliv">
+      <div class="d reveal" style="--i:0"><span>01</span>Gestão de Meta Ads</div>
+      <div class="d reveal" style="--i:1"><span>02</span>Gestão de Google Ads</div>
+      <div class="d reveal" style="--i:2"><span>03</span>Estratégia de campanhas</div>
+      <div class="d reveal" style="--i:3"><span>04</span>Criação de públicos</div>
+      <div class="d reveal" style="--i:4"><span>05</span>Remarketing</div>
+      <div class="d reveal" style="--i:5"><span>06</span>Planejamento de conteúdo</div>
+      <div class="d reveal" style="--i:6"><span>07</span>Gravações quinzenais</div>
+      <div class="d reveal" style="--i:7"><span>08</span>Manhã ou tarde fixa para gravação</div>
+      <div class="d reveal" style="--i:8"><span>09</span>Organização das mídias</div>
+      <div class="d reveal" style="--i:9"><span>10</span>Postagens automáticas</div>
+      <div class="d reveal" style="--i:10"><span>11</span>Acompanhamento de resultados</div>
+      <div class="d reveal" style="--i:11"><span>12</span>Reunião estratégica</div>
+      <div class="d reveal" style="--i:12"><span>13</span>Estratégia de vendas</div>
+      <div class="d reveal" style="--i:13"><span>14</span>Processo de follow-up</div>
+      <div class="d reveal" style="--i:14"><span>15</span>Scripts de atendimento</div>
+      <div class="d reveal" style="--i:15"><span>16</span>Treinamento comercial</div>
+      <div class="d reveal" style="--i:16"><span>17</span>Mentoria de atendimento</div>
+      <div class="d reveal" style="--i:17"><span>18</span>Aconselhamento estratégico</div>
+      <div class="d reveal" style="--i:18"><span>19</span>Análise de leads</div>
+      <div class="d reveal" style="--i:19"><span>20</span>Otimização constante</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 18 · O QUE QUEREMOS CONSTRUIR ============ -->
+<section class="section section--soft" id="construir" data-rail="Objetivo">
+  <div class="container">
+    <header class="s-head s-head--center">
+      <span class="s-num reveal">17</span>
+      <h2 class="s-title reveal">NOSSO OBJETIVO NÃO É FAZER MAIS POSTS.<br><span class="grad">É CONSTRUIR UM NOVO CANAL DE CRESCIMENTO PARA A CENTRAL NORTE.</span></h2>
+    </header>
+
+    <ul class="ladder" id="ladder">
+      <li class="reveal" style="--i:0"><span class="ladder__bar" style="--p:22%"></span>Mais presença digital</li>
+      <li class="reveal" style="--i:1"><span class="ladder__bar" style="--p:31%"></span>Mais autoridade</li>
+      <li class="reveal" style="--i:2"><span class="ladder__bar" style="--p:40%"></span>Mais procura</li>
+      <li class="reveal" style="--i:3"><span class="ladder__bar" style="--p:50%"></span>Mais leads</li>
+      <li class="reveal" style="--i:4"><span class="ladder__bar" style="--p:59%"></span>Mais avaliações</li>
+      <li class="reveal" style="--i:5"><span class="ladder__bar" style="--p:68%"></span>Melhor atendimento</li>
+      <li class="reveal" style="--i:6"><span class="ladder__bar" style="--p:77%"></span>Maior conversão</li>
+      <li class="reveal" style="--i:7"><span class="ladder__bar" style="--p:88%"></span>Mais pacientes</li>
+      <li class="reveal ladder--hi" style="--i:8"><span class="ladder__bar" style="--p:100%"></span>Mais previsibilidade</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 19 · INVESTIMENTO ============ -->
+<section class="section" id="investimento" data-rail="Investimento">
+  <div class="container">
+    <header class="s-head s-head--center">
+      <span class="s-num reveal">18</span>
+      <h2 class="s-title reveal">INVESTIMENTO<br><span class="grad">NA OPERAÇÃO</span></h2>
+    </header>
+
+    <div class="price reveal">
+      <div class="price__glow" aria-hidden="true"></div>
+      <div class="price__top">
+        <span class="price__tag">Plano completo · Marktiva</span>
+        <div class="price__value">
+          <span class="price__cur">R$</span>
+          <span class="price__num" data-count="4500" data-sep="1">0</span>
+          <span class="price__per">,00 / mês</span>
+        </div>
+        <p class="price__sub">Estratégia, gestão, produção, acompanhamento e treinamento — tudo o que foi apresentado nesta proposta.</p>
+      </div>
+
+      <div class="price__grid">
+        <ul>
+          <li>Gestão de Meta Ads</li>
+          <li>Gestão de Google Ads</li>
+          <li>Estratégia de campanhas</li>
+          <li>Criação de públicos e remarketing</li>
+          <li>Planejamento de conteúdo</li>
+          <li>Gravações quinzenais</li>
+          <li>Organização das mídias</li>
+        </ul>
+        <ul>
+          <li>Postagens automáticas</li>
+          <li>Acompanhamento de resultados</li>
+          <li>Reunião estratégica</li>
+          <li>Estratégia de vendas e follow-up</li>
+          <li>Scripts e treinamento de atendimento</li>
+          <li>Mentoria e aconselhamento estratégico</li>
+          <li>Análise de leads e otimização constante</li>
+        </ul>
+      </div>
+
+      <div class="price__media">
+        <div class="price__media-tag">Importante</div>
+        <p>O valor de <strong>R$ 4.500,00</strong> corresponde aos serviços de estratégia, gestão, produção, acompanhamento e treinamento realizados pela Marktiva.</p>
+        <p class="price__media-hi">O investimento em mídia paga não está incluso neste valor.</p>
+        <p>Google Ads e Meta Ads possuem orçamento de mídia separado, definido em conjunto com a Clínica Dentária Central Norte. Podemos começar com um investimento mais controlado, validar as campanhas e aumentar gradualmente conforme os resultados e a capacidade de atendimento da clínica.</p>
+      </div>
+
+      <a class="btn btn--primary btn--lg" href="#encerramento">Quero começar essa construção</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 20 · ENCERRAMENTO ============ -->
+<section class="closing" id="encerramento" data-rail="Encerramento">
+  <canvas class="closing__canvas" id="closeCanvas" aria-hidden="true"></canvas>
+  <div class="container closing__inner">
+    <h2 class="closing__title reveal">
+      A CENTRAL NORTE JÁ CONQUISTOU A REGIÃO.<br>
+      <span class="grad-light">AGORA VAMOS CONSTRUIR SUA PRÓXIMA FASE.</span>
+    </h2>
+    <p class="closing__sub reveal" data-d="1">Da presença tradicional para uma operação digital estruturada, mensurável e preparada para crescer.</p>
+
+    <div class="closing__brand reveal" data-d="2">
+      <span class="closing__logo">MARKTIVA</span>
+      <span class="closing__slogan">Marketing + Conteúdo + Performance + Comercial</span>
+    </div>
+
+    <a class="btn btn--primary btn--lg reveal" data-d="3" href="#hero">Vamos construir essa nova fase</a>
+    <p class="closing__foot reveal" data-d="4">Proposta elaborada pela Agência Marktiva para a Clínica Dentária Central Norte · Londrina/PR</p>
+  </div>
+</section>
+
+</main>
+
+<script src="script.js" defer></script>
+</body>
+</html>
