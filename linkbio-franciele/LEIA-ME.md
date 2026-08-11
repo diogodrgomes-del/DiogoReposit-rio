@@ -8,7 +8,7 @@ trabalhos.html  portfólio — rola, com todos os antes e depois
 montar.html     o estúdio: solte as fotos, ele gera os dois arquivos
 ```
 
-O botão “Clique e veja meus trabalhos” procura `trabalhos.html` ao lado dele.
+O botão “Clique e veja mais resultados” procura `trabalhos.html` ao lado dele.
 Separados, o botão não acha nada.
 
 ## A tela inicial
