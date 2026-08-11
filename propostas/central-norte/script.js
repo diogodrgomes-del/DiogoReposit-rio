@@ -20,8 +20,8 @@
      1. REVEAL ON SCROLL
   --------------------------------------------------------------- */
   const revealTargets = [
-    '.reveal', '.feature-list li', '.flow', '.scan', '.dash',
-    '.phase', '.ladder li', '.serp', '.cal', '.chat', '.phone'
+    '.reveal', '.feature-list li', '.flow', '.scan',
+    '.ladder li', '.serp', '.cal', '.chat', '.phone'
   ].join(',');
 
   const io = new IntersectionObserver((entries) => {
@@ -413,15 +413,22 @@
 
     function run(el) {
       const target = parseFloat(el.dataset.count);
+      /* data-from permite partir de um valor de ancoragem e descer até o preço */
+      const from = el.dataset.from !== undefined ? parseFloat(el.dataset.from) : 0;
       if (reduced) { el.textContent = fmt(target, el); return; }
-      const dur = 1500;
-      const t0 = performance.now();
+      const dur = parseFloat(el.dataset.dur || '1500');
+      const delay = parseFloat(el.dataset.delay || '0');
+      /* contagem regressiva a partir de uma âncora usa easeInOut: segura no valor
+         inicial tempo suficiente para ser lido antes de cair. */
+      const curve = el.dataset.from !== undefined ? easeInOut : easeOut;
+      el.textContent = fmt(from, el);
+      const t0 = performance.now() + delay;
       (function frame(now) {
         const t = clamp((now - t0) / dur, 0, 1);
-        el.textContent = fmt(target * easeOut(t), el);
+        el.textContent = fmt(lerp(from, target, curve(t)), el);
         if (t < 1) requestAnimationFrame(frame);
         else el.textContent = fmt(target, el);
-      })(t0);
+      })(performance.now());
     }
 
     const vis = new IntersectionObserver((entries) => {

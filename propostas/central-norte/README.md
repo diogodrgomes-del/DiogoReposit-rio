@@ -28,7 +28,7 @@ usa a fonte do sistema e continua funcionando normalmente.
 ## Estrutura da apresentação
 
 A narrativa foi montada para **vender a estratégia antes do preço**. O investimento
-só aparece na seção 19, depois de todo o plano:
+só aparece na seção 17, depois de todo o plano:
 
 | # | Seção | Objetivo |
 |---|---|---|
@@ -46,12 +46,14 @@ só aparece na seção 19, depois de todo o plano:
 | 12 | O grande diferencial | O trabalho não acaba no lead |
 | 13 | Mentoria de atendimento | Aproveitar cada oportunidade |
 | 14 | Reuniões estratégicas | Acompanhamento contínuo |
-| 15 | Dados | Painel demonstrativo |
-| 16 | Fases | Validar → Otimizar → Escalar |
-| 17 | Entregas | 20 frentes assumidas pela Marktiva |
-| 18 | O que queremos construir | Visão de futuro |
-| 19 | Investimento | R$ 4.500,00/mês + ressalva de mídia |
-| 20 | Encerramento | Chamada final |
+| 15 | Entregas | 20 frentes assumidas pela Marktiva |
+| 16 | O que queremos construir | Visão de futuro |
+| 17 | Investimento | R$ 4.497,00/mês + ressalva de mídia |
+| 18 | Encerramento | Chamada final |
+
+> As seções de painel de dados e de fases (validar/otimizar/escalar) foram
+> removidas a pedido do cliente: a operação ainda não tem dashboard nem
+> rastreamento definido, então a apresentação não promete o que não pode entregar.
 
 ## Modo apresentação
 
@@ -73,13 +75,14 @@ Todas construídas em código, sem imagens de terceiros:
 - **Aparelho ortodôntico** — dentes desalinhados → brackets aparecem → fio atravessa →
   dentes se alinham. Também controlada pelo scroll.
 - **Rede de partículas** (hero e encerramento), busca do Google sendo digitada, calendário
-  se preenchendo sozinho, conversa de WhatsApp, contadores e gráficos do painel.
+  se preenchendo sozinho, conversa de WhatsApp e o contador do preço.
 
 Todo movimento usa `transform`/`opacity`, as animações pausam quando saem da tela e
 respeitam `prefers-reduced-motion`.
 
 ## Observação comercial
 
-O valor de R$ 4.500,00/mês cobre apenas os serviços da Marktiva. O investimento em
+O valor de R$ 4.497,00/mês cobre apenas os serviços da Marktiva. O número aparece
+com uma animação que parte de R$ 6.799 e desce até o valor da proposta. O investimento em
 mídia paga (Google Ads e Meta Ads) é separado e será definido junto com a clínica —
 isso está explicitado na seção 19.
