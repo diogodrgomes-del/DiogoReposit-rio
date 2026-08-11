@@ -4,7 +4,7 @@ São **duas páginas**, e as duas precisam ficar **na mesma pasta**:
 
 ```
 index.html      tela inicial — cabe inteira sem rolar
-trabalhos.html  portfólio — rola, com todos os antes e depois
+trabalhos.html  portfólio — rola, com todas as fotos de trabalho
 montar.html     o estúdio: solte as fotos, ele gera os dois arquivos
 ```
 
