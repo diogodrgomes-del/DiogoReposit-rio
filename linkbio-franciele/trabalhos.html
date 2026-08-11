@@ -178,6 +178,20 @@ body::after{
 }
 .item figcaption:empty{display:none}
 
+.assinatura{
+  display:block;text-align:center;
+  padding:.4rem 0 1.6rem;
+  font-size:.55rem;font-weight:200;
+  letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(201,184,166,.5);text-decoration:none;
+  transition:color .35s var(--curva);
+}
+.assinatura b{font-weight:400;color:rgba(217,184,110,.72)}
+@media (hover:hover){
+  .assinatura:hover{color:rgba(201,184,166,.7)}
+  .assinatura:hover b{color:var(--ouro)}
+}
+
 .vazio{
   text-align:center;padding:3rem 1rem;color:var(--nude);
   font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;line-height:2;
@@ -233,6 +247,10 @@ body::after{
   </header>
 
   <ul class="lista" id="lista"></ul>
+
+  <a class="assinatura" id="btMarktiva"
+     href="https://www.instagram.com/agenciamarktiva"
+     target="_blank" rel="noopener">Site feito por <b>Marktiva</b></a>
 </div>
 
 <div class="rodape">

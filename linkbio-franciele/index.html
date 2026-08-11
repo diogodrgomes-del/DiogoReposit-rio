@@ -211,7 +211,7 @@ h1{
   position:relative;width:100%;
   /* faixa deitada: sobrancelha e um traco horizontal, entao o recorte
      largo aproveita melhor a altura que sobra para tres cartoes */
-  height:clamp(102px, 17.8vh, 188px);
+  height:clamp(88px, 16.6vh, 180px);
   border-radius:.6em;overflow:hidden;
   border:1px solid rgba(217,184,110,.38);
   z-index:1;
@@ -403,7 +403,35 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
 .rodape{
   font-size:.6em;font-weight:200;
   letter-spacing:.18em;text-transform:uppercase;
-  color:rgba(201,184,166,.72);line-height:1.7;
+  color:rgba(201,184,166,.72);line-height:1.5;
+}
+/* Assinatura: presente sem competir com nada. Fica como segunda linha do
+   rodape, nao como bloco proprio — na tela mais apertada sobram poucos
+   pixels e uma linha separada nao caberia.
+   O em aqui e relativo ao .rodape, que ja e .6em: por isso o piso em px,
+   senao a assinatura cairia para 5px e viraria um fio ilegivel. */
+.assinatura{
+  position:relative;
+  display:block;margin-top:.4em;
+  font-size:max(8px, .82em);font-weight:200;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(201,184,166,.5);
+  transition:color .35s var(--curva);
+}
+/* alarga a area de toque sem alterar a altura da linha: o alvo real
+   passa de 9px para cerca de 30px, sem custar espaco no layout */
+.assinatura::after{
+  content:"";position:absolute;
+  /* Assimetrico de proposito: para cima esta a linha do rodape, e roubar
+     o toque dela seria pior que um alvo menor. Para baixo cresce so ate
+     onde o preenchimento do palco alcanca — passar disso empurra a altura
+     da pagina e reintroduz a rolagem que a tela inteira evita. */
+  left:0;right:0;top:-.6em;bottom:-1em;
+}
+.assinatura b{font-weight:400;color:rgba(217,184,110,.72)}
+@media (hover:hover){
+  .assinatura:hover{color:rgba(201,184,166,.7)}
+  .assinatura:hover b{color:var(--ouro)}
 }
 
 /* ── entrada encenada ──────────────────────────────────────────── */
@@ -578,7 +606,11 @@ src="https://www.facebook.com/tr?id=2127826514818630&amp;ev=PageView&amp;noscrip
     </div>
   </nav>
 
-  <p class="rodape entra" style="--d:800">Mais do que estética, autoestima.</p>
+  <p class="rodape entra" style="--d:800">Mais do que estética, autoestima.
+    <a class="assinatura" id="btMarktiva"
+       href="https://www.instagram.com/agenciamarktiva"
+       target="_blank" rel="noopener">Site feito por <b>Marktiva</b></a>
+  </p>
 
 </main>
 

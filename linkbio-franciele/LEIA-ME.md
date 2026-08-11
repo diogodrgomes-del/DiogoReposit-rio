@@ -101,6 +101,20 @@ upgrade que recupera o que iOS e bloqueadores derrubam.
 Vale um aviso de cookies/privacidade no site: o pixel rastreia visitante e a
 LGPD espera que isso seja informado.
 
+## Assinatura da Marktiva
+
+Discreta no rodapé das **duas páginas**, levando a
+`instagram.com/agenciamarktiva`. Sem os parâmetros `utm_source` e `igsh` que
+vêm do botão de compartilhar do Instagram — são lixo de sessão, não servem
+para nada num link fixo.
+
+Contraste de 3,2:1 contra o fundo: discreta, mas ainda legível. Abaixo disso
+vira decoração que ninguém consegue ler.
+
+A área de toque é **maior que o texto** — 26px na tela inicial, 43px no
+portfólio — esticada por um pseudo-elemento que não ocupa espaço no layout.
+Sem isso o alvo teria 9px de altura e ninguém acertaria no dedo.
+
 ## Decisões que valem saber
 
 **Antes e depois usam sempre o mesmo tratamento de arte.** O estúdio não deixa
