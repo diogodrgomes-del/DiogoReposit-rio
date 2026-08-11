@@ -6,9 +6,24 @@ Landing page de apresentação da proposta comercial. Feita para ser exibida em 
 Cliente: Josimar Gomes e Gabriel, do podcast Bitcoincast. O produto deles é
 conhecimento, curso de DeFi e autocustódia, não rendimento.
 
+## Duas versões
+
+| Arquivo | Telas | Para quê |
+|---|---|---|
+| `index.html` | 9 | **A de apresentar.** Enxuta, para rodar na TV na frente do cliente |
+| `completa.html` | 13 | A longa, para mandar por link depois da reunião ou anexar ao contrato |
+
+As duas dizem a mesma coisa e carregam os mesmos números. A enxuta funde
+"por que agora" dentro do recado, junta a máquina de conteúdo com os dois
+canais, junta ritmo com estrutura comercial, e transforma o comparativo
+"hoje espalhado × Marktiva" numa coluna dentro da operação em vez de uma tela
+inteira. O texto de cada tela também é mais curto.
+
+Se um número mudar, ele muda nas duas.
+
 ## Como abrir
 
-`index.html` é um arquivo único e autossuficiente. Sem build, sem dependências,
+Cada arquivo é único e autossuficiente. Sem build, sem dependências,
 sem CDN. Basta abrir no navegador ou subir em qualquer hospedagem estática.
 As três fontes (Anton, Archivo, IBM Plex Mono) vão embutidas em base64, então o
 tipo nunca cai para uma fonte de sistema no meio da apresentação.
@@ -25,28 +40,27 @@ disco dourado e a página continua apresentável. Assim que os arquivos entrarem
 as fotos aparecem no lugar, já tratadas em preto e branco com veladura dourada
 para casar com a paleta. Recomendado: quadradas, no mínimo 400×400.
 
-## Estrutura das 13 telas
+## As 9 telas da versão de apresentação
 
 | # | Tela | Papel |
 |---|------|-------|
 | 00 | Hero, "Bitcoin não é investimento" | Tese e ficha técnica |
-| 01 | O recado | Quem fala mal ouviu explicando mal |
-| 02 | Por que agora | Educar antes de vender |
-| 03 | O método | Atrair, aprofundar, presentear, convidar |
-| 04 | O fluxo | Duas frentes que convergem numa venda |
-| 05 | A máquina | Dois dias de gravação, um mês no ar |
-| 06 | Os dois canais | Podcast e canal pessoal |
-| 07 | Estrutura de perfil | Dois perfis distintos, lado a lado |
-| 08 | Ritmo e operação | Calendário, tráfego com contingência |
-| 09 | Além do conteúdo | Análise comercial e mentoria de WhatsApp |
-| 10 | O cenário de hoje | Espalhado × uma operação só |
-| 11 | O investimento | Âncora de 17.200, fechamento em 14.489,90 |
-| 12 | Fecho | Bora pra cima |
+| 01 | O recado | Quem fala mal ouviu explicando mal, com faixa de mercado |
+| 02 | O método | Atrair, aprofundar, presentear, convidar |
+| 03 | O fluxo | Duas frentes que convergem numa venda |
+| 04 | A entrega | Dois dias de gravação, os dois canais, as plataformas |
+| 05 | Estrutura de perfil | Dois perfis distintos, lado a lado |
+| 06 | A operação | Calendário, tráfego e estrutura comercial |
+| 07 | O investimento | Âncora de 17.200, fechamento em 14.489,90 |
+| 08 | Fecho | Bora pra cima |
+
+A `completa.html` abre estas em 13, separando "por que agora", "a máquina de
+conteúdo", "os dois canais", "além do conteúdo" e "o cenário de hoje".
 
 ## Números que a página afirma
 
-Alterar em um lugar significa alterar em todos. Eles aparecem no hero, no fluxo,
-na máquina de conteúdo e nos dois canais.
+Alterar em um lugar significa alterar em todos, nas duas versões. Eles aparecem
+no hero, no fluxo, na entrega e nos dois canais.
 
 - 4 podcasts por mês, 2 a cada quinzena, gravados na mesma noite
 - 8 a 10 cortes por episódio
@@ -60,8 +74,8 @@ na máquina de conteúdo e nos dois canais.
 
 ## Decisões que não devem ser desfeitas
 
-- **O preço só aparece na tela 11.** Toda a página antes disso constrói valor,
-  e a tela 11 lista o que está sendo levado antes de mostrar o número.
+- **O preço só aparece na penúltima tela.** Tudo antes disso constrói valor, e
+  a própria tela lista o que está sendo levado antes de mostrar o número.
 - **Nenhuma promessa financeira.** As promessas são de processo e entrega:
   presença, autoridade, base e padrão de produção.
 - **Sem cláusula de blindagem na página.** Ela saiu a pedido do cliente, para
