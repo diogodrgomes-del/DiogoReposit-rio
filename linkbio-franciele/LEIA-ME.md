@@ -1,47 +1,46 @@
 # Link bio — Franciele Bill
 
-Mini landing page de **uma tela só**. Tudo aparece sem rolar e sem abrir nada por
-cima: nome, autoridade, antes/depois, trabalhos e os três botões.
+São **duas páginas**, e as duas precisam ficar **na mesma pasta**:
 
 ```
-index-com-suas-fotos.html  ← PRONTO PARA PUBLICAR. Já tem suas fotos dentro.
-montar.html                ← o estúdio: solte fotos, escolha o estilo, baixe o index
-index.html                 ← o modelo limpo, sem fotos
+index.html      tela inicial — cabe inteira sem rolar
+trabalhos.html  portfólio — rola, com todos os antes e depois
+montar.html     o estúdio: solte as fotos, ele gera os dois arquivos
 ```
 
-## Publicar agora
+O botão “Clique e veja meus trabalhos” procura `trabalhos.html` ao lado dele.
+Separados, o botão não acha nada.
 
-Pegue o **`index-com-suas-fotos.html`**, renomeie para `index.html` e suba.
-Vercel, Netlify, Hostinger — qualquer uma. É um arquivo só, sem pasta e sem
-dependência externa.
+## A tela inicial
 
-Só falta **a foto dela**: entre no `montar.html`, solte o retrato, e baixe de novo.
+Sem rolagem, nesta ordem: nome, **três antes e depois arrastáveis**,
+“+9 mil rostos transformados”, o botão do portfólio e os três contatos.
 
----
+Cada um dos três cartões desliza sozinho uma vez, em sequência, para revelar o
+resultado e ensinar o gesto. Qualquer toque interrompe.
 
-## Os três links (já configurados)
+## A página de trabalhos
 
-| botão | destino |
-|---|---|
-| Agendar no WhatsApp | `wa.me/5543991047801` com "Oii! Vim pelo Instagram!" |
-| Como chegar | `share.google/dgnZltVE6saBeQVc1` |
-| Instagram | `instagram.com/francielebill` |
+Rola de propósito — é o portfólio. Aceita quantos pares você quiser. Cada
+cartão só começa a animar **quando entra na tela**: animar o que está fora da
+vista gastaria quadro à toa e o visitante perderia o gesto sendo ensinado.
 
-Sem endereço, sem @ e sem "resposta rápida" embaixo — só os três rótulos.
+O botão do WhatsApp fica fixo no rodapé, sempre alcançável.
 
----
+## Como montar
 
-## Como o fundo funciona
+1. Abra o **`montar.html`** com dois cliques.
+2. Solte o **retrato** dela (vira a faixa do topo).
+3. Preencha os **três pares** da tela inicial.
+4. Adicione quantos pares quiser na **página de trabalhos**.
+5. Escolha o estilo de arte, confira os links.
+6. Baixe **os dois arquivos** e ponha na mesma pasta.
 
-A foto dela ocupa a **faixa de cima** (58% da altura) e termina em **degradê**,
-dissolvendo na cor sólida que preenche o resto da tela. Não é mais fundo de tela
-cheia, e não existe mais nenhuma camada dela sobre o antes/depois — eram esses
-dois pontos que atrapalhavam a comparação.
+As fotos de sobrancelha costumam estar deitadas — use **girar** até ficarem na
+horizontal e **◂ ▸** para enquadrar.
 
-Se o retrato não estiver embutido, entra um degradê taupe/dourado no lugar e a
-página continua inteira.
-
----
+Cada par precisa da **mesma pessoa e do mesmo enquadramento** nas duas fotos.
+Sem isso a comparação não se sustenta.
 
 ## Pixel da Meta
 
@@ -54,6 +53,7 @@ oficial, que recupera o PageView de quem navega sem JavaScript.
 | **clicar no WhatsApp** | `Contact` |
 | clicar em Como chegar | `CliqueComoChegar` (personalizado) |
 | clicar no Instagram | `CliqueInstagram` (personalizado) |
+| abrir a página de trabalhos | `VerTrabalhos` (personalizado) |
 
 `Contact` é o evento **padrão** da Meta para início de conversa por telefone,
 chat ou mensagem — no Gerenciador ele aparece em português como **"Contato"**.
@@ -102,19 +102,19 @@ filtrar só o "depois". Antes/depois é promessa de resultado — se o depois ga
 brilho que o antes não tem, vira propaganda enganosa. Os dois andam travados
 em par, de propósito.
 
-**Os trabalhos entram numa fileira única, no máximo 6.** Acima disso as
-miniaturas ficariam estreitas demais para mostrar trabalho nenhum, e um sétimo
-item criaria uma segunda fileira que estoura a altura da tela.
+**A tela inicial leva exatamente três pares.** Um quarto empurraria os botões
+para fora da tela — foi medido. O resto vai para `trabalhos.html`, que rola.
 
-**Selo vazio some por completo.** Se você limpar o campo do selo no estúdio, a
-pílula dourada desaparece em vez de virar um caroço com só o losango dentro.
+**Par sem foto não vira ícone quebrado.** Fica o degradê da marca com um
+recado discreto, e o cartão continua no lugar.
 
 **A mensagem do WhatsApp escapa `!`, `'`, `(`, `)` e `*`.** São legais em URL,
 mas vários apps encerram o link automático no `!` e cortariam a mensagem pronta
 pela metade.
 
-**As fontes estão embutidas** (Cormorant Garamond + Jost, recortadas só nos
-caracteres usados: 59 KB). A página não faz **nenhuma** requisição externa.
+**As fontes estão embutidas nas duas páginas** (Cormorant Garamond + Jost,
+recortadas só nos caracteres usados: 59 KB). Fora o pixel, nenhuma das duas
+faz requisição externa.
 
 **Tudo escala a partir de um número só.** O `font-size` do `.palco` é
 `clamp(10px, min(2.05vh, 4.3vw), 18px)` — o menor entre altura e largura da tela.
