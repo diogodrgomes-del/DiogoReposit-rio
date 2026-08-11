@@ -13,11 +13,16 @@ Separados, o botão não acha nada.
 
 ## A tela inicial
 
-Sem rolagem, nesta ordem: nome, **três antes e depois arrastáveis**,
-“+9 mil rostos transformados”, o botão do portfólio e os três contatos.
+Sem rolagem, nesta ordem: nome, **um antes e depois grande e arrastável**,
+“+9 mil rostos transformados”, **três fotos pequenas**, o botão
+“Clique e veja mais resultados” e os três contatos.
 
-Cada um dos três cartões desliza sozinho uma vez, em sequência, para revelar o
-resultado e ensinar o gesto. Qualquer toque interrompe.
+O cartão grande desliza sozinho uma vez, para revelar o resultado e ensinar o
+gesto. Qualquer toque interrompe.
+
+As três fotos pequenas são **resultados soltos, não comparações**: em 60px de
+largura um antes/depois não mostraria transformação nenhuma. Tocar nelas leva
+à mesma página do botão — quem toca numa foto espera que ela abra algo.
 
 ## A página de trabalhos
 
@@ -31,10 +36,11 @@ O botão do WhatsApp fica fixo no rodapé, sempre alcançável.
 
 1. Abra o **`montar.html`** com dois cliques.
 2. Solte o **retrato** dela (vira a faixa do topo).
-3. Preencha os **três pares** da tela inicial.
-4. Adicione quantos pares quiser na **página de trabalhos**.
-5. Escolha o estilo de arte, confira os links.
-6. Baixe **os dois arquivos** e ponha na mesma pasta.
+3. Preencha o **par** da tela inicial (antes e depois).
+4. Solte as **três fotos pequenas**.
+5. Adicione quantos pares quiser na **página de trabalhos**.
+6. Escolha o estilo de arte, confira os links.
+7. Baixe **os dois arquivos** e ponha na mesma pasta.
 
 As fotos de sobrancelha costumam estar deitadas — use **girar** até ficarem na
 horizontal e **◂ ▸** para enquadrar.
@@ -53,7 +59,7 @@ oficial, que recupera o PageView de quem navega sem JavaScript.
 | **clicar no WhatsApp** | `Contact` |
 | clicar em Como chegar | `CliqueComoChegar` (personalizado) |
 | clicar no Instagram | `CliqueInstagram` (personalizado) |
-| abrir a página de trabalhos | `VerTrabalhos` (personalizado) |
+| botão ou miniatura de resultados | `VerTrabalhos` (personalizado) |
 
 `Contact` é o evento **padrão** da Meta para início de conversa por telefone,
 chat ou mensagem — no Gerenciador ele aparece em português como **"Contato"**.
@@ -102,8 +108,9 @@ filtrar só o "depois". Antes/depois é promessa de resultado — se o depois ga
 brilho que o antes não tem, vira propaganda enganosa. Os dois andam travados
 em par, de propósito.
 
-**A tela inicial leva exatamente três pares.** Um quarto empurraria os botões
-para fora da tela — foi medido. O resto vai para `trabalhos.html`, que rola.
+**A tela inicial leva um par e três miniaturas.** Foi medido: com o cartão
+grande no tamanho atual, é o que cabe sem empurrar os botões para fora. O resto
+vai para `trabalhos.html`, que rola.
 
 **Par sem foto não vira ícone quebrado.** Fica o degradê da marca com um
 recado discreto, e o cartão continua no lugar.
