@@ -13,22 +13,18 @@ Separados, o botão não acha nada.
 
 ## A tela inicial
 
-Sem rolagem, nesta ordem: nome, **um antes e depois grande e arrastável**,
-“+9 mil rostos transformados”, **três fotos pequenas**, o botão
+Sem rolagem, nesta ordem: nome, **uma foto de destaque**,
+“+9 mil rostos transformados”, **duas fotos pequenas**, o botão
 “Clique e veja mais resultados” e os três contatos.
 
-O cartão grande desliza sozinho uma vez, para revelar o resultado e ensinar o
-gesto. Qualquer toque interrompe.
-
-As três fotos pequenas são **resultados soltos, não comparações**: em 60px de
-largura um antes/depois não mostraria transformação nenhuma. Tocar nelas leva
-à mesma página do botão — quem toca numa foto espera que ela abra algo.
+São **fotos únicas**, sem comparação arrastável. Tocar nas pequenas leva à
+mesma página do botão — quem toca numa foto espera que ela abra algo.
 
 ## A página de trabalhos
 
-Rola de propósito — é o portfólio. Aceita quantos pares você quiser. Cada
-cartão só começa a animar **quando entra na tela**: animar o que está fora da
-vista gastaria quadro à toa e o visitante perderia o gesto sendo ensinado.
+Rola de propósito — é o portfólio. Aceita quantas fotos você quiser,
+**sempre duas por linha**. As quatro primeiras chegam junto com a página; o
+resto carrega quando o visitante se aproxima.
 
 O botão do WhatsApp fica fixo no rodapé, sempre alcançável.
 
@@ -36,17 +32,14 @@ O botão do WhatsApp fica fixo no rodapé, sempre alcançável.
 
 1. Abra o **`montar.html`** com dois cliques.
 2. Solte o **retrato** dela (vira a faixa do topo).
-3. Preencha o **par** da tela inicial (antes e depois).
-4. Solte as **três fotos pequenas**.
-5. Adicione quantos pares quiser na **página de trabalhos**.
+3. Solte a **foto de destaque** da tela inicial.
+4. Solte as **duas fotos pequenas**.
+5. Adicione quantas fotos quiser na **página de trabalhos**.
 6. Escolha o estilo de arte, confira os links.
 7. Baixe **os dois arquivos** e ponha na mesma pasta.
 
 As fotos de sobrancelha costumam estar deitadas — use **girar** até ficarem na
 horizontal e **◂ ▸** para enquadrar.
-
-Cada par precisa da **mesma pessoa e do mesmo enquadramento** nas duas fotos.
-Sem isso a comparação não se sustenta.
 
 ## Pixel da Meta
 
@@ -117,17 +110,16 @@ Sem isso o alvo teria 9px de altura e ninguém acertaria no dedo.
 
 ## Decisões que valem saber
 
-**Antes e depois usam sempre o mesmo tratamento de arte.** O estúdio não deixa
-filtrar só o "depois". Antes/depois é promessa de resultado — se o depois ganha
-brilho que o antes não tem, vira propaganda enganosa. Os dois andam travados
-em par, de propósito.
+**Duas fotos por linha, nunca três.** Com três, cada uma cai para uns 100px de
+largura e o trabalho deixa de ser legível — que é justamente o motivo de a
+foto estar ali. Vale na tira da tela inicial e na galeria.
 
-**A tela inicial leva um par e três miniaturas.** Foi medido: com o cartão
-grande no tamanho atual, é o que cabe sem empurrar os botões para fora. O resto
-vai para `trabalhos.html`, que rola.
+**O tratamento de arte vale para todas as fotos.** Um único estilo e uma única
+intensidade para o conjunto inteiro: fotos do mesmo perfil com graduações
+diferentes parecem de estúdios diferentes.
 
-**Par sem foto não vira ícone quebrado.** Fica o degradê da marca com um
-recado discreto, e o cartão continua no lugar.
+**Foto que falta não vira ícone quebrado.** Fica o degradê da marca no lugar,
+e o espaço continua ocupado — o layout não se mexe.
 
 **A mensagem do WhatsApp escapa `!`, `'`, `(`, `)` e `*`.** São legais em URL,
 mas vários apps encerram o link automático no `!` e cortariam a mensagem pronta

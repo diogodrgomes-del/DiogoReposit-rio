@@ -104,76 +104,33 @@ body::after{
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
 
-/* ── lista de antes e depois ───────────────────────────────────── */
-.lista{list-style:none;display:grid;gap:1rem;padding-bottom:1.4rem}
-@media (min-width:640px){.lista{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* ── galeria de trabalhos ──────────────────────────────────────── */
+.lista{
+  list-style:none;
+  display:grid;
+  /* duas por linha, sempre. Uma so desperdicaria a largura; tres deixam
+     cada foto com uns 100px e o trabalho para de ser legivel. */
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:.7rem;
+  padding-bottom:1.4rem;
+}
+@media (min-width:760px){.lista{gap:1rem}}
 
-.item{opacity:0;animation:surge .9s var(--curva) both;animation-delay:calc(var(--i,0) * 70ms)}
+.item{opacity:0;animation:surge .9s var(--curva) both;animation-delay:calc(var(--i,0) * 60ms)}
 
-.ba{
+.foto{
   position:relative;width:100%;
-  aspect-ratio:3/2;
-  border-radius:.8rem;overflow:hidden;
-  border:1px solid rgba(217,184,110,.38);
-  box-shadow:0 .4rem 1.4rem rgba(14,10,7,.45);
-  --pos:50%;
-  touch-action:pan-y;
-}
-.ba .face{
-  position:absolute;inset:0;width:100%;height:100%;
-  object-fit:cover;display:block;
-  user-select:none;-webkit-user-drag:none;
-}
-.ba .face.depois{clip-path:inset(0 0 0 var(--pos))}
-.ba::before{
-  content:"";position:absolute;inset:0;
+  aspect-ratio:4/5;
+  border-radius:.7rem;overflow:hidden;
+  border:1px solid rgba(217,184,110,.34);
+  box-shadow:0 .3rem 1.1rem rgba(14,10,7,.42);
   background:linear-gradient(115deg,#6b5c4e,#3a2f26 46%,#8d8175);
 }
-.ba.faltando .aviso{display:flex}
-.aviso{
-  display:none;position:absolute;inset:0;
-  align-items:center;justify-content:center;
-  font-size:.62rem;font-weight:300;
-  letter-spacing:.16em;text-transform:uppercase;
-  color:rgba(244,236,225,.8);text-align:center;padding:0 1rem;
-}
-.ba .tag{
-  position:absolute;bottom:.5rem;
-  padding:.26rem .62rem;border-radius:99rem;
-  background:rgba(20,16,12,.78);
-  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
-  font-size:.53rem;font-weight:300;
-  letter-spacing:.2em;text-transform:uppercase;
-  color:var(--ouro-luz);pointer-events:none;
-}
-.ba .tag.esq{left:.5rem}
-.ba .tag.dir{right:.5rem}
-.ba .divisor{
-  position:absolute;top:0;bottom:0;left:var(--pos);
-  width:2px;margin-left:-1px;
-  background:var(--folha);
-  box-shadow:0 0 .8rem rgba(217,184,110,.6);
-  pointer-events:none;
-}
-.ba .pega{
-  position:absolute;top:50%;left:50%;translate:-50% -50%;
-  width:2.1rem;height:2.1rem;border-radius:50%;
-  background:var(--folha);
-  box-shadow:0 .15rem .5rem rgba(14,10,7,.55);
-  display:flex;align-items:center;justify-content:center;color:#2a2118;
-}
-.ba .pega svg{width:.75rem;height:auto}
-.ba input[type=range]{
-  position:absolute;inset:0;width:100%;height:100%;margin:0;
-  opacity:0;cursor:ew-resize;
-  -webkit-appearance:none;appearance:none;background:transparent;
-}
-.ba input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:2.6rem;height:100%}
-.ba input[type=range]::-moz-range-thumb{width:2.6rem;height:100%;border:0;opacity:0}
+.foto img{width:100%;height:100%;object-fit:cover;display:block}
 
 .item figcaption{
-  margin-top:.5rem;text-align:center;
-  font-size:.6rem;font-weight:300;
+  margin-top:.42rem;text-align:center;
+  font-size:.56rem;font-weight:300;
   letter-spacing:.2em;text-transform:uppercase;color:var(--nude);
 }
 .item figcaption:empty{display:none}
@@ -271,15 +228,15 @@ body::after{
   'use strict';
 
   /* ══════════════════════════════════════════════════════════════════
-     ▸ TODOS OS ANTES E DEPOIS DESTA PAGINA
-       Pode ter quantos quiser: a pagina rola. O titulo e opcional —
+     ▸ TODAS AS FOTOS DESTA PAGINA
+       Pode ter quantas quiser: a pagina rola. O titulo e opcional —
        deixe vazio e nenhuma legenda aparece.
      ══════════════════════════════════════════════════════════════════ */
   var TRABALHOS = [
-    { antes: 'obra-1-antes.jpg', depois: 'obra-1-depois.jpg', titulo: 'Sobrancelha' },
-    { antes: 'obra-2-antes.jpg', depois: 'obra-2-depois.jpg', titulo: 'Lábios' },
-    { antes: 'obra-3-antes.jpg', depois: 'obra-3-depois.jpg', titulo: 'Delineado' },
-    { antes: 'obra-4-antes.jpg', depois: 'obra-4-depois.jpg', titulo: 'Lash' }
+    { foto: 'trabalho-1.jpg', titulo: 'Sobrancelha' },
+    { foto: 'trabalho-2.jpg', titulo: 'Lábios' },
+    { foto: 'trabalho-3.jpg', titulo: 'Delineado' },
+    { foto: 'trabalho-4.jpg', titulo: 'Lash' }
   ];
 
   /* Pixel da Meta — mesmo ID da pagina inicial. Vazio desliga tudo. */
@@ -313,16 +270,12 @@ body::after{
     }
   });
 
-  /* ── monta a lista ────────────────────────────────────────────── */
-  var SETAS = '<svg viewBox="0 0 22 12" fill="none" stroke="currentColor"' +
-              ' stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">' +
-              '<path d="M7 2 2.5 6 7 10M15 2l4.5 4-4.5 4"/></svg>';
-
+  /* ── monta a lista ───────────────────────────────────────────── */
   var lista = document.getElementById('lista');
 
   if (!TRABALHOS.length) {
     lista.outerHTML = '<p class="vazio">Nenhum trabalho cadastrado ainda.<br>' +
-                      'Use o estúdio para adicionar os antes e depois.</p>';
+                      'Use o estúdio para adicionar as fotos.</p>';
     return;
   }
 
@@ -330,81 +283,31 @@ body::after{
     var li = document.createElement('li');
     li.className = 'item';
     li.style.setProperty('--i', indice);
-    li.innerHTML =
-      '<figure>' +
-        '<div class="ba">' +
-          '<img class="face antes" alt="Antes da micropigmentação">' +
-          '<img class="face depois" alt="Depois da micropigmentação">' +
-          '<div class="aviso" aria-hidden="true">faltam as fotos deste par</div>' +
-          '<span class="tag esq">Antes</span>' +
-          '<span class="tag dir">Depois</span>' +
-          '<span class="divisor"><span class="pega" aria-hidden="true">' + SETAS + '</span></span>' +
-          '<input type="range" min="0" max="100" value="50" step="0.1"' +
-          ' aria-label="Arraste para comparar o antes e o depois">' +
-        '</div>' +
-        '<figcaption></figcaption>' +
-      '</figure>';
 
-    var ba     = li.querySelector('.ba');
-    var antes  = li.querySelector('.face.antes');
-    var depois = li.querySelector('.face.depois');
-    var faixa  = li.querySelector('input[type=range]');
-    li.querySelector('figcaption').textContent = obra.titulo || '';
+    var fig = document.createElement('figure');
+    var caixa = document.createElement('div');
+    caixa.className = 'foto';
 
-    antes.src = obra.antes;
-    depois.src = obra.depois;
-    antes.loading = depois.loading = indice < 2 ? 'eager' : 'lazy';
-    antes.decoding = depois.decoding = 'async';
+    var img = document.createElement('img');
+    img.src = obra.foto;
+    img.alt = obra.titulo
+      ? ('Trabalho de ' + obra.titulo + ' por Franciele Bill')
+      : 'Trabalho de Franciele Bill';
+    /* as quatro primeiras chegam junto com a pagina; o resto so quando
+       o visitante se aproxima delas */
+    img.loading = indice < 4 ? 'eager' : 'lazy';
+    img.decoding = 'async';
+    img.addEventListener('error', function () { img.remove(); });
+    caixa.appendChild(img);
+    fig.appendChild(caixa);
 
-    function posicionar(v) { ba.style.setProperty('--pos', v + '%'); }
-    function conferir() {
-      var faltou = [antes, depois].some(function (img) {
-        return !img.getAttribute('src') || (img.complete && img.naturalWidth === 0);
-      });
-      ba.classList.toggle('faltando', faltou);
+    if (obra.titulo) {
+      var cap = document.createElement('figcaption');
+      cap.textContent = obra.titulo;
+      fig.appendChild(cap);
     }
-    [antes, depois].forEach(function (img) {
-      img.addEventListener('error', function () { img.style.display = 'none'; conferir(); });
-      img.addEventListener('load', conferir);
-    });
-    conferir();
-    faixa.addEventListener('input', function () { parar(); posicionar(faixa.value); });
-
-    /* a abertura so roda quando o cartao entra na tela: animar o que
-       esta fora da vista gastaria quadro a toa e o visitante perderia
-       o gesto sendo ensinado */
-    var anim = null, jaRodou = false;
-    function parar() { if (anim) { cancelAnimationFrame(anim); anim = null; } }
-    ['pointerdown', 'keydown', 'wheel'].forEach(function (ev) {
-      ba.addEventListener(ev, parar, { passive: true });
-    });
-    function abertura() {
-      if (jaRodou || menos.matches) return;
-      jaRodou = true;
-      var de = 94, ate = 46, dur = 1500, t0 = null;
-      posicionar(de);
-      anim = requestAnimationFrame(function passo(t) {
-        if (t0 === null) t0 = t;
-        var p = Math.min((t - t0) / dur, 1);
-        var v = de + (ate - de) * (1 - Math.pow(1 - p, 4));
-        posicionar(v); faixa.value = v;
-        anim = p < 1 ? requestAnimationFrame(passo) : null;
-      });
-    }
-
+    li.appendChild(fig);
     lista.appendChild(li);
-
-    if (menos.matches) { posicionar(50); return; }
-    if ('IntersectionObserver' in window) {
-      var olho = new IntersectionObserver(function (entradas) {
-        entradas.forEach(function (e) {
-          if (e.isIntersecting) { setTimeout(abertura, 260); olho.disconnect(); }
-        });
-      }, { threshold: 0.45 });
-      olho.observe(ba);
-    } else {
-      setTimeout(abertura, 900 + indice * 300);
-    }
   });
 })();
 </script>
