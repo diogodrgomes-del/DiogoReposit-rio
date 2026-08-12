@@ -1,5 +1,28 @@
 # Link bio — Franciele Bill
 
+## No ar
+
+**https://franciele-bill-linkbio.vercel.app**
+
+Projeto `franciele-bill-linkbio` na Vercel — separado do `diogo-reposit-rio`,
+que é o dashboard Next.js da Marktiva e não pode receber HTML solto.
+
+Para republicar depois de mexer nos arquivos:
+
+```bash
+export VERCEL_TOKEN='...'
+export VERCEL_TEAM_ID='team_V6eUe4eJiOtewqzI987DOXhF'
+
+node scripts/publicar-vercel.mjs franciele-bill-linkbio \
+  linkbio-franciele/index.html:index.html \
+  linkbio-franciele/trabalhos.html:trabalhos.html --producao
+```
+
+O sufixo `:index.html` renomeia no destino. Sem ele a página responderia num
+endereço com o nome do arquivo local, e o botão entre as páginas quebraria.
+
+## Os arquivos
+
 São **duas páginas**, e as duas precisam ficar **na mesma pasta**:
 
 ```
