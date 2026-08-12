@@ -1,0 +1,1016 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Estúdio · Franciele Bill</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#1b1611">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231b1611'/%3E%3Ctext x='32' y='45' font-family='Georgia,serif' font-style='italic' font-size='34' fill='%23d9b86e' text-anchor='middle'%3EE%3C/text%3E%3C/svg%3E">
+
+<style>
+:root{
+  --fundo:#17120e; --carta:#221b15; --carta2:#2b231b;
+  --linha:#3a2f24; --texto:#efe6da; --fraco:#a8998a; --ouro:#d9b86e;
+  --erro:#e07a6a; --ok:#7fb98a; --r:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--fundo); color:var(--texto); min-height:100vh;
+  font:15px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{margin:0;font-weight:600;letter-spacing:.01em}
+button,input,select,textarea{font:inherit;color:inherit}
+
+/* ── cabecalho ─────────────────────────────────────────────────── */
+.cabeca{
+  position:sticky; top:0; z-index:40; display:flex; align-items:center; gap:14px;
+  padding:14px 20px; background:rgba(23,18,14,.92); backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--linha); flex-wrap:wrap;
+}
+.marca{display:flex;align-items:center;gap:11px;margin-right:auto}
+.selo{
+  width:38px;height:38px;border-radius:11px;display:grid;place-items:center;
+  background:linear-gradient(160deg,#3a2e21,#221b15);border:1px solid var(--linha);
+  font-family:Georgia,serif;font-style:italic;color:var(--ouro);font-size:20px;
+}
+.marca b{display:block;font-size:15px}
+.marca span{display:block;font-size:12px;color:var(--fraco)}
+.estado{font-size:12px;color:var(--fraco);display:flex;align-items:center;gap:7px}
+.ponto{width:8px;height:8px;border-radius:50%;background:var(--fraco)}
+.ponto.on{background:var(--ok)} .ponto.off{background:var(--erro)}
+
+/* ── estrutura ─────────────────────────────────────────────────── */
+.corpo{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:22px;padding:22px;align-items:start}
+@media(max-width:1040px){.corpo{grid-template-columns:1fr}}
+.coluna{display:flex;flex-direction:column;gap:18px;min-width:0}
+.lado{position:sticky;top:82px;display:flex;flex-direction:column;gap:16px}
+@media(max-width:1040px){.lado{position:static}}
+
+.carta{background:var(--carta);border:1px solid var(--linha);border-radius:var(--r);overflow:hidden}
+.carta>header{
+  display:flex;align-items:center;gap:12px;padding:15px 17px;cursor:pointer;
+  border-bottom:1px solid transparent;user-select:none;
+}
+.carta.aberta>header{border-bottom-color:var(--linha)}
+.carta>header .n{
+  width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex:none;
+  background:var(--carta2);border:1px solid var(--linha);color:var(--ouro);font-size:12px;
+}
+.carta>header h2{font-size:15px;flex:1}
+.carta>header small{color:var(--fraco);font-size:12px;font-weight:400}
+.carta>header .seta{color:var(--fraco);transition:rotate .2s}
+.carta.aberta>header .seta{rotate:90deg}
+.miolo{display:none;padding:17px}
+.carta.aberta .miolo{display:block}
+.dica{color:var(--fraco);font-size:12.5px;margin:0 0 14px;line-height:1.5}
+
+/* ── campos ────────────────────────────────────────────────────── */
+.campo{margin-bottom:13px}
+.campo label{display:block;font-size:12.5px;color:var(--fraco);margin-bottom:5px}
+.campo input[type=text],.campo textarea,.campo input[type=url]{
+  width:100%;padding:10px 12px;background:var(--carta2);color:var(--texto);
+  border:1px solid var(--linha);border-radius:10px;outline:none;
+}
+.campo input:focus,.campo textarea:focus{border-color:var(--ouro)}
+.campo input:disabled{opacity:.5}
+.campo textarea{resize:vertical;min-height:62px}
+.dupla{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.dupla{grid-template-columns:1fr}}
+.aviso-link{
+  display:flex;align-items:flex-start;gap:9px;padding:11px 13px;margin-bottom:15px;
+  background:#2b2114;border:1px solid #4a3a20;border-radius:11px;font-size:12.5px;color:#e6cf9f;
+}
+.trava{display:flex;align-items:center;gap:9px;font-size:13px;margin-bottom:15px;cursor:pointer}
+.trava input{width:16px;height:16px;accent-color:var(--ouro)}
+.link-final{font-size:11.5px;color:var(--fraco);word-break:break-all;margin-top:5px}
+
+/* ── botoes ────────────────────────────────────────────────────── */
+.bt{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 16px;border-radius:11px;border:1px solid var(--linha);
+  background:var(--carta2);cursor:pointer;font-size:13.5px;transition:.15s;
+}
+.bt:hover{border-color:var(--ouro);color:var(--ouro)}
+.bt.ouro{background:linear-gradient(160deg,#e0c07a,#c39c50);color:#20180f;border-color:transparent;font-weight:600}
+.bt.ouro:hover{filter:brightness(1.07);color:#20180f}
+.bt.largo{width:100%}
+.bt.mini{padding:6px 10px;font-size:12px;border-radius:9px}
+.bt.perigo:hover{border-color:var(--erro);color:var(--erro)}
+.bt:disabled{opacity:.45;cursor:not-allowed}
+
+/* ── fotos ─────────────────────────────────────────────────────── */
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.slot{background:var(--carta2);border:1px solid var(--linha);border-radius:12px;overflow:hidden}
+.slot .tela{
+  position:relative;aspect-ratio:4/5;background:
+    radial-gradient(120% 90% at 50% 0%,#3a2e22,#1d1712);
+  display:grid;place-items:center;cursor:pointer;overflow:hidden;
+}
+.slot .tela img{width:100%;height:100%;object-fit:cover;display:block}
+.slot .tela .vazio{color:var(--fraco);font-size:12px;text-align:center;padding:0 12px}
+.slot .tela .vazio b{display:block;color:var(--ouro);font-size:22px;font-weight:400;margin-bottom:4px}
+.slot .tela .marca-nova{
+  position:absolute;top:8px;right:8px;background:rgba(217,184,110,.92);color:#20180f;
+  font-size:10px;font-weight:700;padding:3px 7px;border-radius:6px;letter-spacing:.04em;
+}
+.slot .pe{padding:9px 10px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.slot .pe .nome{font-size:11.5px;color:var(--fraco);flex:1;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.slot h3{font-size:12.5px;padding:9px 10px 0;color:var(--texto)}
+
+.obra{display:flex;gap:13px;padding:12px;background:var(--carta2);
+  border:1px solid var(--linha);border-radius:12px;margin-bottom:12px}
+.obra .tela{width:92px;height:115px;flex:none;border-radius:9px;overflow:hidden;
+  background:radial-gradient(120% 90% at 50% 0%,#3a2e22,#1d1712);
+  display:grid;place-items:center;cursor:pointer;position:relative}
+.obra .tela img{width:100%;height:100%;object-fit:cover}
+.obra .tela .vazio{font-size:0}
+.obra .tela .vazio b{color:var(--ouro);font-size:24px;margin:0}
+.obra .lado-obra{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.obra .lado-obra input{width:100%;padding:8px 11px;background:var(--carta);color:var(--texto);
+  border:1px solid var(--linha);border-radius:9px;outline:none}
+.obra .fila{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.ordem{font-size:11px;color:var(--fraco)}
+.vazia{color:var(--fraco);font-size:13px;text-align:center;padding:26px 10px;
+  border:1px dashed var(--linha);border-radius:12px;margin-bottom:12px}
+
+/* ── previa ────────────────────────────────────────────────────── */
+.abas{display:flex;gap:6px;padding:12px 12px 0}
+.abas button{flex:1;padding:8px;background:transparent;border:1px solid var(--linha);
+  border-radius:10px;cursor:pointer;font-size:12.5px;color:var(--fraco)}
+.abas button.ativa{background:var(--carta2);color:var(--ouro);border-color:var(--ouro)}
+.moldura{padding:12px;display:grid;place-items:center}
+.tel{width:100%;max-width:330px;aspect-ratio:9/17.5;border-radius:26px;overflow:hidden;
+  border:1px solid var(--linha);background:#000;position:relative}
+.tel iframe{width:100%;height:100%;border:0;display:block}
+.tel .capa-carregando{position:absolute;inset:0;display:grid;place-items:center;
+  color:var(--fraco);font-size:12px;background:#17120e}
+
+.lista-export{list-style:none;margin:0 0 14px;padding:0;font-size:12.5px}
+.lista-export li{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--linha)}
+.lista-export li:last-child{border-bottom:0}
+.lista-export .tag{margin-left:auto;font-size:11px;padding:2px 7px;border-radius:6px;
+  background:var(--carta2);color:var(--fraco)}
+.lista-export .tag.nova{background:rgba(217,184,110,.16);color:var(--ouro)}
+.lista-export .tag.falta{background:rgba(224,122,106,.14);color:var(--erro)}
+
+.recado{padding:11px 13px;border-radius:11px;font-size:12.5px;margin-bottom:13px;display:none}
+.recado.ver{display:block}
+.recado.bom{background:rgba(127,185,138,.12);border:1px solid rgba(127,185,138,.35);color:#bfe0c6}
+.recado.ruim{background:rgba(224,122,106,.12);border:1px solid rgba(224,122,106,.35);color:#f0c0b6}
+
+.rodape-painel{padding:8px 22px 30px;color:var(--fraco);font-size:12px;text-align:center}
+input[type=file]{display:none}
+</style>
+</head>
+<body>
+
+<header class="cabeca">
+  <div class="marca">
+    <span class="selo">E</span>
+    <span>
+      <b>Estúdio</b>
+      <span>Painel de fotos e alterações · Franciele Bill</span>
+    </span>
+  </div>
+  <div class="estado"><span class="ponto" id="pontoBase"></span><span id="txtBase">carregando o site…</span></div>
+  <button class="bt mini" id="btSalvar">Salvar rascunho</button>
+  <button class="bt mini perigo" id="btZerar">Recomeçar do site</button>
+</header>
+
+<div class="corpo">
+
+  <div class="coluna">
+
+    <!-- ══ 1 · FOTOS DA CAPA ══════════════════════════════════════ -->
+    <section class="carta aberta" data-carta>
+      <header><span class="n">1</span><h2>Fotos da capa</h2><small>tela inicial</small><span class="seta">›</span></header>
+      <div class="miolo">
+        <p class="dica">
+          A <b>foto dela</b> é o retrato que fica de fundo, atrás do nome — escolha uma em pé,
+          com o rosto na parte de cima. O <b>antes e depois</b> é a comparação arrastável, e as duas
+          fotos precisam ser do mesmo rosto no mesmo enquadramento. As <b>miniaturas</b> são as duas
+          fotinhas logo abaixo, que levam para a página de trabalhos.
+          Toque em qualquer quadro para escolher a foto.
+        </p>
+        <div class="grade" id="gradeCapa"></div>
+      </div>
+    </section>
+
+    <!-- ══ 2 · GALERIA ════════════════════════════════════════════ -->
+    <section class="carta aberta" data-carta>
+      <header><span class="n">2</span><h2>Galeria de trabalhos</h2><small id="contaObras"></small><span class="seta">›</span></header>
+      <div class="miolo">
+        <p class="dica">
+          Estas são as fotos da segunda página, a que abre no botão
+          “Clique e veja mais resultados”. Pode colocar quantas quiser — a página rola.
+          O título é opcional: deixe vazio e nenhuma legenda aparece embaixo da foto.
+        </p>
+        <div id="listaObras"></div>
+        <button class="bt largo" id="btAddObra">+ Adicionar foto na galeria</button>
+      </div>
+    </section>
+
+    <!-- ══ 3 · TEXTOS ═════════════════════════════════════════════ -->
+    <section class="carta" data-carta>
+      <header><span class="n">3</span><h2>Textos</h2><small>nome, frases e botões</small><span class="seta">›</span></header>
+      <div class="miolo">
+        <p class="dica">Deixe qualquer campo como está para não mexer nele.</p>
+
+        <div class="dupla">
+          <div class="campo"><label>Nome</label><input type="text" data-txt="nome"></div>
+          <div class="campo"><label>Profissão</label><input type="text" data-txt="funcao"></div>
+        </div>
+        <div class="campo"><label>Frase de efeito</label><input type="text" data-txt="lema"></div>
+        <div class="dupla">
+          <div class="campo"><label>Número em destaque</label><input type="text" data-txt="num"></div>
+          <div class="campo"><label>Texto ao lado do número</label><input type="text" data-txt="txt"></div>
+        </div>
+        <div class="campo"><label>Rodapé da tela inicial</label><input type="text" data-txt="rodape"></div>
+
+        <div class="dupla">
+          <div class="campo"><label>Botão da galeria</label><input type="text" data-txt="rotTrabalhos"></div>
+          <div class="campo"><label>Botão do WhatsApp</label><input type="text" data-txt="rotZap"></div>
+        </div>
+        <div class="dupla">
+          <div class="campo"><label>Botão do mapa</label><input type="text" data-txt="rotMaps"></div>
+          <div class="campo"><label>Botão do Instagram</label><input type="text" data-txt="rotInsta"></div>
+        </div>
+
+        <div class="dupla">
+          <div class="campo"><label>Título da 2ª página</label><input type="text" data-txt="tituloObras"></div>
+          <div class="campo"><label>Linha abaixo do título</label><input type="text" data-txt="subObras"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 4 · LINKS ══════════════════════════════════════════════ -->
+    <section class="carta" data-carta>
+      <header><span class="n">4</span><h2>Links</h2><small>travados por segurança</small><span class="seta">›</span></header>
+      <div class="miolo">
+        <div class="aviso-link">
+          <span>🔒</span>
+          <span>Os links já estão certos e saem no arquivo exportado exatamente como estão hoje.
+          Só destrave se for realmente trocar algum — qualquer campo que você não encostar
+          continua idêntico ao site que está no ar.</span>
+        </div>
+        <label class="trava"><input type="checkbox" id="destravar"> Destravar para editar os links</label>
+
+        <div class="dupla">
+          <div class="campo"><label>WhatsApp · número (55 + DDD + número)</label>
+            <input type="text" data-lk="zapNumero" disabled inputmode="numeric"></div>
+          <div class="campo"><label>WhatsApp · mensagem já escrita</label>
+            <input type="text" data-lk="zapMsg" disabled></div>
+        </div>
+        <p class="link-final" id="linkZap"></p>
+
+        <div class="campo"><label>Google Maps</label><input type="text" data-lk="maps" disabled></div>
+        <div class="campo"><label>Instagram dela</label><input type="text" data-lk="insta" disabled></div>
+        <div class="campo"><label>Assinatura (Marktiva)</label><input type="text" data-lk="marktiva" disabled></div>
+      </div>
+    </section>
+
+    <!-- ══ 5 · PIXEL ══════════════════════════════════════════════ -->
+    <section class="carta" data-carta>
+      <header><span class="n">5</span><h2>Pixel da Meta</h2><small>medição dos cliques</small><span class="seta">›</span></header>
+      <div class="miolo">
+        <p class="dica">
+          Só números. Vazio desliga a medição por completo e o site não faz
+          nenhuma chamada externa. A prévia aqui do painel nunca dispara o pixel.
+        </p>
+        <div class="campo"><label>ID do pixel</label><input type="text" data-lk="pixel" inputmode="numeric"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ══ LADO: PREVIA + EXPORTAR ═══════════════════════════════════ -->
+  <aside class="lado">
+
+    <section class="carta aberta">
+      <div class="abas">
+        <button class="ativa" data-aba="index">Tela inicial</button>
+        <button data-aba="trabalhos">Trabalhos</button>
+      </div>
+      <div class="moldura">
+        <div class="tel"><iframe id="previa" title="Prévia do site"></iframe></div>
+      </div>
+      <div style="padding:0 12px 14px">
+        <button class="bt largo" id="btAtualizar">Atualizar prévia</button>
+      </div>
+    </section>
+
+    <section class="carta aberta">
+      <div class="miolo" style="display:block">
+        <h2 style="font-size:15px;margin-bottom:12px">Exportar</h2>
+        <div class="recado" id="recado"></div>
+        <ul class="lista-export" id="listaExport"></ul>
+        <button class="bt ouro largo" id="btZip" style="margin-bottom:9px">⬇ Baixar site completo (.zip)</button>
+        <div class="dupla" style="gap:9px">
+          <button class="bt" id="btIndex">index.html</button>
+          <button class="bt" id="btTrab">trabalhos.html</button>
+        </div>
+        <hr style="border:0;border-top:1px solid var(--linha);margin:15px 0">
+        <div class="dupla" style="gap:9px">
+          <button class="bt" id="btBackup">Salvar backup</button>
+          <button class="bt" id="btRestaurar">Abrir backup</button>
+        </div>
+      </div>
+    </section>
+
+  </aside>
+</div>
+
+<p class="rodape-painel">
+  Nada aqui é enviado para lugar nenhum: o painel trabalha inteiro dentro do seu navegador.
+</p>
+
+<input type="file" id="pegaFoto" accept="image/*">
+<input type="file" id="pegaBackup" accept="application/json,.json">
+<input type="file" id="pegaModelo" accept="text/html,.html" multiple>
+
+<script>
+(function () {
+'use strict';
+
+/* ══════════════════════════════════════════════════════════════════
+   O painel nunca reescreve o site inteiro: ele pega o index.html e o
+   trabalhos.html que estao na pasta e troca SO os pedacos editados.
+   Campo que voce nao encosta sai byte a byte igual ao que ja esta no
+   ar — e por isso que nenhum link se perde no caminho.
+   ══════════════════════════════════════════════════════════════════ */
+
+var MODELO = { index: '', trabalhos: '' };   /* html original das duas paginas */
+var base   = null;                            /* valores como estao no site   */
+var cfg    = null;                            /* valores editados             */
+var fotos  = {};                              /* chave -> {blob,url,arquivo}  */
+var aba    = 'index';
+
+/* ── atalhos ─────────────────────────────────────────────────────── */
+function $(s, r) { return (r || document).querySelector(s); }
+function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+function escH(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escA(t) { return escH(t).replace(/"/g,'&quot;'); }
+function escJ(t) { return String(t).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\r?\n/g,' '); }
+function deHTML(t) { var d = document.createElement('div'); d.innerHTML = t; return (d.textContent || '').trim(); }
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+function igual(a, b) { return JSON.stringify(a) === JSON.stringify(b); }
+
+/* ══ 1 · LER O SITE ORIGINAL ════════════════════════════════════ */
+
+function tagPorId(html, id) {
+  var i = html.indexOf('id="' + id + '"');
+  if (i < 0) return null;
+  return { ini: html.lastIndexOf('<', i), fim: html.indexOf('>', i) + 1 };
+}
+function lerHref(html, id) {
+  var t = tagPorId(html, id); if (!t) return '';
+  var m = html.slice(t.ini, t.fim).match(/href="([^"]*)"/);
+  return m ? deHTML(m[1]) : '';
+}
+function porHref(html, id, url) {
+  var t = tagPorId(html, id); if (!t) return html;
+  var tag = html.slice(t.ini, t.fim).replace(/href="[^"]*"/, 'href="' + escA(url) + '"');
+  return html.slice(0, t.ini) + tag + html.slice(t.fim);
+}
+/* conteudo de um trecho dentro do bloco <a id=...> ... </a> */
+function noBloco(html, id, re, valor) {
+  var t = tagPorId(html, id); if (!t) return valor === undefined ? '' : html;
+  var fim = html.indexOf('</a>', t.fim);
+  var bloco = html.slice(t.fim, fim);
+  if (valor === undefined) { var m = bloco.match(re); return m ? deHTML(m[2]) : ''; }
+  return html.slice(0, t.fim) + bloco.replace(re, function (_, a, __, c) {
+    return a + escH(valor) + c;
+  }) + html.slice(fim);
+}
+function lerEntre(html, re) { var m = html.match(re); return m ? deHTML(m[2]) : ''; }
+function porEntre(html, re, valor) {
+  return html.replace(re, function (_, a, __, c) { return a + escH(valor) + c; });
+}
+
+var RE = {
+  h1:      /(<h1>)([\s\S]*?)(<\/h1>)/,
+  funcao:  /(<p class="funcao"><span class="fio"><\/span>)([\s\S]*?)(<span class="fio"><\/span><\/p>)/,
+  lema:    /(<p class="lema">)([\s\S]*?)(<\/p>)/,
+  num:     /(<span class="num">)([\s\S]*?)(<\/span>)/,
+  txt:     /(<span class="txt">)([\s\S]*?)(<\/span>)/,
+  rodape:  /(<p class="rodape[^>]*>)([\s\S]*?)(\s*<a class="assinatura")/,
+  rotulo:  /(<span class="rotulo">)([\s\S]*?)(<\/span>)/,
+  zapTrab: /(<\/svg>)([\s\S]*?)(\s*<\/a>)/,
+  titObra: /(<span class="titulo">\s*<b>)([\s\S]*?)(<\/b>)/,
+  subObra: /(<\/b>\s*<span>)([\s\S]*?)(<\/span>)/
+};
+
+function lerSite() {
+  var ix = MODELO.index, tr = MODELO.trabalhos;
+
+  var par = ix.match(/var PAR\s*=\s*\{\s*antes:\s*'([^']*)',\s*depois:\s*'([^']*)'\s*\}/) || [0,'antes.jpg','depois.jpg'];
+  var mini = (ix.match(/var MINIATURAS\s*=\s*\[([^\]]*)\]/) || [0, "'mini-1.jpg','mini-2.jpg'"])[1]
+             .split(',').map(function (s) { return s.trim().replace(/^'|'$/g, ''); }).filter(Boolean);
+
+  var galeria = [], bloco = (tr.match(/var TRABALHOS\s*=\s*\[([\s\S]*?)\];/) || [0, ''])[1], m, n = 0;
+  var reObra = /\{\s*foto:\s*'([^']*)'\s*,\s*titulo:\s*'([^']*)'\s*\}/g;
+  while ((m = reObra.exec(bloco))) galeria.push({ id: 'g' + (++n), arquivo: m[1], titulo: m[2] });
+
+  var zap = lerHref(ix, 'btZap'), pz = zap.match(/wa\.me\/(\d*)\?text=([\s\S]*)$/);
+
+  var retrato = (ix.match(/--retrato:\s*url\('([^']*)'\)/) || [0, 'franciele.jpg'])[1];
+
+  return {
+    capa: {
+      retrato: { arquivo: retrato },
+      antes:  { arquivo: par[1] },
+      depois: { arquivo: par[2] },
+      mini1:  { arquivo: mini[0] || 'mini-1.jpg' },
+      mini2:  { arquivo: mini[1] || 'mini-2.jpg' }
+    },
+    galeria: galeria,
+    seq: n + 1,
+    textos: {
+      nome:         lerEntre(ix, RE.h1),
+      funcao:       lerEntre(ix, RE.funcao),
+      lema:         lerEntre(ix, RE.lema),
+      num:          lerEntre(ix, RE.num),
+      txt:          lerEntre(ix, RE.txt),
+      rodape:       lerEntre(ix, RE.rodape),
+      rotTrabalhos: noBloco(ix, 'btTrabalhos', RE.rotulo),
+      rotZap:       noBloco(ix, 'btZap',   RE.rotulo),
+      rotMaps:      noBloco(ix, 'btMaps',  RE.rotulo),
+      rotInsta:     noBloco(ix, 'btInsta', RE.rotulo),
+      tituloObras:  lerEntre(tr, RE.titObra),
+      subObras:     lerEntre(tr, RE.subObra)
+    },
+    links: {
+      zapNumero: pz ? pz[1] : '',
+      zapMsg:    pz ? decodeURIComponent(pz[2]) : '',
+      zapCru:    zap,
+      maps:      lerHref(ix, 'btMaps'),
+      insta:     lerHref(ix, 'btInsta'),
+      marktiva:  lerHref(ix, 'btMarktiva'),
+      pixel:     (ix.match(/var PIXEL_META\s*=\s*'([^']*)'/) || [0, ''])[1]
+    }
+  };
+}
+
+function montarZap(l) {
+  if (l.zapNumero === base.links.zapNumero && l.zapMsg === base.links.zapMsg) return base.links.zapCru;
+  return 'https://wa.me/' + l.zapNumero + '?text=' + encodeURIComponent(l.zapMsg);
+}
+
+/* ══ 2 · GERAR AS PAGINAS ═══════════════════════════════════════ */
+/* mapa: nome do arquivo -> endereco a usar (na previa vira data URL) */
+
+function gerarIndex(mapa, semPixel) {
+  var h = MODELO.index, t = cfg.textos, b = base.textos, c = cfg.capa;
+  var end = function (n) { return (mapa && mapa[n]) || n; };
+
+  if (t.nome   !== b.nome)   h = porEntre(h, RE.h1, t.nome);
+  if (t.funcao !== b.funcao) h = porEntre(h, RE.funcao, t.funcao);
+  if (t.lema   !== b.lema)   h = porEntre(h, RE.lema, t.lema);
+  if (t.num    !== b.num)    h = porEntre(h, RE.num, t.num);
+  if (t.txt    !== b.txt)    h = porEntre(h, RE.txt, t.txt);
+  if (t.rodape !== b.rodape) h = h.replace(RE.rodape, function (_, a, __, c2) { return a + escH(t.rodape) + c2; });
+
+  if (t.rotTrabalhos !== b.rotTrabalhos) h = noBloco(h, 'btTrabalhos', RE.rotulo, t.rotTrabalhos);
+  if (t.rotZap   !== b.rotZap)   h = noBloco(h, 'btZap',   RE.rotulo, t.rotZap);
+  if (t.rotMaps  !== b.rotMaps)  h = noBloco(h, 'btMaps',  RE.rotulo, t.rotMaps);
+  if (t.rotInsta !== b.rotInsta) h = noBloco(h, 'btInsta', RE.rotulo, t.rotInsta);
+
+  var zap = montarZap(cfg.links);
+  if (zap !== base.links.zapCru)             h = porHref(h, 'btZap', zap);
+  if (cfg.links.maps     !== base.links.maps)     h = porHref(h, 'btMaps', cfg.links.maps);
+  if (cfg.links.insta    !== base.links.insta)    h = porHref(h, 'btInsta', cfg.links.insta);
+  if (cfg.links.marktiva !== base.links.marktiva) h = porHref(h, 'btMarktiva', cfg.links.marktiva);
+
+  /* o retrato e o fundo da tela: mora numa variavel de CSS, nao no script */
+  h = h.replace(/(--retrato:\s*url\(')[^']*('\))/, function (_, a, z) {
+    return a + escJ(end(c.retrato.arquivo)) + z;
+  });
+  if (c.retrato.arquivo !== base.capa.retrato.arquivo) {
+    h = h.replace(/(<meta property="og:image" content=")[^"]*(">)/, function (_, a, z) {
+      return a + escA(c.retrato.arquivo) + z;
+    });
+  }
+
+  var par = "var PAR = { antes: '" + escJ(end(c.antes.arquivo)) + "', depois: '" + escJ(end(c.depois.arquivo)) + "' };";
+  h = h.replace(/var PAR\s*=\s*\{[^}]*\};/, par);
+  h = h.replace(/var MINIATURAS\s*=\s*\[[^\]]*\];/,
+        "var MINIATURAS = ['" + escJ(end(c.mini1.arquivo)) + "', '" + escJ(end(c.mini2.arquivo)) + "'];");
+
+  h = h.replace(/var PIXEL_META\s*=\s*'[^']*';/g,
+        "var PIXEL_META = '" + escJ(semPixel ? '' : cfg.links.pixel) + "';");
+  return h;
+}
+
+function gerarTrabalhos(mapa, semPixel) {
+  var h = MODELO.trabalhos, t = cfg.textos, b = base.textos;
+  var end = function (n) { return (mapa && mapa[n]) || n; };
+
+  if (t.tituloObras !== b.tituloObras) h = porEntre(h, RE.titObra, t.tituloObras);
+  if (t.subObras    !== b.subObras)    h = porEntre(h, RE.subObra, t.subObras);
+  if (t.rotZap      !== b.rotZap)      h = noBloco(h, 'btZap', RE.zapTrab, '\n    ' + t.rotZap + '\n  ');
+
+  var zap = montarZap(cfg.links);
+  if (zap !== base.links.zapCru)                  h = porHref(h, 'btZap', zap);
+  if (cfg.links.marktiva !== base.links.marktiva) h = porHref(h, 'btMarktiva', cfg.links.marktiva);
+
+  var linhas = cfg.galeria.map(function (o) {
+    return "    { foto: '" + escJ(end(o.arquivo)) + "', titulo: '" + escJ(o.titulo || '') + "' }";
+  }).join(',\n');
+  h = h.replace(/var TRABALHOS\s*=\s*\[[\s\S]*?\];/,
+        'var TRABALHOS = [' + (linhas ? '\n' + linhas + '\n  ' : '') + '];');
+
+  h = h.replace(/var PIXEL_META\s*=\s*'[^']*';/g,
+        "var PIXEL_META = '" + escJ(semPixel ? '' : cfg.links.pixel) + "';");
+  return h;
+}
+
+/* ══ 3 · GUARDAR (fotos no IndexedDB, resto no localStorage) ═════ */
+
+var BD = null;
+function abrirBD() {
+  return new Promise(function (ok) {
+    if (!window.indexedDB) return ok(null);
+    var p = indexedDB.open('estudio-franciele', 1);
+    p.onupgradeneeded = function () { p.result.createObjectStore('fotos'); };
+    p.onsuccess = function () { BD = p.result; ok(BD); };
+    p.onerror = function () { ok(null); };
+  });
+}
+function bd(modo, fn) {
+  return new Promise(function (ok, erro) {
+    if (!BD) return ok(null);
+    var t = BD.transaction('fotos', modo), p = fn(t.objectStore('fotos'));
+    t.onerror = function () { erro(t.error); };
+    if (p) { p.onsuccess = function () { ok(p.result); }; } else { t.oncomplete = function () { ok(null); }; }
+  });
+}
+var guardarFoto  = function (k, b) { return bd('readwrite', function (s) { return s.put(b, k); }); };
+var apagarFoto   = function (k)    { return bd('readwrite', function (s) { return s.delete(k); }); };
+var todasAsFotos = function ()     { return bd('readonly',  function (s) { return s.getAllKeys(); }); };
+var pegarFoto    = function (k)    { return bd('readonly',  function (s) { return s.get(k); }); };
+
+function salvar() {
+  try { localStorage.setItem('estudio-franciele', JSON.stringify(cfg)); } catch (_) {}
+}
+function lerSalvo() {
+  try { return JSON.parse(localStorage.getItem('estudio-franciele') || 'null'); } catch (_) { return null; }
+}
+
+/* ══ 4 · FOTOS: escolher, encolher, guardar ═════════════════════ */
+
+var LIMITE = {
+  'capa:retrato': 1600, 'capa:antes': 1400, 'capa:depois': 1400,
+  'capa:mini1': 900, 'capa:mini2': 900
+};
+
+function encolher(arquivo, lado) {
+  return new Promise(function (ok, erro) {
+    var leitor = new FileReader();
+    leitor.onerror = function () { erro(new Error('não consegui ler o arquivo')); };
+    leitor.onload = function () {
+      var img = new Image();
+      img.onerror = function () { erro(new Error('esse arquivo não é uma imagem')); };
+      img.onload = function () {
+        var e = Math.min(1, lado / Math.max(img.width, img.height));
+        var c = document.createElement('canvas');
+        c.width = Math.round(img.width * e); c.height = Math.round(img.height * e);
+        var g = c.getContext('2d');
+        g.fillStyle = '#241d17'; g.fillRect(0, 0, c.width, c.height);
+        g.drawImage(img, 0, 0, c.width, c.height);
+        c.toBlob(function (b) { b ? ok(b) : erro(new Error('não consegui converter a foto')); }, 'image/jpeg', 0.86);
+      };
+      img.src = leitor.result;
+    };
+    leitor.readAsDataURL(arquivo);
+  });
+}
+
+var esperandoFoto = null;
+function pedirFoto(chave) { esperandoFoto = chave; $('#pegaFoto').value = ''; $('#pegaFoto').click(); }
+
+$('#pegaFoto').addEventListener('change', function () {
+  var f = this.files && this.files[0]; if (!f || !esperandoFoto) return;
+  var chave = esperandoFoto; esperandoFoto = null;
+  encolher(f, LIMITE[chave] || 1600).then(function (blob) {
+    if (fotos[chave] && fotos[chave].url) URL.revokeObjectURL(fotos[chave].url);
+    fotos[chave] = { blob: blob, url: URL.createObjectURL(blob) };
+    return guardarFoto(chave, blob);
+  }).then(function () {
+    desenharCapa(); desenharGaleria(); listarExport(); avisar('', '');
+  }).catch(function (e) { avisar('ruim', e.message); });
+});
+
+function tirarFoto(chave) {
+  if (fotos[chave] && fotos[chave].url) URL.revokeObjectURL(fotos[chave].url);
+  delete fotos[chave];
+  apagarFoto(chave).then(function () { desenharCapa(); desenharGaleria(); listarExport(); });
+}
+
+/* ══ 5 · TELA ═══════════════════════════════════════════════════ */
+
+var CAPA = [
+  { k: 'capa:retrato', t: 'Foto dela (fundo)' },
+  { k: 'capa:antes',   t: 'Antes' },
+  { k: 'capa:depois',  t: 'Depois' },
+  { k: 'capa:mini1',   t: 'Miniatura 1' },
+  { k: 'capa:mini2',   t: 'Miniatura 2' }
+];
+var CHAVE_CAPA = {
+  'capa:retrato': 'retrato', 'capa:antes': 'antes', 'capa:depois': 'depois',
+  'capa:mini1': 'mini1', 'capa:mini2': 'mini2'
+};
+
+function quadro(chave, arquivo) {
+  if (fotos[chave]) {
+    return '<img src="' + fotos[chave].url + '" alt=""><span class="marca-nova">NOVA</span>';
+  }
+  /* sem foto nova: tenta mostrar a que ja esta na pasta do site */
+  return '<img src="' + escA(arquivo) + '" alt="" onerror="this.remove()">' +
+         '<span class="vazio"><b>+</b>toque para escolher</span>';
+}
+
+function desenharCapa() {
+  $('#gradeCapa').innerHTML = CAPA.map(function (s) {
+    var arq = cfg.capa[CHAVE_CAPA[s.k]].arquivo;
+    return '<div class="slot">' +
+      '<h3>' + s.t + '</h3>' +
+      '<div class="tela" data-abrir="' + s.k + '">' + quadro(s.k, arq) + '</div>' +
+      '<div class="pe"><span class="nome" title="' + escA(arq) + '">' + escH(arq) + '</span>' +
+        (fotos[s.k] ? '<button class="bt mini perigo" data-tirar="' + s.k + '">desfazer</button>' : '') +
+      '</div></div>';
+  }).join('');
+}
+
+function desenharGaleria() {
+  var l = $('#listaObras');
+  $('#contaObras').textContent = cfg.galeria.length + (cfg.galeria.length === 1 ? ' foto' : ' fotos');
+  if (!cfg.galeria.length) {
+    l.innerHTML = '<p class="vazia">Nenhuma foto na galeria ainda.</p>';
+    return;
+  }
+  l.innerHTML = cfg.galeria.map(function (o, i) {
+    var k = 'gal:' + o.id;
+    return '<div class="obra">' +
+      '<div class="tela" data-abrir="' + k + '">' + quadro(k, o.arquivo) + '</div>' +
+      '<div class="lado-obra">' +
+        '<span class="ordem">' + (i + 1) + 'ª · ' + escH(o.arquivo) + '</span>' +
+        '<input type="text" placeholder="Título (opcional)" value="' + escA(o.titulo || '') + '" data-tit="' + o.id + '">' +
+        '<div class="fila">' +
+          '<button class="bt mini" data-sobe="' + o.id + '"' + (i === 0 ? ' disabled' : '') + '>↑</button>' +
+          '<button class="bt mini" data-desce="' + o.id + '"' + (i === cfg.galeria.length - 1 ? ' disabled' : '') + '>↓</button>' +
+          '<button class="bt mini" data-abrir="' + k + '">Trocar foto</button>' +
+          (fotos[k] ? '<button class="bt mini" data-tirar="' + k + '">desfazer</button>' : '') +
+          '<button class="bt mini perigo" data-apaga="' + o.id + '">Remover</button>' +
+        '</div>' +
+      '</div></div>';
+  }).join('');
+}
+
+function encherCampos() {
+  $$('[data-txt]').forEach(function (e) { e.value = cfg.textos[e.dataset.txt] || ''; });
+  $$('[data-lk]').forEach(function (e) { e.value = cfg.links[e.dataset.lk] || ''; });
+  $('#linkZap').textContent = 'Link final: ' + montarZap(cfg.links);
+}
+
+function avisar(tipo, msg) {
+  var r = $('#recado');
+  r.className = 'recado' + (msg ? ' ver ' + tipo : '');
+  r.textContent = msg;
+}
+
+function listarExport() {
+  var itens = [{ nome: 'index.html', tag: 'gerado', cls: '' }, { nome: 'trabalhos.html', tag: 'gerado', cls: '' }];
+  CAPA.forEach(function (s) {
+    var arq = cfg.capa[CHAVE_CAPA[s.k]].arquivo;
+    itens.push({ nome: arq, tag: fotos[s.k] ? 'nova' : 'sem foto', cls: fotos[s.k] ? 'nova' : 'falta' });
+  });
+  cfg.galeria.forEach(function (o) {
+    itens.push({ nome: o.arquivo, tag: fotos['gal:' + o.id] ? 'nova' : 'sem foto',
+                 cls: fotos['gal:' + o.id] ? 'nova' : 'falta' });
+  });
+  $('#listaExport').innerHTML = itens.map(function (i) {
+    return '<li><span>' + escH(i.nome) + '</span><span class="tag ' + i.cls + '">' + i.tag + '</span></li>';
+  }).join('');
+}
+
+/* ══ 6 · PREVIA ═════════════════════════════════════════════════ */
+
+function mapaDataURL() {
+  var pares = [];
+  CAPA.forEach(function (s) {
+    if (fotos[s.k]) pares.push([cfg.capa[CHAVE_CAPA[s.k]].arquivo, fotos[s.k].blob]);
+  });
+  cfg.galeria.forEach(function (o) {
+    if (fotos['gal:' + o.id]) pares.push([o.arquivo, fotos['gal:' + o.id].blob]);
+  });
+  return Promise.all(pares.map(function (p) {
+    return new Promise(function (ok) {
+      var l = new FileReader();
+      l.onload = function () { ok([p[0], l.result]); };
+      l.readAsDataURL(p[1]);
+    });
+  })).then(function (lista) {
+    var m = {}; lista.forEach(function (p) { m[p[0]] = p[1]; }); return m;
+  });
+}
+
+function atualizarPrevia() {
+  if (!MODELO.index) return;
+  mapaDataURL().then(function (mapa) {
+    /* semPixel = true: a previa nunca conta visita no Gerenciador */
+    $('#previa').srcdoc = aba === 'index' ? gerarIndex(mapa, true) : gerarTrabalhos(mapa, true);
+  });
+}
+
+/* ══ 7 · EXPORTAR ═══════════════════════════════════════════════ */
+
+var TABELA = (function () {
+  var t = [], c, i, j;
+  for (i = 0; i < 256; i++) {
+    c = i;
+    for (j = 0; j < 8; j++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1;
+    t[i] = c >>> 0;
+  }
+  return t;
+})();
+function crc32(b) {
+  var c = 0xFFFFFFFF;
+  for (var i = 0; i < b.length; i++) c = TABELA[(c ^ b[i]) & 0xFF] ^ (c >>> 8);
+  return (c ^ 0xFFFFFFFF) >>> 0;
+}
+function zipar(arqs) {
+  var d = new Date(), partes = [], central = [], off = 0;
+  var hora = ((d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() / 2)) & 0xFFFF;
+  var data = (((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate()) & 0xFFFF;
+
+  arqs.forEach(function (a) {
+    var nome = new TextEncoder().encode(a.nome), crc = crc32(a.dados), tam = a.dados.length;
+    var lh = new Uint8Array(30 + nome.length), v = new DataView(lh.buffer);
+    v.setUint32(0, 0x04034b50, true); v.setUint16(4, 20, true); v.setUint16(6, 0x0800, true);
+    v.setUint16(10, hora, true); v.setUint16(12, data, true);
+    v.setUint32(14, crc, true); v.setUint32(18, tam, true); v.setUint32(22, tam, true);
+    v.setUint16(26, nome.length, true);
+    lh.set(nome, 30);
+    partes.push(lh, a.dados);
+
+    var ch = new Uint8Array(46 + nome.length), w = new DataView(ch.buffer);
+    w.setUint32(0, 0x02014b50, true); w.setUint16(4, 20, true); w.setUint16(6, 20, true);
+    w.setUint16(8, 0x0800, true);
+    w.setUint16(12, hora, true); w.setUint16(14, data, true);
+    w.setUint32(16, crc, true); w.setUint32(20, tam, true); w.setUint32(24, tam, true);
+    w.setUint16(28, nome.length, true); w.setUint32(42, off, true);
+    ch.set(nome, 46);
+    central.push(ch);
+    off += lh.length + tam;
+  });
+
+  var tamC = central.reduce(function (s, c) { return s + c.length; }, 0);
+  var fim = new Uint8Array(22), f = new DataView(fim.buffer);
+  f.setUint32(0, 0x06054b50, true);
+  f.setUint16(8, arqs.length, true); f.setUint16(10, arqs.length, true);
+  f.setUint32(12, tamC, true); f.setUint32(16, off, true);
+
+  return new Blob(partes.concat(central, [fim]), { type: 'application/zip' });
+}
+
+function baixar(nome, blob) {
+  var u = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = u; a.download = nome; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function () { URL.revokeObjectURL(u); }, 4000);
+}
+function comoBlob(txt) { return new Blob([txt], { type: 'text/html;charset=utf-8' }); }
+
+function exportarZip() {
+  var arqs = [
+    { nome: 'index.html',     dados: new TextEncoder().encode(gerarIndex(null, false)) },
+    { nome: 'trabalhos.html', dados: new TextEncoder().encode(gerarTrabalhos(null, false)) }
+  ];
+  var fila = [];
+  CAPA.forEach(function (s) {
+    if (fotos[s.k]) fila.push({ nome: cfg.capa[CHAVE_CAPA[s.k]].arquivo, blob: fotos[s.k].blob });
+  });
+  cfg.galeria.forEach(function (o) {
+    if (fotos['gal:' + o.id]) fila.push({ nome: o.arquivo, blob: fotos['gal:' + o.id].blob });
+  });
+
+  Promise.all(fila.map(function (f) {
+    return f.blob.arrayBuffer().then(function (b) { return { nome: f.nome, dados: new Uint8Array(b) }; });
+  })).then(function (imgs) {
+    baixar('site-franciele-bill.zip', zipar(arqs.concat(imgs)));
+    var faltando = contarFaltando();
+    avisar(faltando ? 'ruim' : 'bom', faltando
+      ? 'Zip baixado. Atenção: ' + faltando + ' foto(s) ainda não foram escolhidas — ' +
+        'esses arquivos precisam continuar na pasta do site, senão o espaço fica vazio.'
+      : 'Zip pronto. Suba a pasta inteira e o site já sobe com as fotos novas.');
+  }).catch(function (e) { avisar('ruim', 'Não deu para montar o zip: ' + e.message); });
+}
+
+function contarFaltando() {
+  var n = 0;
+  CAPA.forEach(function (s) { if (!fotos[s.k]) n++; });
+  cfg.galeria.forEach(function (o) { if (!fotos['gal:' + o.id]) n++; });
+  return n;
+}
+
+/* ══ 8 · BACKUP ═════════════════════════════════════════════════ */
+
+function salvarBackup() {
+  var chaves = CAPA.map(function (s) { return s.k; })
+    .concat(cfg.galeria.map(function (o) { return 'gal:' + o.id; }))
+    .filter(function (k) { return !!fotos[k]; });
+
+  Promise.all(chaves.map(function (k) {
+    return new Promise(function (ok) {
+      var l = new FileReader();
+      l.onload = function () { ok([k, l.result]); };
+      l.readAsDataURL(fotos[k].blob);
+    });
+  })).then(function (lista) {
+    var f = {}; lista.forEach(function (p) { f[p[0]] = p[1]; });
+    baixar('backup-estudio-franciele.json',
+      new Blob([JSON.stringify({ versao: 1, cfg: cfg, fotos: f }, null, 1)], { type: 'application/json' }));
+    avisar('bom', 'Backup salvo. Ele guarda os textos e as fotos — dá para abrir em outro computador.');
+  });
+}
+
+$('#pegaBackup').addEventListener('change', function () {
+  var f = this.files && this.files[0]; if (!f) return;
+  var l = new FileReader();
+  l.onload = function () {
+    var d;
+    try { d = JSON.parse(l.result); } catch (_) { return avisar('ruim', 'Esse arquivo não é um backup do estúdio.'); }
+    if (!d || !d.cfg) return avisar('ruim', 'Backup sem conteúdo reconhecido.');
+    cfg = d.cfg;
+    Object.keys(fotos).forEach(function (k) { if (fotos[k].url) URL.revokeObjectURL(fotos[k].url); });
+    fotos = {};
+    var pend = Object.keys(d.fotos || {}).map(function (k) {
+      return fetch(d.fotos[k]).then(function (r) { return r.blob(); }).then(function (b) {
+        fotos[k] = { blob: b, url: URL.createObjectURL(b) };
+        return guardarFoto(k, b);
+      });
+    });
+    Promise.all(pend).then(function () {
+      salvar(); encherCampos(); desenharCapa(); desenharGaleria(); listarExport(); atualizarPrevia();
+      avisar('bom', 'Backup restaurado.');
+    });
+  };
+  l.readAsText(f);
+});
+
+/* ══ 9 · LIGACOES DE TELA ═══════════════════════════════════════ */
+
+document.addEventListener('click', function (e) {
+  var a = e.target.closest('[data-abrir]');   if (a) return pedirFoto(a.dataset.abrir);
+  var t = e.target.closest('[data-tirar]');   if (t) return tirarFoto(t.dataset.tirar);
+
+  var s = e.target.closest('[data-sobe]'), d = e.target.closest('[data-desce]');
+  if (s || d) {
+    var id = (s || d).dataset.sobe || (s || d).dataset.desce;
+    var i = cfg.galeria.findIndex(function (o) { return o.id === id; });
+    var j = s ? i - 1 : i + 1;
+    if (j < 0 || j >= cfg.galeria.length) return;
+    var tmp = cfg.galeria[i]; cfg.galeria[i] = cfg.galeria[j]; cfg.galeria[j] = tmp;
+    salvar(); desenharGaleria(); listarExport();
+    return;
+  }
+
+  var x = e.target.closest('[data-apaga]');
+  if (x) {
+    var idx = cfg.galeria.findIndex(function (o) { return o.id === x.dataset.apaga; });
+    if (idx < 0) return;
+    if (!confirm('Tirar esta foto da galeria?')) return;
+    tirarFoto('gal:' + cfg.galeria[idx].id);
+    cfg.galeria.splice(idx, 1);
+    salvar(); desenharGaleria(); listarExport();
+    return;
+  }
+
+  var h = e.target.closest('[data-carta] > header');
+  if (h) h.parentNode.classList.toggle('aberta');
+});
+
+document.addEventListener('input', function (e) {
+  var el = e.target;
+  if (el.dataset.tit !== undefined) {
+    var o = cfg.galeria.find(function (g) { return g.id === el.dataset.tit; });
+    if (o) { o.titulo = el.value; salvar(); }
+  } else if (el.dataset.txt) {
+    cfg.textos[el.dataset.txt] = el.value; salvar();
+  } else if (el.dataset.lk) {
+    cfg.links[el.dataset.lk] = el.value; salvar();
+    $('#linkZap').textContent = 'Link final: ' + montarZap(cfg.links);
+  }
+});
+
+$('#destravar').addEventListener('change', function () {
+  $$('[data-lk]').forEach(function (e) {
+    if (e.dataset.lk !== 'pixel') e.disabled = !$('#destravar').checked;
+  });
+});
+
+$('#btAddObra').addEventListener('click', function () {
+  var id = 'g' + cfg.seq;
+  cfg.galeria.push({ id: id, arquivo: 'trabalho-' + cfg.seq + '.jpg', titulo: '' });
+  cfg.seq++;
+  salvar(); desenharGaleria(); listarExport();
+  pedirFoto('gal:' + id);
+});
+
+$$('.abas button').forEach(function (b) {
+  b.addEventListener('click', function () {
+    $$('.abas button').forEach(function (o) { o.classList.remove('ativa'); });
+    b.classList.add('ativa'); aba = b.dataset.aba; atualizarPrevia();
+  });
+});
+
+$('#btAtualizar').addEventListener('click', atualizarPrevia);
+$('#btZip').addEventListener('click', exportarZip);
+$('#btIndex').addEventListener('click', function () { baixar('index.html', comoBlob(gerarIndex(null, false))); });
+$('#btTrab').addEventListener('click', function () { baixar('trabalhos.html', comoBlob(gerarTrabalhos(null, false))); });
+$('#btBackup').addEventListener('click', salvarBackup);
+$('#btRestaurar').addEventListener('click', function () { $('#pegaBackup').value = ''; $('#pegaBackup').click(); });
+$('#btSalvar').addEventListener('click', function () {
+  salvar(); avisar('bom', 'Rascunho salvo neste navegador. Para publicar, exporte o zip.');
+});
+$('#btZerar').addEventListener('click', function () {
+  if (!confirm('Isto apaga tudo que você mudou aqui e volta ao site que está no ar. Continuar?')) return;
+  Object.keys(fotos).forEach(function (k) { if (fotos[k].url) URL.revokeObjectURL(fotos[k].url); });
+  Promise.all(Object.keys(fotos).map(apagarFoto)).then(function () {
+    fotos = {}; cfg = clone(base);
+    localStorage.removeItem('estudio-franciele');
+    encherCampos(); desenharCapa(); desenharGaleria(); listarExport(); atualizarPrevia();
+    avisar('bom', 'Voltou tudo para o site original.');
+  });
+});
+
+/* ══ 10 · PARTIDA ═══════════════════════════════════════════════ */
+
+function pegarModelos() {
+  return Promise.all(['index.html', 'trabalhos.html'].map(function (n) {
+    return fetch(n, { cache: 'no-store' }).then(function (r) {
+      if (!r.ok) throw new Error(n + ': ' + r.status);
+      return r.text();
+    });
+  }));
+}
+
+function pedirModelosNaMao() {
+  $('#pontoBase').className = 'ponto off';
+  $('#txtBase').innerHTML = 'não achei o site — <b style="color:var(--ouro);cursor:pointer" id="btModelo">' +
+    'escolher index.html e trabalhos.html</b>';
+  $('#btModelo').addEventListener('click', function () { $('#pegaModelo').click(); });
+}
+
+$('#pegaModelo').addEventListener('change', function () {
+  var lidos = {}, arqs = Array.prototype.slice.call(this.files || []);
+  Promise.all(arqs.map(function (f) {
+    return new Promise(function (ok) {
+      var l = new FileReader();
+      l.onload = function () { lidos[f.name] = l.result; ok(); };
+      l.readAsText(f);
+    });
+  })).then(function () {
+    if (!lidos['index.html'] || !lidos['trabalhos.html']) {
+      return avisar('ruim', 'Preciso dos dois arquivos juntos: index.html e trabalhos.html.');
+    }
+    MODELO.index = lidos['index.html'];
+    MODELO.trabalhos = lidos['trabalhos.html'];
+    ligar();
+  });
+});
+
+function ligar() {
+  base = lerSite();
+  var salvo = lerSalvo();
+  cfg = salvo && salvo.textos && salvo.links ? salvo : clone(base);
+  if (!cfg.seq) cfg.seq = base.seq;
+
+  $('#pontoBase').className = 'ponto on';
+  $('#txtBase').textContent = 'site carregado' + (salvo ? ' · rascunho recuperado' : '');
+
+  todasAsFotos().then(function (chaves) {
+    return Promise.all((chaves || []).map(function (k) {
+      return pegarFoto(k).then(function (b) {
+        if (b) fotos[k] = { blob: b, url: URL.createObjectURL(b) };
+      });
+    }));
+  }).then(function () {
+    encherCampos(); desenharCapa(); desenharGaleria(); listarExport(); atualizarPrevia();
+  });
+}
+
+abrirBD().then(pegarModelos).then(function (r) {
+  MODELO.index = r[0]; MODELO.trabalhos = r[1];
+  ligar();
+}).catch(pedirModelosNaMao);
+
+})();
+</script>
+
+</body>
+</html>
