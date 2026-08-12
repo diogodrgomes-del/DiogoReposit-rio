@@ -13,26 +13,34 @@ Separados, o botão não acha nada.
 
 ## A tela inicial
 
-Sem rolagem, nesta ordem: nome, **uma foto de destaque**,
+Sem rolagem, nesta ordem: nome, **um antes e depois arrastável**,
 “+9 mil rostos transformados”, **duas fotos pequenas**, o botão
 “Clique e veja mais resultados” e os três contatos.
 
-São **fotos únicas**, sem comparação arrastável. Tocar nas pequenas leva à
-mesma página do botão — quem toca numa foto espera que ela abra algo.
+A comparação do topo desliza sozinha uma vez, para revelar o resultado e
+ensinar o gesto. Qualquer toque interrompe.
+
+As duas fotos de baixo são **imagens únicas**, sem comparação. Tocar nelas leva
+à mesma página do botão — quem toca numa foto espera que ela abra algo.
 
 ## A página de trabalhos
 
-Rola de propósito — é o portfólio. Aceita quantas fotos você quiser,
-**sempre duas por linha**. As quatro primeiras chegam junto com a página; o
-resto carrega quando o visitante se aproxima.
+Rola de propósito — é o portfólio. **Sem comparação nenhuma**: são fotos
+únicas, que é o que você anexa. Aceita quantas quiser, **sempre duas por
+linha**. As quatro primeiras chegam junto com a página; o resto carrega quando
+o visitante se aproxima.
 
 O botão do WhatsApp fica fixo no rodapé, sempre alcançável.
+
+**O botão voltar desfaz o passo** em vez de recarregar a tela inicial: assim a
+página anterior volta como estava, com a rolagem no lugar. Se alguém abrir
+`trabalhos.html` direto, sem histórico, o link normal assume.
 
 ## Como montar
 
 1. Abra o **`montar.html`** com dois cliques.
 2. Solte o **retrato** dela (vira a faixa do topo).
-3. Solte a **foto de destaque** da tela inicial.
+3. Preencha o **antes e depois** do topo.
 4. Solte as **duas fotos pequenas**.
 5. Adicione quantas fotos quiser na **página de trabalhos**.
 6. Escolha o estilo de arte, confira os links.
@@ -113,6 +121,13 @@ Sem isso o alvo teria 9px de altura e ninguém acertaria no dedo.
 **Duas fotos por linha, nunca três.** Com três, cada uma cai para uns 100px de
 largura e o trabalho deixa de ser legível — que é justamente o motivo de a
 foto estar ali. Vale na tira da tela inicial e na galeria.
+
+**A comparação existe só na tela inicial.** Na galeria seriam dezenas de
+divisórias competindo entre si; e em duas colunas cada lado teria uns 80px,
+onde não se enxerga transformação alguma.
+
+**Antes e depois usam sempre o mesmo tratamento de arte.** O estúdio não deixa
+filtrar só o "depois" — seria propaganda enganosa.
 
 **O tratamento de arte vale para todas as fotos.** Um único estilo e uma única
 intensidade para o conjunto inteiro: fotos do mesmo perfil com graduações

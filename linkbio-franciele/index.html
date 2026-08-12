@@ -203,21 +203,73 @@ h1{
   color:transparent;
 }
 
-/* ── foto de destaque ──────────────────────────────────────────── */
+/* ── antes e depois ──────────────────────────────── */
 .vitrine{width:100%}
-.destaque{
+.pares{width:100%}
+
+.ba{
   position:relative;width:100%;
+  /* faixa deitada: sobrancelha e um traco horizontal, entao o recorte
+     largo aproveita melhor a altura que sobra */
   height:clamp(80px, 16.1vh, 180px);
-  border-radius:.7em;overflow:hidden;
+  border-radius:.6em;overflow:hidden;
   border:1px solid rgba(217,184,110,.38);
-  box-shadow:0 .35em 1.2em rgba(14,10,7,.45);
-  /* sem foto fica o degrade da marca, nunca um icone quebrado */
-  background:linear-gradient(115deg,#6b5c4e,#3a2f26 46%,#8d8175);
+  z-index:1;
+  box-shadow:0 .3em 1em rgba(14,10,7,.42);
+  --pos:50%;
+  touch-action:pan-y;
 }
-.destaque img{
-  width:100%;height:100%;object-fit:cover;display:block;
+.ba .face{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;display:block;
   user-select:none;-webkit-user-drag:none;
 }
+.ba .face.depois{clip-path:inset(0 0 0 var(--pos))}
+.ba::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(115deg,#6b5c4e,#3a2f26 46%,#8d8175);
+}
+.ba.faltando .aviso{display:flex}
+.aviso{
+  display:none;position:absolute;inset:0;
+  align-items:center;justify-content:center;
+  font-size:.54em;font-weight:300;
+  letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(244,236,225,.8);text-align:center;padding:0 1em;
+}
+.ba .tag{
+  position:absolute;bottom:.45em;
+  padding:.26em .62em;border-radius:99em;
+  background:rgba(20,16,12,.78);
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  font-size:.54em;font-weight:300;
+  letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ouro-luz);pointer-events:none;
+}
+.ba .tag.esq{left:.45em}
+.ba .tag.dir{right:.45em}
+.ba .divisor{
+  position:absolute;top:0;bottom:0;left:var(--pos);
+  width:2px;margin-left:-1px;
+  background:var(--folha);
+  box-shadow:0 0 .7em rgba(217,184,110,.6);
+  pointer-events:none;
+}
+.ba .pega{
+  position:absolute;top:50%;left:50%;translate:-50% -50%;
+  width:2.2em;height:2.2em;border-radius:50%;
+  background:var(--folha);
+  box-shadow:0 .15em .5em rgba(14,10,7,.55);
+  display:flex;align-items:center;justify-content:center;color:#2a2118;
+}
+.ba .pega svg{width:.72em;height:auto}
+.ba input[type=range]{
+  position:absolute;inset:0;width:100%;height:100%;margin:0;
+  opacity:0;cursor:ew-resize;
+  -webkit-appearance:none;appearance:none;background:transparent;
+}
+.ba input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:2.2em;height:100%}
+.ba input[type=range]::-moz-range-thumb{width:2.2em;height:100%;border:0;opacity:0}
 
 .legenda{
   margin-top:.5em;
@@ -423,13 +475,13 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
   .palco>.ver-trabalhos{grid-area:trabalhos}
   .palco>.acoes{grid-area:acoes}
   .palco>.rodape{grid-area:rodape}
-  .destaque{height:clamp(56px,16.5vh,108px)}
+  .ba{height:clamp(56px,16.5vh,108px)}
 }
 
 /* telas em pe muito curtas (navegador do app comendo altura) */
 @media (orientation:portrait) and (max-height:545px){
   .palco{gap:.7em}
-  .destaque{height:clamp(72px,14vh,116px)}
+  .ba{height:clamp(72px,14vh,116px)}
   .ver-trabalhos{padding:.65em 1em}
 }
 
@@ -474,7 +526,7 @@ src="https://www.facebook.com/tr?id=2127826514818630&amp;ev=PageView&amp;noscrip
   </div>
 
   <figure class="vitrine entra" style="--d:340">
-    <div class="destaque" id="destaque"></div>
+    <div class="pares" id="pares"></div>
     <figcaption class="legenda">
       <span class="num">+9 mil</span>
       <span class="txt">rostos transformados</span>
@@ -655,15 +707,80 @@ src="https://www.facebook.com/tr?id=2127826514818630&amp;ev=PageView&amp;noscrip
 
   /* ══════════════════════════════════════════════════════════════════
      ▸ AS FOTOS DA TELA INICIAL
-       DESTAQUE e a foto grande do topo. MINIATURAS sao as duas menores
-       logo abaixo. O resto vai para a pagina trabalhos.html.
+       PAR e a comparacao arrastavel do topo. MINIATURAS sao as duas
+       fotos menores logo abaixo. O resto vai para trabalhos.html.
      ══════════════════════════════════════════════════════════════════ */
-  var DESTAQUE = 'destaque.jpg';
+  var PAR = { antes: 'antes.jpg', depois: 'depois.jpg' };
   var MINIATURAS = ['mini-1.jpg', 'mini-2.jpg'];
 
   var menos = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  /* ── fotos ───────────────────────────────────────────────────── */
+  /* ── antes e depois ───────────────────────────────────────────── */
+  var SETAS = '<svg viewBox="0 0 22 12" fill="none" stroke="currentColor"' +
+              ' stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">' +
+              '<path d="M7 2 2.5 6 7 10M15 2l4.5 4-4.5 4"/></svg>';
+
+  function montarPar(par, indice) {
+    var ba = document.createElement('div');
+    ba.className = 'ba';
+    ba.innerHTML =
+      '<img class="face antes" alt="Sobrancelha antes da micropigmentação">' +
+      '<img class="face depois" alt="Sobrancelha depois da micropigmentação">' +
+      '<div class="aviso" aria-hidden="true">antes e depois ' + (indice + 1) + '</div>' +
+      '<span class="tag esq">Antes</span>' +
+      '<span class="tag dir">Depois</span>' +
+      '<span class="divisor"><span class="pega" aria-hidden="true">' + SETAS + '</span></span>' +
+      '<input type="range" min="0" max="100" value="50" step="0.1"' +
+      ' aria-label="Arraste para comparar o antes e o depois">';
+
+    var antes  = ba.querySelector('.face.antes');
+    var depois = ba.querySelector('.face.depois');
+    var faixa  = ba.querySelector('input[type=range]');
+    antes.src  = par.antes;
+    depois.src = par.depois;
+
+    function posicionar(v) { ba.style.setProperty('--pos', v + '%'); }
+
+    /* foto faltando: fica o degrade com um recado, nunca icone quebrado */
+    function conferir() {
+      var faltou = [antes, depois].some(function (img) {
+        return !img.getAttribute('src') || (img.complete && img.naturalWidth === 0);
+      });
+      ba.classList.toggle('faltando', faltou);
+    }
+    [antes, depois].forEach(function (img) {
+      img.addEventListener('error', function () { img.style.display = 'none'; conferir(); });
+      img.addEventListener('load', conferir);
+    });
+    conferir();
+
+    var anim = null;
+    function parar() { if (anim) { cancelAnimationFrame(anim); anim = null; } }
+    ['pointerdown', 'keydown', 'wheel'].forEach(function (ev) {
+      ba.addEventListener(ev, parar, { passive: true });
+    });
+    faixa.addEventListener('input', function () { parar(); posicionar(faixa.value); });
+
+    /* a divisoria desliza sozinha uma vez, revelando o resultado e
+       ensinando o gesto. Os tres saem em sequencia, nao juntos. */
+    function abertura() {
+      if (menos.matches) { posicionar(50); return; }
+      var de = 94, ate = 46, dur = 1700, t0 = null;
+      posicionar(de);
+      anim = requestAnimationFrame(function passo(t) {
+        if (t0 === null) t0 = t;
+        var p = Math.min((t - t0) / dur, 1);
+        var v = de + (ate - de) * (1 - Math.pow(1 - p, 4));
+        posicionar(v); faixa.value = v;
+        anim = p < 1 ? requestAnimationFrame(passo) : null;
+      });
+    }
+    setTimeout(abertura, 1300 + indice * 320);
+    return ba;
+  }
+
+  document.getElementById('pares').appendChild(montarPar(PAR, 0));
+
   function porFoto(arquivo, alt) {
     var img = document.createElement('img');
     img.src = arquivo;
@@ -673,9 +790,6 @@ src="https://www.facebook.com/tr?id=2127826514818630&amp;ev=PageView&amp;noscrip
     img.addEventListener('error', function () { img.remove(); });
     return img;
   }
-
-  document.getElementById('destaque')
-          .appendChild(porFoto(DESTAQUE, 'Trabalho de Franciele Bill'));
 
   /* as pequenas levam para a mesma pagina do botao: quem toca numa foto
      espera que ela abra alguma coisa */
