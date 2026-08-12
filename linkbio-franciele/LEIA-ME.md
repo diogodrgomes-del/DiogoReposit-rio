@@ -6,13 +6,13 @@
 |---|---|
 | **franciele-bill-linkbio.vercel.app** | o link bio — é este que vai na bio do Instagram |
 | franciele-bill-linkbio.vercel.app/trabalhos.html | a galeria |
-| **franciele-bill-linkbio.vercel.app/painel.html** | o painel para trocar fotos e textos |
+| **franciele-bill-linkbio.vercel.app/painel.html** | o editor |
 
-O painel mostra a **versão** no canto superior direito. Se o carimbo não bater
-com o do site no ar, o arquivo aberto é uma cópia velha — baixar duas vezes gera
-`montar (1).html` e o nome original continua apontando para a antiga.
+O editor mostra a **versão** no canto superior esquerdo. Se o carimbo não bater
+com o do editor no ar, o arquivo aberto é uma cópia velha — baixar duas vezes
+gera `painel (1).html` e o nome original continua apontando para a antiga.
 
-O painel tem `noindex`, então não aparece em busca. Mas o endereço é adivinhável
+O editor tem `noindex`, então não aparece em busca. Mas o endereço é adivinhável
 — quem abrir só vê a ferramenta, que não guarda nada e não publica nada sozinha.
 
 Projeto `franciele-bill-linkbio` na Vercel — separado do `diogo-reposit-rio`,
@@ -27,7 +27,7 @@ export VERCEL_TEAM_ID='team_V6eUe4eJiOtewqzI987DOXhF'
 node scripts/publicar-vercel.mjs franciele-bill-linkbio \
   linkbio-franciele/index.html:index.html \
   linkbio-franciele/trabalhos.html:trabalhos.html \
-  linkbio-franciele/montar.html:painel.html --producao
+  linkbio-franciele/painel.html:painel.html --producao
 ```
 
 O sufixo `:index.html` renomeia no destino. Sem ele a página responderia num
@@ -110,7 +110,7 @@ var EVENTO_CONVERSA = 'Contact';
 ```
 
 O ID mora em **dois lugares**: a constante `PIXEL_META` e o `<noscript>` do
-`<head>`. Pelo estúdio isso é automático — ele mantém os dois em sincronia e
+`<head>`. Pelo editor isso é automático — ele mantém os dois em sincronia e
 apaga o `<noscript>` inteiro quando o campo fica vazio.
 
 Editando na mão, troque **os dois**. Mexer só num deixa o outro chamando o
@@ -164,7 +164,7 @@ foto estar ali. Vale na tira da tela inicial e na galeria.
 divisórias competindo entre si; e em duas colunas cada lado teria uns 80px,
 onde não se enxerga transformação alguma.
 
-**Antes e depois usam sempre o mesmo tratamento de arte.** O estúdio não deixa
+**Antes e depois usam sempre o mesmo tratamento de arte.** O editor não deixa
 filtrar só o "depois" — seria propaganda enganosa.
 
 **O tratamento de arte vale para todas as fotos.** Um único estilo e uma única
