@@ -8,6 +8,10 @@
 | franciele-bill-linkbio.vercel.app/trabalhos.html | a galeria |
 | **franciele-bill-linkbio.vercel.app/painel.html** | o painel para trocar fotos e textos |
 
+O painel mostra a **versão** no canto superior direito. Se o carimbo não bater
+com o do site no ar, o arquivo aberto é uma cópia velha — baixar duas vezes gera
+`montar (1).html` e o nome original continua apontando para a antiga.
+
 O painel tem `noindex`, então não aparece em busca. Mas o endereço é adivinhável
 — quem abrir só vê a ferramenta, que não guarda nada e não publica nada sozinha.
 

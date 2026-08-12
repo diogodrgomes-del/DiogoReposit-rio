@@ -29,6 +29,10 @@ body{
   padding:5px 12px;border-radius:99px;background:var(--folha);color:#2a2118;
   font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
 }
+.carimbo{
+  font-size:11px;letter-spacing:.08em;color:var(--fraco);
+  font-variant-numeric:tabular-nums;
+}
 .corpo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,400px);align-items:start}
 @media (max-width:980px){.corpo{grid-template-columns:1fr}}
 .controles{padding:22px;display:flex;flex-direction:column;gap:24px;min-width:0}
@@ -151,7 +155,13 @@ input[type=range]{width:100%;accent-color:var(--ouro)}
     <h1>Painel do link bio — Franciele Bill</h1>
     <p>Solte as fotos, escolha o estilo, confira os links. Saem os dois arquivos do site.</p>
   </div>
-  <span class="selo-ouro">nada é enviado para a internet</span>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+    <span class="selo-ouro">nada é enviado para a internet</span>
+    <!-- carimbo de versao: sem ele nao da para saber, de olho, se o arquivo
+         aberto e o mais novo. Baixar duas vezes gera "montar (1).html" e o
+         nome original continua apontando para a copia antiga. -->
+    <span class="carimbo">versão 12/08 19:08</span>
+  </div>
 </div>
 
 <div class="corpo">
