@@ -2,7 +2,14 @@
 
 ## No ar
 
-**https://franciele-bill-linkbio.vercel.app**
+| endereço | o que é |
+|---|---|
+| **franciele-bill-linkbio.vercel.app** | o link bio — é este que vai na bio do Instagram |
+| franciele-bill-linkbio.vercel.app/trabalhos.html | a galeria |
+| **franciele-bill-linkbio.vercel.app/painel.html** | o painel para trocar fotos e textos |
+
+O painel tem `noindex`, então não aparece em busca. Mas o endereço é adivinhável
+— quem abrir só vê a ferramenta, que não guarda nada e não publica nada sozinha.
 
 Projeto `franciele-bill-linkbio` na Vercel — separado do `diogo-reposit-rio`,
 que é o dashboard Next.js da Marktiva e não pode receber HTML solto.
@@ -15,7 +22,8 @@ export VERCEL_TEAM_ID='team_V6eUe4eJiOtewqzI987DOXhF'
 
 node scripts/publicar-vercel.mjs franciele-bill-linkbio \
   linkbio-franciele/index.html:index.html \
-  linkbio-franciele/trabalhos.html:trabalhos.html --producao
+  linkbio-franciele/trabalhos.html:trabalhos.html \
+  linkbio-franciele/montar.html:painel.html --producao
 ```
 
 O sufixo `:index.html` renomeia no destino. Sem ele a página responderia num
@@ -61,7 +69,7 @@ página anterior volta como estava, com a rolagem no lugar. Se alguém abrir
 
 ## Como montar
 
-1. Abra o **`montar.html`** com dois cliques.
+1. Abra **franciele-bill-linkbio.vercel.app/painel.html** (ou o `montar.html` local).
 2. Solte o **retrato** dela (vira a faixa do topo).
 3. Preencha o **antes e depois** do topo.
 4. Solte as **duas fotos pequenas**.
