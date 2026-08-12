@@ -190,7 +190,7 @@ body::after{
 
 <div class="folha">
   <header class="topo">
-    <a class="voltar" id="btVoltar" href="index.html" aria-label="Voltar">
+    <a class="voltar" id="btVoltar" href="index.html" aria-label="Voltar para a tela inicial">
       <svg width="15" height="15" viewBox="0 0 12 12" fill="none" stroke="currentColor"
            stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M8 2L4 6l4 4"/>
@@ -270,19 +270,11 @@ body::after{
     }
   });
 
-  /* ── voltar ──────────────────────────────────────────────────── */
-  /* O href e a rede de seguranca: funciona sem JavaScript e quando a
-     pagina foi aberta direto, sem historico. Mas quando o visitante veio
-     da tela inicial, desfazer o passo devolve a pagina como ela estava,
-     com a rolagem no lugar — carregar de novo perderia isso. */
-  document.getElementById('btVoltar').addEventListener('click', function (e) {
-    var veioDaqui = document.referrer &&
-                    new URL(document.referrer).origin === location.origin;
-    if (veioDaqui && history.length > 1) {
-      e.preventDefault();
-      history.back();
-    }
-  });
+  /* O voltar e um link comum para index.html, e so isso.
+     Ja tentei desfazer o passo do navegador aqui, para preservar a
+     rolagem. Mas o historico tem entradas que a pagina nao controla:
+     em navegador de dentro de aplicativo, o passo anterior pode ser
+     qualquer coisa. Destino previsivel vale mais que rolagem. */
 
   /* ── monta a lista ───────────────────────────────────────────── */
   var lista = document.getElementById('lista');

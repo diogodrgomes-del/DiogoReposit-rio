@@ -35,54 +35,57 @@ endereço com o nome do arquivo local, e o botão entre as páginas quebraria.
 
 ## Os arquivos
 
-São **duas páginas**, e as duas precisam ficar **na mesma pasta**:
-
 ```
 index.html      tela inicial — cabe inteira sem rolar
-trabalhos.html  portfólio — rola, com todas as fotos de trabalho
-montar.html     o estúdio: solte as fotos, ele gera os dois arquivos
+trabalhos.html  galeria — rola, fotos únicas, duas por linha
+painel.html     o editor
 ```
 
-O botão “Clique e veja mais resultados” procura `trabalhos.html` ao lado dele.
-Separados, o botão não acha nada.
+`index.html` e `trabalhos.html` precisam ficar **na mesma pasta**: o botão da
+tela inicial procura `trabalhos.html` ao lado dele.
+
+## O editor
+
+Não é formulário. É **a própria página, editável**: ela aparece em tamanho de
+celular e cada foto e cada texto que dá para trocar fica com contorno dourado
+ao passar o dedo ou o mouse.
+
+- **Foto** → abre o seletor de arquivo
+- **Texto** → abre uma caixinha para escrever
+- **Galeria** → cada foto tem × para remover, e há um bloco “+ foto” no fim
+
+São 5 fotos e 6 textos na tela inicial, mais a galeria inteira.
+
+Ao lado ficam o estilo de arte, os links e o pixel — coisas que não dá para
+clicar na página porque não aparecem nela.
+
+O editor **carrega os modelos baixados do site publicado**, então o que você
+edita é exatamente o que está no ar.
+
+### Por que ele não publica sozinho
+
+Para publicar direto, o token da Vercel teria que estar dentro dele. Como o
+editor fica numa página pública, qualquer pessoa leria o token no código-fonte
+e ganharia poder de criar, alterar e apagar deploys da conta inteira.
+
+Dá para resolver com uma função no servidor que guarde o token como variável de
+ambiente, protegida por senha. Enquanto isso não existe, o caminho é baixar os
+dois arquivos e publicar pela linha de comando.
 
 ## A tela inicial
 
-Sem rolagem, nesta ordem: nome, **um antes e depois arrastável**,
-“+9 mil rostos transformados”, **duas fotos pequenas**, o botão
-“Clique e veja mais resultados” e os três contatos.
-
-A comparação do topo desliza sozinha uma vez, para revelar o resultado e
-ensinar o gesto. Qualquer toque interrompe.
-
-As duas fotos de baixo são **imagens únicas**, sem comparação. Tocar nelas leva
-à mesma página do botão — quem toca numa foto espera que ela abra algo.
+Sem rolagem: nome, **um antes e depois arrastável**, “+9 mil rostos
+transformados”, **duas fotos**, o botão “Clique e veja mais resultados” e os
+três contatos.
 
 ## A página de trabalhos
 
-Rola de propósito — é o portfólio. **Sem comparação nenhuma**: são fotos
-únicas, que é o que você anexa. Aceita quantas quiser, **sempre duas por
-linha**. As quatro primeiras chegam junto com a página; o resto carrega quando
-o visitante se aproxima.
+Rola de propósito. Fotos únicas, **sempre duas por linha**.
 
-O botão do WhatsApp fica fixo no rodapé, sempre alcançável.
-
-**O botão voltar desfaz o passo** em vez de recarregar a tela inicial: assim a
-página anterior volta como estava, com a rolagem no lugar. Se alguém abrir
-`trabalhos.html` direto, sem histórico, o link normal assume.
-
-## Como montar
-
-1. Abra **franciele-bill-linkbio.vercel.app/painel.html** (ou o `montar.html` local).
-2. Solte o **retrato** dela (vira a faixa do topo).
-3. Preencha o **antes e depois** do topo.
-4. Solte as **duas fotos pequenas**.
-5. Adicione quantas fotos quiser na **página de trabalhos**.
-6. Escolha o estilo de arte, confira os links.
-7. Baixe **os dois arquivos** e ponha na mesma pasta.
-
-As fotos de sobrancelha costumam estar deitadas — use **girar** até ficarem na
-horizontal e **◂ ▸** para enquadrar.
+**O voltar é um link comum para a tela inicial.** Já usei o histórico do
+navegador aqui, para preservar a rolagem — mas o histórico tem entradas que a
+página não controla, e em navegador de dentro de aplicativo o passo anterior
+pode ser qualquer coisa. Destino previsível vale mais que rolagem preservada.
 
 ## Pixel da Meta
 
