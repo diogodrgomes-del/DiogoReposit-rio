@@ -109,7 +109,7 @@ dialog.escrever .linha{display:flex;gap:8px;margin-top:12px;justify-content:flex
 
 <div class="barra">
   <h1>Editor — Franciele Bill</h1>
-  <span class="carimbo">versão 12/08 20:41</span>
+  <span class="carimbo">versão 13/08 15:12</span>
   <div class="abas">
     <button type="button" id="abaHome" aria-pressed="true">Tela inicial</button>
     <button type="button" id="abaObras" aria-pressed="false">Meus trabalhos</button>
@@ -268,7 +268,10 @@ function novaFoto(){ return { img:null, giro:0, enq:50, dados:'' }; }
   const pega = (re, txt) => { const m = (txt||h).match(re); return m ? m[1] : ''; };
   estado.textos = {
     nome:    pega(/<h1>([^<]*)<\/h1>/),
-    funcao:  pega(/<span class="fio"><\/span>([^<]*)<span/),
+    /* ancorado no paragrafo: a sequencia fio+texto+span aparece antes no
+       monograma, e sem a ancora a leitura pega o vazio de la e a escrita
+       injeta o texto ao lado do B */
+    funcao:  pega(/<p class="funcao">\s*<span class="fio"><\/span>([^<]*)<span/),
     lema:    pega(/<p class="lema">([^<]*)<\/p>/),
     numero:  pega(/<span class="num">([^<]*)<\/span>/),
     legenda: pega(/<span class="txt">([^<]*)<\/span>/),
@@ -283,12 +286,23 @@ function novaFoto(){ return { img:null, giro:0, enq:50, dados:'' }; }
     maps:  pega(/id="btMaps"\s+href="([^"]*)"/)
   };
   estado.pixel = pega(/var PIXEL_META = '([^']*)'/);
+  /* guarda as fotos que o modelo ja traz: sem isso, exportar depois de
+     trocar uma so apagaria todas as outras */
+  estado.fotos.retrato.dados = pega(/--retrato: url\("(data:image[^"]*)"\)/);
+  const par = h.match(/var PAR = \{ antes: '([^']*)', depois: '([^']*)' \}/);
+  if(par){ estado.fotos.antes.dados = par[1]; estado.fotos.depois.dados = par[2]; }
+  const mini = h.match(/var MINIATURAS = \['([^']*)',\s*'([^']*)'\]/);
+  if(mini){ estado.fotos.mini1.dados = mini[1]; estado.fotos.mini2.dados = mini[2]; }
   // a galeria começa com o que ja existe no modelo
   const lista = (o.match(/var TRABALHOS = \[([\s\S]*?)\n  \];/)||['',''])[1];
   /* o modelo escreve o titulo entre aspas simples ou duplas conforme o
      valor; aceitar so um dos dois zerava a lista sem avisar */
-  estado.obras = [...lista.matchAll(/titulo:\s*(?:"([^"]*)"|'([^']*)')/g)].map(m=>{
-    const f = novaFoto(); f.titulo = m[1] !== undefined ? m[1] : m[2]; return f;
+  estado.obras = [...lista.matchAll(
+      /\{\s*foto:\s*'([^']*)'\s*,\s*titulo:\s*(?:"([^"]*)"|'([^']*)')/g)].map(m=>{
+    const f = novaFoto();
+    f.dados  = m[1] || '';
+    f.titulo = m[2] !== undefined ? m[2] : (m[3] || '');
+    return f;
   });
   if(!estado.obras.length) estado.obras = [Object.assign(novaFoto(),{titulo:'Sobrancelha'})];
 })();
@@ -365,7 +379,7 @@ function dados(chaveOuFoto, alvo){
 function gerarHome(){
   let h = MODELO.home;
   const r = dados('retrato','retrato');
-  h = h.replace("--retrato: url('franciele.jpg');",
+  h = h.replace(/--retrato: [^;]*;/,
                 r ? '--retrato: url("'+r+'");' : '--retrato: none;');
   h = h.replace(/<meta property="og:image"[^>]*>\n?/,'');
   h = h.replace(/var PAR = \{[^}]*\};/,
@@ -378,7 +392,8 @@ function gerarHome(){
   h = aplicarPixel(h);
   const t = estado.textos;
   h = h.replace(/<h1>[^<]*<\/h1>/,'<h1>'+txt(t.nome)+'</h1>');
-  h = h.replace(/(<span class="fio"><\/span>)[^<]*(<span)/,'$1'+txt(t.funcao)+'$2');
+  h = h.replace(/(<p class="funcao">\s*<span class="fio"><\/span>)[^<]*(<span)/,
+                '$1'+txt(t.funcao)+'$2');
   h = h.replace(/<p class="lema">[^<]*<\/p>/,'<p class="lema">'+txt(t.lema)+'</p>');
   h = h.replace(/<span class="num">[^<]*<\/span>/,'<span class="num">'+txt(t.numero)+'</span>');
   h = h.replace(/<span class="txt">[^<]*<\/span>/,'<span class="txt">'+txt(t.legenda)+'</span>');

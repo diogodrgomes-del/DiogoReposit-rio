@@ -7,6 +7,8 @@
 | **franciele-bill-linkbio.vercel.app** | o link bio — é este que vai na bio do Instagram |
 | franciele-bill-linkbio.vercel.app/trabalhos.html | a galeria |
 | **franciele-bill-linkbio.vercel.app/painel.html** | o editor |
+| .../versao-07-08.html | a versão de 07/08, com as fotos antigas |
+| .../editor-07-08.html | o editor daquela versão |
 
 O editor mostra a **versão** no canto superior esquerdo. Se o carimbo não bater
 com o do editor no ar, o arquivo aberto é uma cópia velha — baixar duas vezes
@@ -61,6 +63,17 @@ clicar na página porque não aparecem nela.
 
 O editor **carrega os modelos baixados do site publicado**, então o que você
 edita é exatamente o que está no ar.
+
+### A versão de 07/08
+
+Guardada em `versao-07-08/`, com o editor próprio dela. É de antes de várias
+mudanças: tem o selo “Embaixadora”, a galeria dentro da tela inicial, e não
+tem segunda página nem assinatura da Marktiva. **As 7 fotos que estavam nela
+continuam lá** — serve para recuperar imagens sem procurar os originais.
+
+O editor dela é separado porque a estrutura é outra: as faces da comparação
+são `<img>` com `src` direto em vez de uma lista, e a galeria usa `arquivo`
+em vez de `foto`. O editor de hoje não acharia nada.
 
 ### Por que ele não publica sozinho
 
