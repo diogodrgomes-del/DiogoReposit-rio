@@ -143,13 +143,13 @@ body::-webkit-scrollbar{display:none}
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:.95em;
+  gap:.78em;
   width:min(100%,27em);
   margin-inline:auto;
   padding:
     calc(1.25em + env(safe-area-inset-top))
     1.7em
-    calc(1.15em + env(safe-area-inset-bottom));
+    calc(1.55em + env(safe-area-inset-bottom));
   text-align:center;
 
   /* TUDO escala a partir deste unico numero — o menor entre a altura
@@ -328,17 +328,37 @@ h1{
   letter-spacing:.24em;text-transform:uppercase;
   color:var(--ouro-luz);
 }
+/* a frase e o botao. O alvo de toque passa de 10px para 34px por um
+   pseudo-elemento, que estica a area sem empurrar o layout. */
+.chamada{
+  position:relative;
+  display:inline-flex;align-items:center;gap:.5em;
+  padding:.2em .1em;
+  border-bottom:1px solid rgba(217,184,110,.42);
+  transition:color .3s var(--curva),border-color .3s var(--curva);
+}
+.chamada::after{content:"";position:absolute;left:-1em;right:-1em;top:50%;
+  height:34px;transform:translateY(-50%)}
+.chamada .seta{flex:none;opacity:.8;transition:transform .3s var(--curva)}
+@media (hover:hover){
+  .chamada:hover{color:#fff;border-color:var(--ouro)}
+  .chamada:hover .seta{transform:translateX(2px)}
+}
+.grade li a{display:block;width:100%;height:100%}
 /* uma fileira sempre. o numero de colunas vem do JS, conforme quantas
    fotos existem — assim nunca sobra um item orfao numa segunda fileira,
    que era o que estourava a altura em tela grande. */
 .grade{
   display:grid;
-  grid-template-columns:repeat(var(--colunas,5),minmax(0,1fr));
-  gap:.42em;width:100%;list-style:none;
+  grid-template-columns:repeat(var(--colunas,3),minmax(0,1fr));
+  gap:.42em;list-style:none;
+  /* nao ocupa a largura toda: com tres retratos esticados a tira ficava
+     mais alta que a foto principal e empurrava os botoes para fora */
+  width:min(100%,18.5em);margin-inline:auto;
 }
 .grade li{
   position:relative;
-  aspect-ratio:3/4;
+  aspect-ratio:1/1;
   border-radius:.55em;overflow:hidden;
   border:1px solid rgba(217,184,110,.34);
   background:linear-gradient(140deg,#6b5c4e,#3a2f26);
@@ -346,10 +366,10 @@ h1{
   animation-delay:calc(500ms + var(--i,0) * 70ms);
 }
 .grade img{width:100%;height:100%;object-fit:cover;display:block}
-/* alem do sexto nao entra: manteria a fileira unica as custas de
-   miniaturas estreitas demais para mostrar trabalho nenhum */
-.grade li:nth-child(n+7){display:none}
-@media (max-height:660px){ .grade li:nth-child(n+5){display:none} }
+/* tres na tira, e so. Da quarta em diante a foto vive na tela de
+   resultados, que rola: mais colunas aqui deixariam cada miniatura
+   estreita demais para mostrar trabalho nenhum. */
+.grade li:nth-child(n+4){display:none}
 
 /* ── acoes ─────────────────────────────────────────────────────── */
 .acoes{width:100%;display:flex;flex-direction:column;gap:.7em}
@@ -432,6 +452,96 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
   color:rgba(201,184,166,.72);line-height:1.7;
 }
 
+/* ── tela de resultados ────────────────────────────────────────── */
+.resultados{
+  position:fixed;inset:0;z-index:60;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  background:var(--escuro);
+  padding:0 1.1rem calc(1.6rem + env(safe-area-inset-bottom));
+  animation:entraTela .45s var(--curva) both;
+}
+.resultados[hidden]{display:none}
+.res-folha{width:min(100%,34rem);margin-inline:auto}
+@keyframes entraTela{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.res-topo{
+  position:sticky;top:0;z-index:5;
+  display:flex;align-items:center;gap:.8rem;
+  padding:calc(.85rem + env(safe-area-inset-top)) 0 .85rem;
+  background:linear-gradient(180deg,
+    var(--escuro) 0%, var(--escuro) 84%, rgba(36,29,23,.72) 93%, rgba(36,29,23,0) 100%);
+}
+.voltar{
+  flex:none;width:2.4rem;height:2.4rem;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(217,184,110,.42);
+  background:rgba(217,184,110,.08);
+  color:var(--ouro-luz);cursor:pointer;
+  transition:background-color .3s var(--curva),transform .3s var(--curva);
+}
+@media (hover:hover){.voltar:hover{background:rgba(217,184,110,.2);transform:translateX(-2px)}}
+.res-titulo{display:flex;flex-direction:column;gap:.12rem;min-width:0;text-align:left}
+.res-titulo b{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-weight:300;font-size:1.5rem;line-height:1.05;
+  background:var(--folha);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.res-titulo span{
+  font-size:.58rem;font-weight:200;
+  letter-spacing:.24em;text-transform:uppercase;color:var(--nude);
+}
+.res-mono{
+  margin-left:auto;flex:none;padding-right:.18rem;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-style:italic;font-size:1.45rem;line-height:1;
+  background:var(--folha);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+/* duas por linha, sempre: com tres cada foto cai para uns 100px e o
+   trabalho deixa de ser legivel — que e o motivo de ela estar ali. */
+.res-lista{
+  list-style:none;display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:.7rem;padding-bottom:1.2rem;
+}
+.res-item{opacity:0;animation:surge .9s var(--curva) both;
+  animation-delay:calc(var(--i,0) * 60ms)}
+.res-foto{
+  position:relative;width:100%;aspect-ratio:4/5;
+  border-radius:.7rem;overflow:hidden;
+  border:1px solid rgba(217,184,110,.34);
+  box-shadow:0 .3rem 1.1rem rgba(14,10,7,.42);
+  background:linear-gradient(115deg,#6b5c4e,#3a2f26 46%,#8d8175);
+}
+.res-foto img{width:100%;height:100%;object-fit:cover;display:block}
+.res-vazio{
+  text-align:center;color:var(--nude);
+  font-size:.8rem;font-weight:200;line-height:1.9;padding:3rem 0;
+}
+
+/* ── assinatura ────────────────────────────────────────────────── */
+/* discreta, mas com 3,2:1 de contraste — abaixo disso vira decoracao
+   que ninguem le. O alvo de toque tambem e maior que o texto. */
+.assinatura{
+  position:absolute;left:0;right:0;
+  bottom:calc(.9em + env(safe-area-inset-bottom));
+  text-align:center;
+  font-size:max(8px,.55em);font-weight:200;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(201,184,166,.5);
+  transition:color .35s var(--curva);
+}
+.assinatura b{font-weight:400;color:rgba(217,184,110,.72)}
+.assinatura::after{content:"";position:absolute;left:0;right:0;top:-13px;bottom:0}
+@media (hover:hover){
+  .assinatura:hover{color:rgba(201,184,166,.78)}
+  .assinatura:hover b{color:var(--ouro)}
+}
+.resultados .assinatura{position:relative;bottom:auto;display:block;
+  font-size:.55rem;padding:.5rem 0 1.4rem}
+.resultados .assinatura::after{top:0;bottom:0}
+
 /* ── entrada encenada ──────────────────────────────────────────── */
 .entra{opacity:0;animation:surge 1.1s var(--curva) both;
        animation-delay:calc(var(--d,0) * 1ms)}
@@ -461,7 +571,7 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
       "selo   trabalhos"
       "rodape acoes";
     align-items:center;justify-items:center;
-    gap:.5em 1.4em;
+    gap:.38em 1.4em;
     font-size:clamp(10px, min(3.3vh,1.5vw), 15px);
   }
   .palco>.coroa{grid-area:coroa}
@@ -469,7 +579,6 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
   .palco>.selo{grid-area:selo}
   .palco>.vitrine{grid-area:vitrine;width:100%}
   .palco>.trabalhos{grid-area:trabalhos;width:100%}
-  .grade li:nth-child(n+5){display:none}
   .palco>.acoes{grid-area:acoes}
   .palco>.rodape{grid-area:rodape}
   .ba{height:clamp(92px,29vh,170px)}
@@ -477,14 +586,14 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
 
 /* telas em pe muito curtas (navegador do app comendo altura) */
 @media (orientation:portrait) and (max-height:545px){
-  .palco{gap:.82em}
+  .palco{gap:.7em}
   .ba{height:clamp(96px,18.5vh,150px)}
   .miniaturas .mini{border-radius:.45em}
 }
 
 @media (min-width:900px) and (min-height:640px){
   #retrato{background-position:50% 22%}
-  .palco{gap:1.2em}
+  .palco{gap:1em}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -541,7 +650,12 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
   </figure>
 
   <section class="trabalhos entra" style="--d:460">
-    <h2 class="titulo">Meus trabalhos</h2>
+    <a class="titulo chamada" id="btResultados" href="#resultados">
+      Clique e veja nossos resultados
+      <svg class="seta" width="9" height="9" viewBox="0 0 12 12" fill="none"
+           stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+           stroke-linejoin="round" aria-hidden="true"><path d="M4 2l4 4-4 4"/></svg>
+    </a>
     <ul class="grade" id="grade"></ul>
   </section>
 
@@ -602,7 +716,34 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
 
   <p class="rodape entra" style="--d:800">Mais do que estética, autoestima.</p>
 
+  <a class="assinatura entra" style="--d:880" id="btMarktiva"
+     href="https://www.instagram.com/agenciamarktiva"
+     target="_blank" rel="noopener">Site criado por <b>Agência Marktiva</b></a>
+
 </main>
+
+<section class="resultados" id="resultados" hidden aria-label="Resultados de Franciele Bill">
+  <div class="res-folha">
+    <header class="res-topo">
+      <button class="voltar" id="btVoltar" type="button"
+              aria-label="Voltar para a página inicial">
+        <svg width="15" height="15" viewBox="0 0 12 12" fill="none" stroke="currentColor"
+             stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true"><path d="M8 2L4 6l4 4"/></svg>
+      </button>
+      <span class="res-titulo">
+        <b>Nossos resultados</b>
+        <span>Franciele Bill · Londrina</span>
+      </span>
+      <span class="res-mono" aria-hidden="true">B</span>
+    </header>
+
+    <ul class="res-lista" id="lista"></ul>
+
+    <a class="assinatura" href="https://www.instagram.com/agenciamarktiva"
+       target="_blank" rel="noopener">Site criado por <b>Agência Marktiva</b></a>
+  </div>
+</section>
 
 
 <script>
@@ -731,21 +872,106 @@ a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
 
   /* ── meus trabalhos ───────────────────────────────────────────── */
   var grade = document.getElementById('grade');
-  var MAX_NA_FILEIRA = 6;
+  var MAX_NA_FILEIRA = 3;
   var quantos = Math.min(TRABALHOS.length, MAX_NA_FILEIRA);
   grade.style.setProperty('--colunas', quantos || 1);
 
   TRABALHOS.slice(0, MAX_NA_FILEIRA).forEach(function (t, i) {
     var li = document.createElement('li');
     li.style.setProperty('--i', i);
+    /* a miniatura tambem abre os resultados: quem toca na foto espera
+       ver a foto maior, nao ficar sem resposta */
+    var elo = document.createElement('a');
+    elo.href = '#resultados';
+    elo.setAttribute('aria-label', 'Ver todos os resultados');
     var img = document.createElement('img');
     img.src = t.arquivo;
     img.alt = t.titulo ? ('Trabalho de ' + t.titulo + ' por Franciele Bill') : 'Trabalho de Franciele Bill';
     img.loading = 'lazy';
     img.decoding = 'async';
     img.addEventListener('error', function () { img.remove(); });
-    li.appendChild(img);
+    elo.appendChild(img);
+    li.appendChild(elo);
     grade.appendChild(li);
+  });
+
+  /* ── tela de resultados ───────────────────────────────────────── */
+  /* Mora no mesmo arquivo. Assim o voltar nunca depende de um segundo
+     HTML estar ao lado — abrir o arquivo sozinho continua funcionando. */
+  var tela  = document.getElementById('resultados');
+  var lista = document.getElementById('lista');
+  var montada = false;
+
+  function montarLista() {
+    if (montada) return;
+    montada = true;
+    if (!TRABALHOS.length) {
+      lista.outerHTML = '<p class="res-vazio">As fotos dos trabalhos entram aqui.</p>';
+      return;
+    }
+    TRABALHOS.forEach(function (obra, i) {
+      var li = document.createElement('li');
+      li.className = 'res-item';
+      li.style.setProperty('--i', Math.min(i, 8));
+      var caixa = document.createElement('div');
+      caixa.className = 'res-foto';
+      var img = document.createElement('img');
+      img.src = obra.arquivo;
+      img.alt = obra.titulo ? ('Trabalho de ' + obra.titulo + ' por Franciele Bill') : 'Trabalho de Franciele Bill';
+      img.decoding = 'async';
+      if (i > 3) img.loading = 'lazy';
+      img.addEventListener('error', function () { img.remove(); });
+      caixa.appendChild(img);
+      li.appendChild(caixa);
+      lista.appendChild(li);
+    });
+  }
+
+  function abrir() {
+    montarLista();
+    tela.hidden = false;
+    tela.scrollTop = 0;
+    document.body.style.overflow = 'hidden';
+    var b = document.getElementById('btVoltar');
+    if (b) b.focus({ preventScroll: true });
+    if (typeof fbq === 'function') fbq('trackCustom', 'VerTrabalhos');
+  }
+  function fechar() {
+    tela.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  /* O endereco vira #resultados, entao o botao voltar do proprio
+     celular tambem fecha a tela em vez de sair do site.
+
+     So desfaco o passo do navegador quando o passo e MEU. Se a pessoa
+     chegou por um link ja com #resultados, o passo anterior nao e da
+     pagina — pode ser a tela em branco de onde o aplicativo abriu o
+     link, e a seta jogaria ela justamente ali. Por isso a conta abaixo,
+     em vez de um history.back() cego. */
+  var passosMeus = 0;
+
+  window.addEventListener('hashchange', function () {
+    if (location.hash === '#resultados') { passosMeus++; abrir(); }
+    else { if (passosMeus > 0) passosMeus--; fechar(); }
+  });
+
+  if (location.hash === '#resultados') abrir();
+
+  document.getElementById('btVoltar').addEventListener('click', function () {
+    if (passosMeus > 0) { history.back(); return; }
+    /* sem passo meu: troco o endereco sem criar passo novo, para o
+       botao do celular continuar levando de onde a pessoa veio */
+    try {
+      history.replaceState(null, '', location.pathname + location.search);
+    } catch (e) {
+      location.hash = '';        /* file:// e origem nula recusam o replaceState */
+    }
+    fechar();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !tela.hidden) document.getElementById('btVoltar').click();
   });
 
   /* ── parallax discreto ────────────────────────────────────────── */

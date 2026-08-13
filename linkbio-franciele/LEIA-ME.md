@@ -66,14 +66,46 @@ edita é exatamente o que está no ar.
 
 ### A versão de 07/08
 
-Guardada em `versao-07-08/`, com o editor próprio dela. É de antes de várias
-mudanças: tem o selo “Embaixadora”, a galeria dentro da tela inicial, e não
-tem segunda página nem assinatura da Marktiva. **As 7 fotos que estavam nela
-continuam lá** — serve para recuperar imagens sem procurar os originais.
+Guardada em `versao-07-08/`, com o editor próprio dela. Mantém o selo
+“Embaixadora” e as **7 fotos** que já estavam nela. É **um arquivo só**:
+a tela inicial e os resultados moram no mesmo HTML.
+
+| na tela inicial | ao tocar em “Clique e veja nossos resultados” |
+|---|---|
+| as **3 primeiras** fotos, lado a lado | **todas** as fotos, duas por linha, rolando |
+
+**Por que não são duas páginas aqui.** Este arquivo circula sozinho — vai por
+WhatsApp, é baixado, é aberto direto da pasta. Com uma segunda página, o
+“voltar” procuraria um arquivo ao lado que muitas vezes não está lá, e caía
+no vazio. Aqui a volta não depende de nada além do próprio arquivo.
+
+O endereço ganha `#resultados` quando a galeria abre, então o botão voltar do
+próprio celular também fecha a tela em vez de sair do site. E quando alguém
+chega por um link que **já vem** com `#resultados`, a seta não desfaz o passo
+do navegador — o passo anterior não é nosso, e desfazê-lo jogaria a pessoa
+justamente na tela em branco de onde o aplicativo abriu o link.
 
 O editor dela é separado porque a estrutura é outra: as faces da comparação
 são `<img>` com `src` direto em vez de uma lista, e a galeria usa `arquivo`
 em vez de `foto`. O editor de hoje não acharia nada.
+
+No editor a tira mostra a **lista inteira**, não só as três — da quarta em
+diante a foto ganha a marca “só nos resultados”. Se o editor copiasse o corte
+da página publicada, a quarta foto em diante ficaria sem jeito de trocar nem
+de apagar.
+
+Para reconstruir esse editor depois de mexer na página:
+
+```bash
+node scripts/empacotar-editor.mjs \
+  linkbio-franciele/fontes/editor-07-08-sem-modelo.html \
+  linkbio-franciele/versao-07-08/index.html - \
+  linkbio-franciele/versao-07-08/editor.html
+```
+
+O editor guarda a página inteira dentro dele, em base64. Sem reempacotar,
+ele continua editando a versão antiga — foi assim que o `montar.html` ficou
+para trás três vezes.
 
 ### Por que ele não publica sozinho
 
