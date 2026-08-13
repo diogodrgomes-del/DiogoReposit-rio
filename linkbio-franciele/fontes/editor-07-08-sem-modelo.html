@@ -433,6 +433,8 @@ const ESTILO_EDICAO = `
     font:700 11px/1 ui-sans-serif,system-ui,sans-serif;letter-spacing:.1em;
     text-transform:uppercase}
   .ed-somar:hover{background:rgba(217,184,110,.16)}
+  .grade li{display:block!important}
+  .ed-somar{display:flex!important}
   .ed-marca{position:absolute;left:0;right:0;bottom:0;z-index:98;
     padding:2px 0;text-align:center;font-size:7px;letter-spacing:.08em;
     text-transform:uppercase;color:#f4ece1;background:rgba(14,10,7,.66)}
@@ -487,7 +489,6 @@ function equiparObras(doc){
   estado.obras.forEach((obra, i) => {
     const li = doc.createElement('li');
     li.style.opacity = 1; li.style.animation = 'none';
-    li.style.display = 'block';           /* o corte da 4a em diante nao vale aqui */
     if(obra.dados){
       const img = doc.createElement('img');
       img.src = obra.dados; li.appendChild(img);
