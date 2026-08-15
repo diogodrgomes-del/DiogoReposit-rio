@@ -1,4 +1,5 @@
 import { nomeNegocio } from "@/lib/portal";
+import FormularioCadastro from "./FormularioCadastro";
 
 export const metadata = {
   title: "Acesso ao Wi-Fi",
@@ -14,9 +15,9 @@ const ERROS: Record<string, string> = {
   provedor: "Opção de login inválida.",
 };
 
-// Repassa os parametros que o roteador anexou (uamip, mac, challenge…) para os
-// links de login, para conseguir liberar a internet depois da autorizacao.
-function querystringAp(sp: Record<string, string | string[] | undefined>): string {
+// Parametros que o roteador anexou (uamip, mac, challenge…), preservados para
+// conseguir liberar a internet depois — no formulario e no login social.
+function objetoAp(sp: Record<string, string | string[] | undefined>): Record<string, string> {
   const chaves = [
     "uamip",
     "uamport",
@@ -28,13 +29,12 @@ function querystringAp(sp: Record<string, string | string[] | undefined>): strin
     "nasid",
     "ssid",
   ];
-  const q = new URLSearchParams();
+  const out: Record<string, string> = {};
   for (const k of chaves) {
     const v = sp[k];
-    if (typeof v === "string" && v) q.set(k, v);
+    if (typeof v === "string" && v) out[k] = v;
   }
-  const s = q.toString();
-  return s ? `?${s}` : "";
+  return out;
 }
 
 export default async function PortalWifi({
@@ -44,7 +44,11 @@ export default async function PortalWifi({
 }) {
   const sp = await searchParams;
   const negocio = nomeNegocio();
-  const qs = querystringAp(sp);
+  const ap = objetoAp(sp);
+  const qs = (() => {
+    const s = new URLSearchParams(ap).toString();
+    return s ? `?${s}` : "";
+  })();
   const erroChave = typeof sp.erro === "string" ? sp.erro : null;
   const erro = erroChave ? ERROS[erroChave] ?? "Não foi possível conectar." : null;
 
@@ -72,6 +76,12 @@ export default async function PortalWifi({
             {erro}
           </p>
         )}
+
+        <FormularioCadastro negocio={negocio} ap={ap} />
+
+        <div className="portal-ou">
+          <span>ou entre com</span>
+        </div>
 
         <div className="portal-botoes">
           <a className="portal-btn portal-btn-fb" href={`/api/wifi/facebook/start${qs}`}>

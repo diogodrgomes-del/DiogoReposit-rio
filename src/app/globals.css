@@ -1563,6 +1563,70 @@ tbody tr.marcada td:first-child { background: color-mix(in srgb, var(--s1) 7%, t
   text-align: center;
 }
 
+.portal-form {
+  display: block;
+}
+
+.portal-form .campo {
+  margin-bottom: 13px;
+}
+
+.portal-btn-primario {
+  background: var(--s1);
+  border-color: var(--s1);
+  color: #fff;
+  margin-top: 4px;
+}
+
+.portal-btn-primario:hover:not(:disabled) {
+  filter: brightness(1.07);
+  border-color: var(--s1);
+}
+
+.portal-btn-primario:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.portal-consent {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  margin: 4px 0 14px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-3);
+  cursor: pointer;
+}
+
+.portal-consent input {
+  width: 17px;
+  height: 17px;
+  margin-top: 1px;
+  flex: none;
+  accent-color: var(--s1);
+  cursor: pointer;
+}
+
+.portal-ou {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 22px 0 16px;
+  color: var(--ink-3);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.portal-ou::before,
+.portal-ou::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
 .portal-caixa-ok {
   text-align: center;
 }

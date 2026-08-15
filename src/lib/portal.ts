@@ -19,10 +19,14 @@ import { Pool } from "pg";
 
 export type Provedor = "facebook" | "google";
 
+/** Como o visitante entrou: rede social ou formulário de dados pessoais. */
+export type OrigemLead = Provedor | "cadastro";
+
 export type Visitante = {
-  provedor: Provedor;
+  provedor: OrigemLead;
   nome: string;
   email: string | null;
+  telefone?: string | null;
   idExterno: string;
 };
 
@@ -245,6 +249,50 @@ export async function trocarCodePorVisitante(
 }
 
 // ----------------------------------------------------------------------------
+// Formulário de dados pessoais (alternativa ao login social)
+// ----------------------------------------------------------------------------
+
+export type DadosCadastro = { nome: string; email: string; telefone: string | null };
+
+/** E-mail plausível: um @, algo antes, e um domínio com ponto depois. */
+function emailValido(v: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+}
+
+/**
+ * Valida o formulário. Pede só o essencial (nome e e-mail) — coletar menos é a
+ * regra da LGPD. Telefone é opcional e guardado só com os dígitos.
+ */
+export function validarCadastro(bruto: {
+  nome?: unknown;
+  email?: unknown;
+  telefone?: unknown;
+  consentimento?: unknown;
+}): { ok: true; dados: DadosCadastro } | { ok: false; erro: string } {
+  const nome = String(bruto.nome ?? "").trim();
+  const email = String(bruto.email ?? "").trim().toLowerCase();
+  const telBruto = String(bruto.telefone ?? "").replace(/\D/g, "");
+
+  if (bruto.consentimento !== true) {
+    return { ok: false, erro: "É preciso aceitar os termos para conectar." };
+  }
+  if (nome.length < 2) {
+    return { ok: false, erro: "Informe seu nome." };
+  }
+  if (!emailValido(email)) {
+    return { ok: false, erro: "Informe um e-mail válido." };
+  }
+  if (telBruto && (telBruto.length < 10 || telBruto.length > 13)) {
+    return { ok: false, erro: "Telefone inválido. Use o DDD e o número." };
+  }
+
+  return {
+    ok: true,
+    dados: { nome, email, telefone: telBruto || null },
+  };
+}
+
+// ----------------------------------------------------------------------------
 // Liberar a internet
 //
 // Num portal cativo real, o roteador manda o visitante para ca com parametros
@@ -351,11 +399,15 @@ async function garantirTabela(sql: Consulta) {
       id_externo TEXT        NOT NULL,
       nome       TEXT        NOT NULL,
       email      TEXT,
+      telefone   TEXT,
       ssid       TEXT,
       ip         TEXT,
       criado_em  TIMESTAMPTZ NOT NULL DEFAULT now()
     )
   `;
+  // Tabela criada antes de existir o formulário não tem a coluna; adiciona sem
+  // quebrar quem já rodou a versão só com login social.
+  await sql`ALTER TABLE wifi_visitantes ADD COLUMN IF NOT EXISTS telefone TEXT`;
   await sql`
     CREATE INDEX IF NOT EXISTS wifi_visitantes_data
       ON wifi_visitantes (criado_em DESC)
@@ -376,9 +428,10 @@ export async function registrarVisitante(
   try {
     await garantirTabela(sql);
     await sql`
-      INSERT INTO wifi_visitantes (provedor, id_externo, nome, email, ssid, ip)
+      INSERT INTO wifi_visitantes
+        (provedor, id_externo, nome, email, telefone, ssid, ip)
       VALUES (${v.provedor}, ${v.idExterno}, ${v.nome}, ${v.email},
-              ${ap.ssid ?? null}, ${ap.ip ?? null})
+              ${v.telefone ?? null}, ${ap.ssid ?? null}, ${ap.ip ?? null})
     `;
   } catch (e) {
     console.error("Falha ao registrar visitante do Wi-Fi:", (e as Error).message);
