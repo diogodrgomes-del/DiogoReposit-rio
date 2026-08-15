@@ -1470,6 +1470,128 @@ tbody tr.marcada td:first-child { background: color-mix(in srgb, var(--s1) 7%, t
   margin: 0 0 15px;
 }
 
+/* ==================== portal cativo de Wi-Fi ==================== */
+
+.portal-caixa {
+  width: 100%;
+  max-width: 380px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: clamp(26px, 6vw, 38px);
+  box-shadow: 0 6px 30px rgba(16, 25, 23, 0.08);
+}
+
+.portal-marca {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.portal-wifi {
+  display: inline-grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--s1) 14%, transparent);
+  color: var(--s1);
+  margin-bottom: 12px;
+}
+
+.portal-caixa h1 {
+  font-family: var(--serif);
+  font-size: 23px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  letter-spacing: -0.02em;
+}
+
+.portal-caixa .sub {
+  color: var(--ink-3);
+  font-size: 14.5px;
+  margin: 0;
+}
+
+.portal-botoes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.portal-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: filter 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+}
+
+.portal-btn-fb {
+  background: #1877f2;
+  border-color: #1877f2;
+  color: #fff;
+}
+
+.portal-btn-fb:hover {
+  filter: brightness(1.06);
+}
+
+.portal-btn-google {
+  background: var(--card);
+  border-color: var(--border);
+  color: var(--ink);
+}
+
+.portal-btn-google:hover {
+  border-color: var(--ink-3);
+}
+
+.portal-lgpd {
+  margin: 20px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-3);
+  text-align: center;
+}
+
+.portal-caixa-ok {
+  text-align: center;
+}
+
+.portal-check {
+  display: inline-grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--good) 16%, transparent);
+  color: var(--good);
+  margin-bottom: 14px;
+}
+
+.portal-caixa-ok .sub {
+  margin-bottom: 22px;
+}
+
+.portal-aviso {
+  background: color-mix(in srgb, var(--warn) 14%, transparent);
+  color: var(--warn);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.45;
+  margin: 0 0 18px;
+}
+
 /* ======================== impressão / PDF ======================== */
 
 .so-impressao {

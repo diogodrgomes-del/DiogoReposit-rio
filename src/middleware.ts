@@ -15,6 +15,12 @@ export async function middleware(req: NextRequest) {
     // Diagnóstico de configuração: precisa responder sem sessão, porque é
     // usado justamente quando o login não funciona. Não expõe valor algum.
     pathname === "/api/saude" ||
+    // Portal cativo de Wi-Fi: é público por definição — quem chega ainda não
+    // tem internet, muito menos sessão do painel. Só serve login social e
+    // libera o acesso; não toca em token da Meta nem em dado de cliente.
+    pathname === "/wifi" ||
+    pathname.startsWith("/wifi/") ||
+    pathname.startsWith("/api/wifi/") ||
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico";
 
