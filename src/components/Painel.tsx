@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import type { Cliente } from "@/lib/clientes";
 import type { Painel as DadosPainel, ResumoCliente } from "@/lib/meta";
 import {
@@ -258,6 +259,9 @@ export default function Painel() {
             </div>
           )}
 
+          <Link className="btn" href="/financeiro">
+            Financeiro
+          </Link>
           <button className="btn btn-icone" onClick={alternarTema} title="Alternar tema">
             ◐
           </button>

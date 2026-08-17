@@ -1648,3 +1648,664 @@ tbody tr.marcada td:first-child { background: color-mix(in srgb, var(--s1) 7%, t
     transition: none !important;
   }
 }
+
+/* ============================================================
+   Financeiro — Marktiva (empresa) e Diogo (pessoal)
+
+   Reaproveita tudo que já existe: .app, .topo, .tiles, .painel,
+   .abas, .btn, .tabela-wrap. Só entra aqui o que é próprio do
+   financeiro: a grade do calendário, os cartões de contrato e os
+   estados de cobrança.
+   ============================================================ */
+
+.fin-mes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.fin-mes strong {
+  min-width: 158px;
+  text-align: center;
+}
+
+/* Só a inicial: `capitalize` transformaria "agosto de 2026" em "Agosto De". */
+.fin-mes strong::first-letter {
+  text-transform: uppercase;
+}
+
+.fin-status {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.fin-aviso {
+  background: color-mix(in srgb, var(--warn) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--warn) 35%, transparent);
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-size: 14px;
+  margin: 0 0 16px;
+}
+
+.fin-aviso.ok {
+  background: color-mix(in srgb, var(--good) 12%, transparent);
+  border-color: color-mix(in srgb, var(--good) 32%, transparent);
+}
+
+.fin-aviso code {
+  font-family: var(--mono);
+  font-weight: 600;
+}
+
+.fin-erro {
+  color: var(--crit);
+  font-size: 14px;
+  margin: 8px 0 0;
+}
+
+.fin-erro.destaque {
+  background: color-mix(in srgb, var(--crit) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--crit) 32%, transparent);
+  border-radius: 8px;
+  padding: 11px 14px;
+  margin: 0 0 16px;
+}
+
+.fin-vazio {
+  color: var(--ink-3);
+  font-size: 14px;
+  margin: 10px 0 0;
+}
+
+.fin-cab {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.fin-cab > div:first-child {
+  margin-right: auto;
+  min-width: 0;
+}
+
+.fin-cab .desc {
+  margin-bottom: 0;
+}
+
+/* ---------------- pastilhas de situação ---------------- */
+
+.pastilha.fin-pago {
+  background: color-mix(in srgb, var(--good) 15%, transparent);
+  color: var(--good);
+}
+
+/* Pago com atraso é âmbar, não vermelho: o dinheiro entrou; o que ficou
+   registrado foi o comportamento do cliente. */
+.pastilha.fin-atrasado {
+  background: color-mix(in srgb, var(--warn) 16%, transparent);
+  color: var(--warn);
+}
+
+.pastilha.fin-vencido {
+  background: color-mix(in srgb, var(--crit) 15%, transparent);
+  color: var(--crit);
+}
+
+.pastilha.fin-hoje {
+  background: color-mix(in srgb, var(--s2) 16%, transparent);
+  color: var(--s2);
+}
+
+.pastilha.fin-aberto {
+  background: color-mix(in srgb, var(--ink-3) 16%, transparent);
+  color: var(--ink-2);
+}
+
+/* ---------------- agenda de cobrança ---------------- */
+
+.fin-lembrete {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: color-mix(in srgb, var(--s2) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--s2) 30%, transparent);
+  border-radius: 8px;
+  padding: 10px 13px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.fin-lembrete span {
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.fin-bloco + .fin-bloco {
+  margin-top: 20px;
+}
+
+.fin-bloco-cab {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--border-2);
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+
+.fin-bloco-cab h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.fin-bloco-cab span {
+  font-size: 14px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.fin-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fin-item {
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 11px 13px;
+  background: var(--card-2);
+}
+
+/* Barra na lateral do que já entrou na janela de lembrete. */
+.fin-item.urgente {
+  border-left: 3px solid var(--s2);
+}
+
+.fin-item-topo {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.fin-item-nome {
+  font-size: 14.5px;
+  font-weight: 600;
+  min-width: 0;
+}
+
+.fin-item-nome em {
+  font-weight: 400;
+  color: var(--ink-2);
+  font-style: normal;
+}
+
+.fin-item-valor {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.fin-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--ink-3);
+  margin: 6px 0 9px;
+}
+
+.fin-tag {
+  font-size: 11.5px;
+  font-family: var(--mono);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 1px 7px;
+  margin-left: 7px;
+}
+
+.fin-tag.ok {
+  color: var(--good);
+  border-color: color-mix(in srgb, var(--good) 35%, transparent);
+}
+
+/* ---------------- botões de baixa ---------------- */
+
+.fin-acoes,
+.fin-acoes-celula {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.btn-mini {
+  min-height: 32px;
+  padding: 5px 10px;
+  font-size: 13px;
+  border-radius: 6px;
+}
+
+.btn.fin-marcado {
+  border-color: color-mix(in srgb, var(--good) 45%, transparent);
+  color: var(--good);
+}
+
+.fin-baixa {
+  display: flex;
+  gap: 9px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 11px;
+}
+
+.fin-baixa label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 11.5px;
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+
+.fin-baixa input,
+.fin-baixa select {
+  min-height: 34px;
+  padding: 5px 9px;
+  font-size: 13.5px;
+}
+
+/* ---------------- formulários ---------------- */
+
+.fin-form {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card-2);
+  padding: 15px;
+  margin-bottom: 18px;
+}
+
+.fin-form-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.fin-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.fin-campo > span {
+  font-size: 11.5px;
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+
+.fin-campo input,
+.fin-campo select {
+  width: 100%;
+}
+
+.fin-campo input[type="number"] {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 8px 11px;
+  font-size: 14px;
+  min-height: 40px;
+}
+
+.fin-campo.largo {
+  grid-column: span 2;
+}
+
+.fin-campo.fin-check {
+  flex-direction: row;
+  align-items: center;
+  gap: 9px;
+}
+
+.fin-campo.fin-check span {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--ink-2);
+}
+
+.fin-form-acoes {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.fin-dica {
+  font-size: 13px;
+  color: var(--ink-3);
+  margin-right: auto;
+}
+
+/* ---------------- tabela de lançamentos ---------------- */
+
+.fin-tabela {
+  min-width: 940px;
+}
+
+/* A tabela do painel de campanhas ordena por clique; esta não — o cursor de
+   mão prometeria um comportamento que não existe aqui. */
+.fin-tabela th {
+  cursor: default;
+}
+
+.fin-tabela th:hover {
+  color: var(--ink-3);
+}
+
+.fin-sub {
+  color: var(--ink-3);
+  font-style: normal;
+  font-size: 13px;
+}
+
+/* ---------------- contratos recorrentes ---------------- */
+
+.fin-contratos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 13px;
+}
+
+.fin-contrato {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 13px 14px;
+  background: var(--card-2);
+}
+
+.fin-contrato.inativo {
+  opacity: 0.62;
+}
+
+.fin-contrato-cab {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.fin-contrato-cab em {
+  font-style: normal;
+  color: var(--ink-2);
+}
+
+.fin-contrato-meta {
+  font-size: 12.5px;
+  color: var(--ink-3);
+  margin-top: 3px;
+  line-height: 1.45;
+}
+
+.fin-contrato-valor {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.fin-contrato-hist {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--ink-3);
+  margin: 10px 0;
+}
+
+/* ---------------- despesas por categoria ---------------- */
+
+.fin-categorias {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.fin-categoria-rot {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.fin-categoria-rot b {
+  font-variant-numeric: tabular-nums;
+}
+
+.fin-trilho {
+  height: 12px;
+  background: var(--border-2);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.fin-barra {
+  height: 100%;
+  background: color-mix(in srgb, var(--s2) 45%, transparent);
+  border-radius: 100px;
+  min-width: 3px;
+}
+
+/* Trecho cheio: a parte da categoria que já foi efetivamente paga. */
+.fin-barra-paga {
+  height: 100%;
+  background: var(--s2);
+  border-radius: 100px;
+}
+
+.fin-categoria-obs {
+  font-size: 12.5px;
+  color: var(--ink-3);
+  margin-top: 4px;
+}
+
+/* ---------------- calendário do mês ---------------- */
+
+.fin-cal-grade {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.fin-cal-cab {
+  margin-bottom: 5px;
+}
+
+.fin-cal-cab span {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  text-align: center;
+}
+
+.fin-cal-vazio {
+  min-height: 62px;
+}
+
+.fin-cal-dia {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-start;
+  min-height: 62px;
+  padding: 5px 6px;
+  border: 1px solid var(--border-2);
+  border-radius: 7px;
+  background: var(--card);
+  cursor: pointer;
+  text-align: left;
+  overflow: hidden;
+}
+
+.fin-cal-dia:hover {
+  border-color: var(--s1);
+}
+
+.fin-cal-num {
+  font-size: 12.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+}
+
+.fin-cal-dia.fds {
+  background: var(--card-2);
+}
+
+.fin-cal-dia.feriado {
+  background: color-mix(in srgb, var(--s3) 10%, transparent);
+  border-color: color-mix(in srgb, var(--s3) 28%, transparent);
+}
+
+.fin-cal-dia.hoje {
+  border-color: var(--s1);
+  box-shadow: inset 0 0 0 1px var(--s1);
+}
+
+.fin-cal-dia.sel {
+  background: color-mix(in srgb, var(--s1) 12%, transparent);
+}
+
+/* Só marca o dia; o vermelho do valor já diz o resto. */
+.fin-cal-dia.alerta .fin-cal-num {
+  color: var(--crit);
+}
+
+.fin-cal-feriado {
+  font-size: 10.5px;
+  line-height: 1.2;
+  color: var(--s3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.fin-cal-valor {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.fin-cal-valor.entrada {
+  color: var(--good);
+}
+
+.fin-cal-valor.saida {
+  color: var(--crit);
+}
+
+.fin-cal-detalhe {
+  margin-top: 14px;
+  border-top: 1px solid var(--border-2);
+  padding-top: 11px;
+  font-size: 14px;
+}
+
+.fin-cal-detalhe ul {
+  list-style: none;
+  margin: 7px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.fin-cal-detalhe li {
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.fin-cal-detalhe em {
+  font-style: normal;
+  color: var(--ink-3);
+}
+
+.fin-cal-nota {
+  display: block;
+  color: var(--ink-3);
+  font-size: 13px;
+  margin-top: 3px;
+}
+
+.fin-cal-legenda {
+  font-size: 12.5px;
+  color: var(--ink-3);
+  margin: 13px 0 0;
+  line-height: 1.5;
+}
+
+/* No celular as quatro seções não cabem lado a lado. Rolagem horizontal na
+   própria faixa é melhor do que quebrar em duas linhas: mantém a barra com a
+   altura de sempre e nenhuma aba fica escondida fora da tela. */
+@media (max-width: 760px) {
+  .fin-secoes {
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .fin-secoes::-webkit-scrollbar {
+    display: none;
+  }
+
+  .fin-status {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 620px) {
+  .fin-campo.largo {
+    grid-column: span 1;
+  }
+
+  .fin-cal-dia,
+  .fin-cal-vazio {
+    min-height: 50px;
+  }
+
+  .fin-cal-feriado {
+    display: none;
+  }
+}
